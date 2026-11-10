@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -13,6 +14,9 @@ public class PlayerInteractor : MonoBehaviour
     [SerializeField] private Color interactionColor = new Color(0.65f, 0.9f, 0.65f);
 
     private IInteractable currentInteractable;
+
+    public event Action<IInteractable> InteractionStarted;
+    public event Action<IInteractable> InteractionEnded;
 
     private void Awake()
     {
@@ -46,8 +50,8 @@ public class PlayerInteractor : MonoBehaviour
             StartInteraction(interactable);
         }
 
-        if (currentInteractable != null)
-            currentInteractable.Interact(Time.deltaTime);
+        if (currentInteractable is MonoBehaviour currentTarget && currentTarget != null)
+            currentInteractable.Interact(gameObject, Time.deltaTime);
     }
 
     private IInteractable FindInteractable()
@@ -86,7 +90,8 @@ public class PlayerInteractor : MonoBehaviour
             return;
 
         currentInteractable = interactable;
-        currentInteractable.BeginInteraction();
+        InteractionStarted?.Invoke(currentInteractable);
+        currentInteractable.BeginInteraction(gameObject);
     }
 
     private void StopInteraction()
@@ -94,8 +99,14 @@ public class PlayerInteractor : MonoBehaviour
         if (currentInteractable == null)
             return;
 
-        currentInteractable.EndInteraction();
+        IInteractable interactable = currentInteractable;
         currentInteractable = null;
+
+        if (interactable is MonoBehaviour target && target != null)
+        {
+            interactable.EndInteraction(gameObject);
+            InteractionEnded?.Invoke(interactable);
+        }
     }
 
     private void OnDisable()

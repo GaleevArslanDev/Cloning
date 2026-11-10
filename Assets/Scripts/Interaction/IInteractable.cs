@@ -1,7 +1,10 @@
+using UnityEngine;
+
 public interface IInteractable
 {
     bool CanInteract { get; }
-    void BeginInteraction();
-    void Interact(float deltaTime);
-    void EndInteraction();
+    bool RecordInteraction { get; }
+    void BeginInteraction(GameObject interactor);
+    void Interact(GameObject interactor, float deltaTime);
+    void EndInteraction(GameObject interactor);
 }

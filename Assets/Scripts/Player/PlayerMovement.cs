@@ -57,4 +57,16 @@ public class PlayerMovement : MonoBehaviour
         Vector3 velocity = horizontalVelocity + Vector3.up * verticalVelocity;
         controller.Move(velocity * Time.deltaTime);
     }
+
+    public void Teleport(Vector3 position, Quaternion rotation)
+    {
+        controller.enabled = false;
+        transform.SetPositionAndRotation(position, rotation);
+        controller.enabled = true;
+
+        horizontalVelocity = Vector3.zero;
+        verticalVelocity = -2f;
+        moveInput = Vector2.zero;
+        IsRunning = false;
+    }
 }

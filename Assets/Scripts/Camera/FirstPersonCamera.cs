@@ -86,4 +86,13 @@ public class FirstPersonCamera : MonoBehaviour
         transform.localPosition = startPosition + currentOffset;
         transform.localRotation = Quaternion.Euler(pitch, 0f, 0f);
     }
+
+    public void ResetLook()
+    {
+        pitch = 0f;
+        bobTime = 0f;
+        currentOffset = Vector3.zero;
+        transform.localPosition = startPosition;
+        transform.localRotation = Quaternion.identity;
+    }
 }
