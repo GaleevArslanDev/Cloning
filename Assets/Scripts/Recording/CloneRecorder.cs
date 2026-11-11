@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class CloneRecorder : MonoBehaviour
@@ -11,8 +12,12 @@ public class CloneRecorder : MonoBehaviour
     [SerializeField] private FirstPersonCamera playerCamera;
     [SerializeField] private PlayerClimber playerClimber;
     [SerializeField] private PlayerCarry playerCarry;
+    [SerializeField] private CarryableItem[] resettableItems;
     [SerializeField] private float sampleInterval = 0.05f;
+    [SerializeField] private int maximumClones = 5;
 
+    private readonly List<CloneRecordingData> savedRecordings = new List<CloneRecordingData>();
+    private readonly List<ClonePlayback> activeClones = new List<ClonePlayback>();
     private CloneRecordingData recording;
     private float recordingTime;
     private float nextSampleTime;
@@ -34,6 +39,14 @@ public class CloneRecorder : MonoBehaviour
             playerCarry = GetComponent<PlayerCarry>();
         if (playerHead == null && playerCamera != null)
             playerHead = playerCamera.transform;
+
+        if (resettableItems == null || resettableItems.Length == 0)
+        {
+            resettableItems = FindObjectsByType<CarryableItem>(
+                FindObjectsInactive.Include,
+                FindObjectsSortMode.None
+            );
+        }
 
         if (playerInteractor != null)
         {
@@ -77,7 +90,8 @@ public class CloneRecorder : MonoBehaviour
         recording.Duration = recordingTime;
         isRecording = false;
 
-        SpawnClone();
+        SaveRecording();
+        RestartClones();
         MovePlayerToStart();
         BeginRecording();
     }
@@ -161,9 +175,31 @@ public class CloneRecorder : MonoBehaviour
         });
     }
 
-    private void SpawnClone()
+    private void SaveRecording()
     {
-        if (clonePrefab == null || recording.Poses.Count == 0)
+        if (recording.Poses.Count == 0)
+            return;
+
+        savedRecordings.Add(recording);
+
+        int cloneLimit = maximumClones > 0 ? maximumClones : 5;
+
+        while (savedRecordings.Count > cloneLimit)
+            savedRecordings.RemoveAt(0);
+    }
+
+    private void RestartClones()
+    {
+        StopActiveClones();
+        ResetItems();
+
+        foreach (CloneRecordingData savedRecording in savedRecordings)
+            SpawnClone(savedRecording);
+    }
+
+    private void SpawnClone(CloneRecordingData recordingToPlay)
+    {
+        if (clonePrefab == null || recordingToPlay.Poses.Count == 0)
             return;
 
         GameObject clone = Instantiate(clonePrefab);
@@ -175,7 +211,30 @@ public class CloneRecorder : MonoBehaviour
             return;
         }
 
-        playback.Initialize(recording);
+        playback.Initialize(recordingToPlay);
+        activeClones.Add(playback);
+    }
+
+    private void StopActiveClones()
+    {
+        foreach (ClonePlayback clone in activeClones)
+        {
+            if (clone != null)
+                clone.StopPlayback();
+        }
+
+        activeClones.Clear();
+    }
+
+    private void ResetItems()
+    {
+        foreach (CarryableItem item in resettableItems)
+        {
+            if (item != null)
+                item.ResetToStart();
+        }
+
+        Physics.SyncTransforms();
     }
 
     private void MovePlayerToStart()
@@ -194,6 +253,8 @@ public class CloneRecorder : MonoBehaviour
 
     private void OnDestroy()
     {
+        StopActiveClones();
+
         if (playerInteractor != null)
         {
             playerInteractor.InteractionStarted -= RecordInteractionStarted;

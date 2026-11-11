@@ -109,8 +109,13 @@ public abstract class PressurePlate : MonoBehaviour
 
         foreach (KeyValuePair<Collider, GameObject> pair in activeColliders)
         {
-            if (pair.Key == null || pair.Value == null)
+            if (pair.Key == null ||
+                pair.Value == null ||
+                !pair.Key.enabled ||
+                !pair.Key.gameObject.activeInHierarchy)
+            {
                 invalidColliders.Add(pair.Key);
+            }
         }
 
         foreach (Collider itemCollider in invalidColliders)

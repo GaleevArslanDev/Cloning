@@ -13,6 +13,7 @@ public class ClonePlayback : MonoBehaviour
     private int interactionIndex;
     private int carryActionIndex;
     private float playbackTime;
+    private bool isFinished;
 
     public bool IsStandingStill { get; private set; }
 
@@ -26,6 +27,7 @@ public class ClonePlayback : MonoBehaviour
         interactionIndex = 0;
         carryActionIndex = 0;
         playbackTime = 0f;
+        isFinished = false;
 
         if (recording.Poses.Count > 0)
             ApplyPose(recording.Poses[0]);
@@ -33,7 +35,7 @@ public class ClonePlayback : MonoBehaviour
 
     private void Update()
     {
-        if (recording == null || recording.Poses.Count == 0)
+        if (isFinished || recording == null || recording.Poses.Count == 0)
             return;
 
         playbackTime += Time.deltaTime;
@@ -43,7 +45,7 @@ public class ClonePlayback : MonoBehaviour
         UpdateCarryActions();
 
         if (playbackTime >= recording.Duration)
-            FinishPlayback();
+            StopPlayback();
     }
 
     private void UpdatePose()
@@ -132,7 +134,19 @@ public class ClonePlayback : MonoBehaviour
         }
     }
 
-    private void FinishPlayback()
+    public void StopPlayback()
+    {
+        if (isFinished)
+            return;
+
+        isFinished = true;
+
+        Cleanup();
+        gameObject.SetActive(false);
+        Destroy(gameObject);
+    }
+
+    private void Cleanup()
     {
         foreach (MonoBehaviour target in activeInteractions)
         {
@@ -144,7 +158,10 @@ public class ClonePlayback : MonoBehaviour
 
         if (carryController != null)
             carryController.StopCarrying();
+    }
 
-        Destroy(gameObject);
+    private void OnDestroy()
+    {
+        Cleanup();
     }
 }
