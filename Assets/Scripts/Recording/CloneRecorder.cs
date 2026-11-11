@@ -10,6 +10,7 @@ public class CloneRecorder : MonoBehaviour
     [SerializeField] private PlayerInteractor playerInteractor;
     [SerializeField] private FirstPersonCamera playerCamera;
     [SerializeField] private PlayerClimber playerClimber;
+    [SerializeField] private PlayerCarry playerCarry;
     [SerializeField] private float sampleInterval = 0.05f;
 
     private CloneRecordingData recording;
@@ -29,6 +30,8 @@ public class CloneRecorder : MonoBehaviour
             playerCamera = GetComponentInChildren<FirstPersonCamera>();
         if (playerClimber == null)
             playerClimber = GetComponent<PlayerClimber>();
+        if (playerCarry == null)
+            playerCarry = GetComponent<PlayerCarry>();
         if (playerHead == null && playerCamera != null)
             playerHead = playerCamera.transform;
 
@@ -36,6 +39,12 @@ public class CloneRecorder : MonoBehaviour
         {
             playerInteractor.InteractionStarted += RecordInteractionStarted;
             playerInteractor.InteractionEnded += RecordInteractionEnded;
+        }
+
+        if (playerCarry != null)
+        {
+            playerCarry.ItemPickedUp += RecordItemPickup;
+            playerCarry.ItemDropped += RecordItemDrop;
         }
     }
 
@@ -124,6 +133,34 @@ public class CloneRecorder : MonoBehaviour
         });
     }
 
+    private void RecordItemPickup(CarryableItem item)
+    {
+        if (!isRecording)
+            return;
+
+        recording.CarryActions.Add(new RecordedCarryAction
+        {
+            Time = recordingTime,
+            Item = item,
+            Type = RecordedCarryActionType.Pickup
+        });
+    }
+
+    private void RecordItemDrop(CarryableItem item, Vector3 position, Quaternion rotation)
+    {
+        if (!isRecording)
+            return;
+
+        recording.CarryActions.Add(new RecordedCarryAction
+        {
+            Time = recordingTime,
+            Item = item,
+            Type = RecordedCarryActionType.Drop,
+            DropPosition = position,
+            DropRotation = rotation
+        });
+    }
+
     private void SpawnClone()
     {
         if (clonePrefab == null || recording.Poses.Count == 0)
@@ -157,10 +194,16 @@ public class CloneRecorder : MonoBehaviour
 
     private void OnDestroy()
     {
-        if (playerInteractor == null)
-            return;
+        if (playerInteractor != null)
+        {
+            playerInteractor.InteractionStarted -= RecordInteractionStarted;
+            playerInteractor.InteractionEnded -= RecordInteractionEnded;
+        }
 
-        playerInteractor.InteractionStarted -= RecordInteractionStarted;
-        playerInteractor.InteractionEnded -= RecordInteractionEnded;
+        if (playerCarry != null)
+        {
+            playerCarry.ItemPickedUp -= RecordItemPickup;
+            playerCarry.ItemDropped -= RecordItemDrop;
+        }
     }
 }

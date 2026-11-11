@@ -22,9 +22,25 @@ public struct RecordedInteraction
     public RecordedInteractionType Type;
 }
 
+public enum RecordedCarryActionType
+{
+    Pickup,
+    Drop
+}
+
+public struct RecordedCarryAction
+{
+    public float Time;
+    public CarryableItem Item;
+    public RecordedCarryActionType Type;
+    public Vector3 DropPosition;
+    public Quaternion DropRotation;
+}
+
 public class CloneRecordingData
 {
     public readonly List<RecordedPose> Poses = new List<RecordedPose>();
     public readonly List<RecordedInteraction> Interactions = new List<RecordedInteraction>();
+    public readonly List<RecordedCarryAction> CarryActions = new List<RecordedCarryAction>();
     public float Duration;
 }

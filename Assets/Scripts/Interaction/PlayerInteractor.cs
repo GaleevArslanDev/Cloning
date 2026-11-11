@@ -12,6 +12,7 @@ public class PlayerInteractor : MonoBehaviour
     [SerializeField] private Image interactionPanelImage;
     [SerializeField] private Color hoverColor = Color.white;
     [SerializeField] private Color interactionColor = new Color(0.65f, 0.9f, 0.65f);
+    [SerializeField] private PlayerCarry playerCarry;
 
     private IInteractable currentInteractable;
 
@@ -22,6 +23,8 @@ public class PlayerInteractor : MonoBehaviour
     {
         if (interactionCamera == null)
             interactionCamera = GetComponentInChildren<Camera>();
+        if (playerCarry == null)
+            playerCarry = GetComponent<PlayerCarry>();
 
         if (interactionPanelImage == null && interactionPanel != null)
             interactionPanelImage = interactionPanel.GetComponentInChildren<Image>(true);
@@ -32,6 +35,14 @@ public class PlayerInteractor : MonoBehaviour
 
     private void Update()
     {
+        if (playerCarry != null && playerCarry.IsBusy)
+        {
+            StopInteraction();
+            SetPanelVisible(false);
+            SetPanelColor(false);
+            return;
+        }
+
         IInteractable interactable = FindInteractable();
         bool interactionHeld = Mouse.current != null && Mouse.current.leftButton.isPressed;
 

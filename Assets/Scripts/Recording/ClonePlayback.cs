@@ -5,20 +5,26 @@ public class ClonePlayback : MonoBehaviour
 {
     [SerializeField] private Transform head;
     [SerializeField] private float standingSpeed = 0.05f;
+    [SerializeField] private CloneCarryController carryController;
 
     private readonly HashSet<MonoBehaviour> activeInteractions = new HashSet<MonoBehaviour>();
     private CloneRecordingData recording;
     private int poseIndex;
     private int interactionIndex;
+    private int carryActionIndex;
     private float playbackTime;
 
     public bool IsStandingStill { get; private set; }
 
     public void Initialize(CloneRecordingData recordingData)
     {
+        if (carryController == null)
+            carryController = GetComponent<CloneCarryController>();
+
         recording = recordingData;
         poseIndex = 0;
         interactionIndex = 0;
+        carryActionIndex = 0;
         playbackTime = 0f;
 
         if (recording.Poses.Count > 0)
@@ -34,6 +40,7 @@ public class ClonePlayback : MonoBehaviour
 
         UpdatePose();
         UpdateInteractions();
+        UpdateCarryActions();
 
         if (playbackTime >= recording.Duration)
             FinishPlayback();
@@ -106,6 +113,25 @@ public class ClonePlayback : MonoBehaviour
         }
     }
 
+    private void UpdateCarryActions()
+    {
+        while (carryActionIndex < recording.CarryActions.Count &&
+               recording.CarryActions[carryActionIndex].Time <= playbackTime)
+        {
+            RecordedCarryAction action = recording.CarryActions[carryActionIndex];
+
+            if (carryController != null)
+            {
+                if (action.Type == RecordedCarryActionType.Pickup)
+                    carryController.Pickup(action.Item);
+                else
+                    carryController.Drop(action.DropPosition, action.DropRotation);
+            }
+
+            carryActionIndex++;
+        }
+    }
+
     private void FinishPlayback()
     {
         foreach (MonoBehaviour target in activeInteractions)
@@ -115,6 +141,10 @@ public class ClonePlayback : MonoBehaviour
         }
 
         activeInteractions.Clear();
+
+        if (carryController != null)
+            carryController.StopCarrying();
+
         Destroy(gameObject);
     }
 }
