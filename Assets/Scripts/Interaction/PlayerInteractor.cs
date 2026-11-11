@@ -13,6 +13,7 @@ public class PlayerInteractor : MonoBehaviour
     [SerializeField] private Color hoverColor = Color.white;
     [SerializeField] private Color interactionColor = new Color(0.65f, 0.9f, 0.65f);
     [SerializeField] private PlayerCarry playerCarry;
+    [SerializeField] private PlayerClimber playerClimber;
 
     private IInteractable currentInteractable;
 
@@ -25,6 +26,8 @@ public class PlayerInteractor : MonoBehaviour
             interactionCamera = GetComponentInChildren<Camera>();
         if (playerCarry == null)
             playerCarry = GetComponent<PlayerCarry>();
+        if (playerClimber == null)
+            playerClimber = GetComponent<PlayerClimber>();
 
         if (interactionPanelImage == null && interactionPanel != null)
             interactionPanelImage = interactionPanel.GetComponentInChildren<Image>(true);
@@ -35,6 +38,15 @@ public class PlayerInteractor : MonoBehaviour
 
     private void Update()
     {
+        if (playerClimber != null && playerClimber.IsMounted)
+        {
+            StopInteraction();
+            SetPanelVisible(false);
+            SetPanelColor(false);
+            playerClimber.HandleDismountInput();
+            return;
+        }
+
         if (playerCarry != null && playerCarry.IsBusy)
         {
             StopInteraction();

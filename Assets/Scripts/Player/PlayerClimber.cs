@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerClimber : MonoBehaviour
 {
@@ -7,6 +8,9 @@ public class PlayerClimber : MonoBehaviour
     private CharacterController controller;
     private ClonePlayback mountedClone;
     private Transform originalParent;
+    private bool canDismount;
+
+    public bool IsMounted => mountedClone != null;
 
     private void Awake()
     {
@@ -24,6 +28,7 @@ public class PlayerClimber : MonoBehaviour
 
         Dismount();
         mountedClone = clone;
+        canDismount = false;
 
         if (playerMovement != null)
             playerMovement.enabled = false;
@@ -40,6 +45,23 @@ public class PlayerClimber : MonoBehaviour
             Dismount();
     }
 
+    public void HandleDismountInput()
+    {
+        if (!IsMounted || Mouse.current == null)
+            return;
+
+        if (!canDismount)
+        {
+            if (!Mouse.current.leftButton.isPressed)
+                canDismount = true;
+
+            return;
+        }
+
+        if (Mouse.current.leftButton.wasPressedThisFrame)
+            Dismount();
+    }
+
     public void Dismount()
     {
         if (mountedClone == null)
@@ -47,6 +69,7 @@ public class PlayerClimber : MonoBehaviour
 
         transform.SetParent(originalParent, true);
         mountedClone = null;
+        canDismount = false;
 
         if (controller != null)
             controller.enabled = true;

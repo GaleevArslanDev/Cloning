@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5401811244433842864}
-  m_Layer: 2
+  m_Layer: 0
   m_Name: CameraRoot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -43,7 +43,7 @@ GameObject:
   - component: {fileID: 7923117439123233657}
   - component: {fileID: 291455285502282425}
   - component: {fileID: 8210443502210939081}
-  m_Layer: 2
+  m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -135,7 +135,7 @@ GameObject:
   - component: {fileID: 8665230707131071983}
   - component: {fileID: 2098895183635857466}
   - component: {fileID: 2282028842542487520}
-  m_Layer: 2
+  m_Layer: 0
   m_Name: Clone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -241,7 +241,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6992324735264879252}
-  m_Layer: 2
+  m_Layer: 0
   m_Name: MountPoint
   m_TagString: Untagged
   m_Icon: {fileID: -5487077368411116049, guid: 0000000000000000d000000000000000, type: 0}
@@ -272,7 +272,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8155462800266970014}
-  m_Layer: 2
+  m_Layer: 0
   m_Name: CarryPoint
   m_TagString: Untagged
   m_Icon: {fileID: -5487077368411116049, guid: 0000000000000000d000000000000000, type: 0}
@@ -305,7 +305,7 @@ GameObject:
   - component: {fileID: 6694248366361330141}
   - component: {fileID: 8733040666084046028}
   - component: {fileID: 4579602953957609626}
-  m_Layer: 2
+  m_Layer: 0
   m_Name: Model
   m_TagString: Untagged
   m_Icon: {fileID: 0}
