@@ -134,6 +134,7 @@ GameObject:
   - component: {fileID: 1684127980154139999}
   - component: {fileID: 8665230707131071983}
   - component: {fileID: 2098895183635857466}
+  - component: {fileID: 2282028842542487520}
   m_Layer: 2
   m_Name: Clone
   m_TagString: Untagged
@@ -157,6 +158,7 @@ Transform:
   - {fileID: 6694248366361330141}
   - {fileID: 5401811244433842864}
   - {fileID: 6992324735264879252}
+  - {fileID: 8155462800266970014}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1684127980154139999
@@ -173,6 +175,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ClonePlayback
   head: {fileID: 5401811244433842864}
   standingSpeed: 0.05
+  carryController: {fileID: 0}
 --- !u!136 &8665230707131071983
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -210,6 +213,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CloneClimbInteractable
   playback: {fileID: 1684127980154139999}
   mountPoint: {fileID: 6992324735264879252}
+--- !u!114 &2282028842542487520
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1294868066697222516}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80518724546b6a34498b0d459c54e357, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CloneCarryController
+  carryPoint: {fileID: 8155462800266970014}
+  playback: {fileID: 1684127980154139999}
+  pickupDistance: 2.5
+  pickupDuration: 0.45
+  dropDuration: 0.35
+  followSpeed: 14
+  movementSway: 0.02
 --- !u!1 &1319254848865385593
 GameObject:
   m_ObjectHideFlags: 0
@@ -236,6 +258,37 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 2, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3308199505788794666}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2085342494853628340
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8155462800266970014}
+  m_Layer: 2
+  m_Name: CarryPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: -5487077368411116049, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8155462800266970014
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2085342494853628340}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1.24, y: -0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
