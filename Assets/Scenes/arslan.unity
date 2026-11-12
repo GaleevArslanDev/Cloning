@@ -1551,7 +1551,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerCarry
   playerCamera: {fileID: 1812834978}
   playerMovement: {fileID: 693672893}
-  holdOffset: {x: 0.35, y: -0.25, z: 1.3}
+  holdOffset: {x: 0.35, y: -0.25, z: 1.7}
   pickupDuration: 0.45
   dropDuration: 0.35
   followSpeed: 14
@@ -1560,6 +1560,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   movementSway: 0.025
+  rotationStep: 15
 --- !u!1 &827772732
 GameObject:
   m_ObjectHideFlags: 0

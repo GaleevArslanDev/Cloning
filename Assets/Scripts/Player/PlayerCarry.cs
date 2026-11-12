@@ -13,13 +13,14 @@ public class PlayerCarry : MonoBehaviour
     [SerializeField] private float dropSearchDistance = 8f;
     [SerializeField] private LayerMask dropSurfaceLayers = ~0;
     [SerializeField] private float movementSway = 0.025f;
+    [SerializeField] private float rotationStep = 15f;
 
     private CarryableItem heldItem;
     private Vector3 transitionStartPosition;
     private Quaternion transitionStartRotation;
     private Vector3 dropPosition;
     private Quaternion dropRotation;
-    private Quaternion restingRotation;
+    private Quaternion holdRotation;
     private float transitionTime;
     private float swayTime;
     private bool canDrop;
@@ -67,7 +68,11 @@ public class PlayerCarry : MonoBehaviour
             Mouse.current.leftButton.wasPressedThisFrame)
         {
             StartDrop();
+            return;
         }
+
+        if (state == CarryState.Holding)
+            UpdateRotationInput();
     }
 
     private void LateUpdate()
@@ -89,7 +94,13 @@ public class PlayerCarry : MonoBehaviour
             return false;
 
         heldItem = item;
-        restingRotation = item.transform.rotation;
+        Quaternion relativeRotation = Quaternion.Inverse(transform.rotation) * item.transform.rotation;
+        Vector3 defaultRotation = item.HoldRotationOffset;
+        holdRotation = Quaternion.Euler(
+            defaultRotation.x,
+            relativeRotation.eulerAngles.y,
+            defaultRotation.z
+        );
         transitionStartPosition = item.transform.position;
         transitionStartRotation = item.transform.rotation;
         transitionTime = 0f;
@@ -171,12 +182,26 @@ public class PlayerCarry : MonoBehaviour
 
     private Quaternion GetHoldRotation()
     {
-        return playerCamera.transform.rotation * Quaternion.Euler(heldItem.HoldRotationOffset);
+        return playerCamera.transform.rotation * holdRotation;
+    }
+
+    private void UpdateRotationInput()
+    {
+        if (Mouse.current == null)
+            return;
+
+        float scroll = Mouse.current.scroll.ReadValue().y;
+
+        if (Mathf.Abs(scroll) < 0.01f)
+            return;
+
+        float angle = Mathf.Sign(scroll) * rotationStep;
+        holdRotation = Quaternion.AngleAxis(angle, Vector3.up) * holdRotation;
     }
 
     private void FindDropPose(out Vector3 position, out Quaternion rotation)
     {
-        rotation = restingRotation;
+        rotation = heldItem.transform.rotation;
         Vector3 origin = heldItem.transform.position + Vector3.up * 0.2f;
         RaycastHit[] hits = Physics.RaycastAll(
             origin,
