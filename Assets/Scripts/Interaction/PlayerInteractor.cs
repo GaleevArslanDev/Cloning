@@ -10,12 +10,14 @@ public class PlayerInteractor : MonoBehaviour
     [SerializeField] private LayerMask interactionLayers = ~0;
     [SerializeField] private GameObject interactionPanel;
     [SerializeField] private Image interactionPanelImage;
+    [SerializeField] private Image mouseButtonImage;
     [SerializeField] private Color hoverColor = Color.white;
     [SerializeField] private Color interactionColor = new Color(0.65f, 0.9f, 0.65f);
     [SerializeField] private PlayerCarry playerCarry;
     [SerializeField] private PlayerClimber playerClimber;
 
     private IInteractable currentInteractable;
+    private Vector3 mouseButtonScale;
 
     public event Action<IInteractable> InteractionStarted;
     public event Action<IInteractable> InteractionEnded;
@@ -32,6 +34,9 @@ public class PlayerInteractor : MonoBehaviour
         if (interactionPanelImage == null && interactionPanel != null)
             interactionPanelImage = interactionPanel.GetComponentInChildren<Image>(true);
 
+        if (mouseButtonImage != null)
+            mouseButtonScale = mouseButtonImage.rectTransform.localScale;
+
         SetPanelColor(false);
         SetPanelVisible(false);
     }
@@ -41,9 +46,26 @@ public class PlayerInteractor : MonoBehaviour
         if (playerClimber != null && playerClimber.IsMounted)
         {
             StopInteraction();
+            ClimbableLedge ledge = FindClimbableLedge();
+            bool climbPressed = Mouse.current != null && Mouse.current.rightButton.wasPressedThisFrame;
+
+            SetPanelVisible(ledge != null);
+            SetPanelColor(climbPressed && ledge != null);
+            SetRightMouseHint(ledge != null);
+
+            if (climbPressed && ledge != null)
+                playerClimber.ClimbTo(ledge);
+
+            playerClimber.HandleDismountInput();
+            return;
+        }
+
+        if (playerClimber != null && playerClimber.IsClimbing)
+        {
+            StopInteraction();
             SetPanelVisible(false);
             SetPanelColor(false);
-            playerClimber.HandleDismountInput();
+            SetRightMouseHint(false);
             return;
         }
 
@@ -52,9 +74,11 @@ public class PlayerInteractor : MonoBehaviour
             StopInteraction();
             SetPanelVisible(false);
             SetPanelColor(false);
+            SetRightMouseHint(false);
             return;
         }
 
+        SetRightMouseHint(false);
         IInteractable interactable = FindInteractable();
         bool interactionHeld = Mouse.current != null && Mouse.current.leftButton.isPressed;
 
@@ -95,6 +119,19 @@ public class PlayerInteractor : MonoBehaviour
         return interactable;
     }
 
+    private ClimbableLedge FindClimbableLedge()
+    {
+        if (interactionCamera == null)
+            return null;
+
+        Ray ray = new Ray(interactionCamera.transform.position, interactionCamera.transform.forward);
+
+        if (!Physics.Raycast(ray, out RaycastHit hit, interactionDistance, interactionLayers))
+            return null;
+
+        return hit.collider.GetComponentInParent<ClimbableLedge>();
+    }
+
     private void SetPanelVisible(bool isVisible)
     {
         if (interactionPanel != null && interactionPanel.activeSelf != isVisible)
@@ -105,6 +142,19 @@ public class PlayerInteractor : MonoBehaviour
     {
         if (interactionPanelImage != null)
             interactionPanelImage.color = isInteracting ? interactionColor : hoverColor;
+    }
+
+    private void SetRightMouseHint(bool isRightMouse)
+    {
+        if (mouseButtonImage == null)
+            return;
+
+        Vector3 scale = mouseButtonScale;
+
+        if (isRightMouse)
+            scale.x = -scale.x;
+
+        mouseButtonImage.rectTransform.localScale = scale;
     }
 
     private void StartInteraction(IInteractable interactable)
@@ -136,5 +186,6 @@ public class PlayerInteractor : MonoBehaviour
     {
         StopInteraction();
         SetPanelVisible(false);
+        SetRightMouseHint(false);
     }
 }
