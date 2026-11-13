@@ -13,13 +13,14 @@ public class PlayerCarry : MonoBehaviour
     [SerializeField] private float dropSearchDistance = 8f;
     [SerializeField] private LayerMask dropSurfaceLayers = ~0;
     [SerializeField] private float movementSway = 0.025f;
+    [SerializeField] private float rotationStep = 15f;
 
     private CarryableItem heldItem;
     private Vector3 transitionStartPosition;
     private Quaternion transitionStartRotation;
     private Vector3 dropPosition;
     private Quaternion dropRotation;
-    private Quaternion restingRotation;
+    private Quaternion holdRotation;
     private float transitionTime;
     private float swayTime;
     private bool canDrop;
@@ -67,7 +68,11 @@ public class PlayerCarry : MonoBehaviour
             Mouse.current.leftButton.wasPressedThisFrame)
         {
             StartDrop();
+            return;
         }
+
+        if (state == CarryState.Holding)
+            UpdateRotationInput();
     }
 
     private void LateUpdate()
@@ -89,7 +94,13 @@ public class PlayerCarry : MonoBehaviour
             return false;
 
         heldItem = item;
-        restingRotation = item.transform.rotation;
+        Quaternion relativeRotation = Quaternion.Inverse(transform.rotation) * item.transform.rotation;
+        Vector3 defaultRotation = item.HoldRotationOffset;
+        holdRotation = Quaternion.Euler(
+            defaultRotation.x,
+            relativeRotation.eulerAngles.y,
+            defaultRotation.z
+        );
         transitionStartPosition = item.transform.position;
         transitionStartRotation = item.transform.rotation;
         transitionTime = 0f;
@@ -125,8 +136,7 @@ public class PlayerCarry : MonoBehaviour
     {
         transitionStartPosition = heldItem.transform.position;
         transitionStartRotation = heldItem.transform.rotation;
-        dropRotation = restingRotation;
-        dropPosition = FindDropPosition();
+        FindDropPose(out dropPosition, out dropRotation);
         transitionTime = 0f;
         state = CarryState.Dropping;
 
@@ -172,11 +182,26 @@ public class PlayerCarry : MonoBehaviour
 
     private Quaternion GetHoldRotation()
     {
-        return playerCamera.transform.rotation * Quaternion.Euler(heldItem.HoldRotationOffset);
+        return playerCamera.transform.rotation * holdRotation;
     }
 
-    private Vector3 FindDropPosition()
+    private void UpdateRotationInput()
     {
+        if (Mouse.current == null)
+            return;
+
+        float scroll = Mouse.current.scroll.ReadValue().y;
+
+        if (Mathf.Abs(scroll) < 0.01f)
+            return;
+
+        float angle = Mathf.Sign(scroll) * rotationStep;
+        holdRotation = Quaternion.AngleAxis(angle, Vector3.up) * holdRotation;
+    }
+
+    private void FindDropPose(out Vector3 position, out Quaternion rotation)
+    {
+        rotation = heldItem.transform.rotation;
         Vector3 origin = heldItem.transform.position + Vector3.up * 0.2f;
         RaycastHit[] hits = Physics.RaycastAll(
             origin,
@@ -207,11 +232,46 @@ public class PlayerCarry : MonoBehaviour
         }
 
         if (!surfaceFound)
-            return heldItem.transform.position;
+        {
+            position = heldItem.transform.position;
+            return;
+        }
+
+        Vector3 surfacePoint = nearestHit.point;
+        Vector3 surfaceNormal = nearestHit.normal.normalized;
+        MirrorPlacement mirrorPlacement = heldItem.GetComponent<MirrorPlacement>();
+
+        if (mirrorPlacement != null)
+        {
+            rotation = mirrorPlacement.GetDropRotation(nearestHit, heldItem.transform.rotation);
+            surfacePoint = mirrorPlacement.GetSurfacePoint(nearestHit);
+            surfaceNormal = mirrorPlacement.GetSurfaceNormal(nearestHit);
+        }
+
+        float bottomOffset = GetBottomOffset(rotation, surfaceNormal);
+        position = surfacePoint + surfaceNormal * (bottomOffset + 0.01f);
+    }
+
+    private float GetBottomOffset(Quaternion targetRotation, Vector3 surfaceNormal)
+    {
+        Quaternion currentRotation = heldItem.transform.rotation;
+        heldItem.transform.rotation = targetRotation;
+        Physics.SyncTransforms();
 
         Bounds bounds = heldItem.GetBounds();
-        float bottomOffset = Mathf.Max(0.02f, heldItem.transform.position.y - bounds.min.y);
-        return nearestHit.point + Vector3.up * (bottomOffset + 0.01f);
+        Vector3 centerOffset = bounds.center - heldItem.transform.position;
+        Vector3 extents = bounds.extents;
+        Vector3 normal = surfaceNormal.normalized;
+
+        float radius = Mathf.Abs(normal.x) * extents.x +
+                       Mathf.Abs(normal.y) * extents.y +
+                       Mathf.Abs(normal.z) * extents.z;
+
+        float bottomOffset = radius - Vector3.Dot(centerOffset, normal);
+
+        heldItem.transform.rotation = currentRotation;
+        Physics.SyncTransforms();
+        return Mathf.Max(0.02f, bottomOffset);
     }
 
     private void OnDestroy()
