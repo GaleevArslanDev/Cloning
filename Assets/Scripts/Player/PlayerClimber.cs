@@ -27,7 +27,7 @@ public class PlayerClimber : MonoBehaviour
 
     public void Mount(ClonePlayback clone, Transform mountPoint)
     {
-        if (clone == null || mountPoint == null || !clone.IsStandingStill)
+        if (clone == null || mountPoint == null)
             return;
 
         Dismount();
