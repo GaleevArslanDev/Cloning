@@ -7,7 +7,7 @@ public class CloneClimbInteractable : MonoBehaviour, IInteractable
 
     private PlayerClimber rider;
 
-    public bool CanInteract => playback != null && playback.IsStandingStill;
+    public bool CanInteract => playback != null;
     public bool RecordInteraction => false;
 
     private void Awake()
@@ -16,15 +16,6 @@ public class CloneClimbInteractable : MonoBehaviour, IInteractable
             playback = GetComponentInParent<ClonePlayback>();
         if (mountPoint == null)
             mountPoint = transform;
-    }
-
-    private void Update()
-    {
-        if (rider != null && !CanInteract)
-        {
-            rider.DismountFrom(playback);
-            rider = null;
-        }
     }
 
     public void BeginInteraction(GameObject interactor)

@@ -78,8 +78,30 @@ public class PlayerInteractor : MonoBehaviour
             return;
         }
 
-        SetRightMouseHint(false);
+        ClimbableLedge climbableLedge = FindClimbableLedge();
         IInteractable interactable = FindInteractable();
+        bool groundClimbPressed = Mouse.current != null && Mouse.current.rightButton.wasPressedThisFrame;
+
+        if (groundClimbPressed && climbableLedge != null && playerClimber != null)
+        {
+            StopInteraction();
+            SetPanelVisible(true);
+            SetPanelColor(true);
+            SetRightMouseHint(true);
+            playerClimber.ClimbTo(climbableLedge);
+            return;
+        }
+
+        if (interactable == null && climbableLedge != null && playerClimber != null)
+        {
+            StopInteraction();
+            SetPanelVisible(true);
+            SetPanelColor(false);
+            SetRightMouseHint(true);
+            return;
+        }
+
+        SetRightMouseHint(false);
         bool interactionHeld = Mouse.current != null && Mouse.current.leftButton.isPressed;
 
         SetPanelVisible(interactable != null);

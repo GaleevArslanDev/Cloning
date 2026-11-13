@@ -27,7 +27,7 @@ public class PlayerClimber : MonoBehaviour
 
     public void Mount(ClonePlayback clone, Transform mountPoint)
     {
-        if (clone == null || mountPoint == null || !clone.IsStandingStill)
+        if (clone == null || mountPoint == null)
             return;
 
         Dismount();
@@ -89,8 +89,13 @@ public class PlayerClimber : MonoBehaviour
 
     public void ClimbTo(ClimbableLedge ledge)
     {
-        if (!IsMounted || ledge == null)
+        if (ledge == null || IsClimbing)
             return;
+
+        if (playerMovement != null)
+            playerMovement.enabled = false;
+        if (controller != null)
+            controller.enabled = false;
 
         transform.SetParent(originalParent, true);
         mountedClone = null;
