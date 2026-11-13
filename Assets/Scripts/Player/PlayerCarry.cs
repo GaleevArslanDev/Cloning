@@ -276,7 +276,18 @@ public class PlayerCarry : MonoBehaviour
 
     private void OnDestroy()
     {
-        if (heldItem != null)
-            heldItem.Release(gameObject, heldItem.transform.position, heldItem.transform.rotation);
+        CancelCarry();
+    }
+
+    public void CancelCarry()
+    {
+        if (heldItem == null)
+            return;
+
+        CarryableItem item = heldItem;
+        heldItem = null;
+        state = CarryState.None;
+        canDrop = false;
+        item.Release(gameObject, item.transform.position, item.transform.rotation);
     }
 }

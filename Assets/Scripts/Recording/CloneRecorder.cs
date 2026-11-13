@@ -96,6 +96,40 @@ public class CloneRecorder : MonoBehaviour
         BeginRecording();
     }
 
+    public void EndCurrentLevel()
+    {
+        isRecording = false;
+        recording = null;
+        savedRecordings.Clear();
+        StopActiveClones();
+
+        if (playerCarry != null)
+            playerCarry.CancelCarry();
+        if (playerClimber != null)
+            playerClimber.Dismount();
+
+        ResetItems();
+    }
+
+    public void StartNewLevel(Transform levelStartPoint)
+    {
+        isRecording = false;
+        savedRecordings.Clear();
+        StopActiveClones();
+
+        if (levelStartPoint != null)
+            startPoint = levelStartPoint;
+
+        if (playerCarry != null)
+            playerCarry.CancelCarry();
+        if (playerClimber != null)
+            playerClimber.Dismount();
+
+        CaptureLevelItems();
+        MovePlayerToStart();
+        BeginRecording();
+    }
+
     private void BeginRecording()
     {
         recording = new CloneRecordingData();
@@ -232,6 +266,22 @@ public class CloneRecorder : MonoBehaviour
         {
             if (item != null)
                 item.ResetToStart();
+        }
+
+        Physics.SyncTransforms();
+    }
+
+    private void CaptureLevelItems()
+    {
+        resettableItems = FindObjectsByType<CarryableItem>(
+            FindObjectsInactive.Include,
+            FindObjectsSortMode.None
+        );
+
+        foreach (CarryableItem item in resettableItems)
+        {
+            if (item != null)
+                item.CaptureStartState();
         }
 
         Physics.SyncTransforms();

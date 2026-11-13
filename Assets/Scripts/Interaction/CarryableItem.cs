@@ -139,4 +139,17 @@ public class CarryableItem : MonoBehaviour, IInteractable
         body.useGravity = startGravity;
         body.isKinematic = startKinematic;
     }
+
+    public void CaptureStartState()
+    {
+        Initialize();
+        startParent = transform.parent;
+        startPosition = transform.position;
+        startRotation = transform.rotation;
+        startKinematic = body.isKinematic;
+        startGravity = body.useGravity;
+
+        for (int i = 0; i < itemColliders.Length; i++)
+            startTriggers[i] = itemColliders[i].isTrigger;
+    }
 }
