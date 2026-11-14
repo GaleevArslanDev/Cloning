@@ -12,27 +12,36 @@ public class ClimbableLedge : MonoBehaviour
                 ? -Physics.gravity.normalized
                 : Vector3.up;
 
-            Transform highestPoint = null;
-            float highestPosition = float.NegativeInfinity;
-
-            if (points != null)
-            {
-                foreach (Transform point in points)
-                {
-                    if (point == null)
-                        continue;
-
-                    float position = Vector3.Dot(point.position, worldUp);
-
-                    if (position <= highestPosition)
-                        continue;
-
-                    highestPosition = position;
-                    highestPoint = point;
-                }
-            }
-
-            return highestPoint != null ? highestPoint.position : transform.position;
+            return GetLandingPosition(worldUp);
         }
+    }
+
+    public Vector3 GetLandingPosition(Vector3 upDirection)
+    {
+        Vector3 worldUp = upDirection.sqrMagnitude > 0.001f
+            ? upDirection.normalized
+            : Vector3.up;
+
+        Transform highestPoint = null;
+        float highestPosition = float.NegativeInfinity;
+
+        if (points != null)
+        {
+            foreach (Transform point in points)
+            {
+                if (point == null)
+                    continue;
+
+                float position = Vector3.Dot(point.position, worldUp);
+
+                if (position <= highestPosition)
+                    continue;
+
+                highestPosition = position;
+                highestPoint = point;
+            }
+        }
+
+        return highestPoint != null ? highestPoint.position : transform.position;
     }
 }

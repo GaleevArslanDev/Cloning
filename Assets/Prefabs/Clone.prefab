@@ -175,7 +175,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ClonePlayback
   head: {fileID: 5401811244433842864}
   standingSpeed: 0.05
-  carryController: {fileID: 0}
+  carryController: {fileID: 2282028842542487520}
 --- !u!136 &8665230707131071983
 CapsuleCollider:
   m_ObjectHideFlags: 0

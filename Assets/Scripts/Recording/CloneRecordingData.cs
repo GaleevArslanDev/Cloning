@@ -37,10 +37,26 @@ public struct RecordedCarryAction
     public Quaternion DropRotation;
 }
 
+public enum RecordedInputType
+{
+    LeftPressed,
+    LeftReleased,
+    RightPressed,
+    ScrollUp,
+    ScrollDown
+}
+
+public struct RecordedInputAction
+{
+    public float Time;
+    public RecordedInputType Type;
+}
+
 public class CloneRecordingData
 {
     public readonly List<RecordedPose> Poses = new List<RecordedPose>();
     public readonly List<RecordedInteraction> Interactions = new List<RecordedInteraction>();
     public readonly List<RecordedCarryAction> CarryActions = new List<RecordedCarryAction>();
+    public readonly List<RecordedInputAction> InputActions = new List<RecordedInputAction>();
     public float Duration;
 }

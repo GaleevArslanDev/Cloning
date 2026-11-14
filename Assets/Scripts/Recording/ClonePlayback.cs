@@ -12,10 +12,14 @@ public class ClonePlayback : MonoBehaviour
     private int poseIndex;
     private int interactionIndex;
     private int carryActionIndex;
+    private int inputActionIndex;
     private float playbackTime;
     private bool isFinished;
 
     public bool IsStandingStill { get; private set; }
+    public bool IsLeftInputHeld { get; private set; }
+    public bool RightInputPressedThisFrame { get; private set; }
+    public float ScrollInputThisFrame { get; private set; }
 
     public void Initialize(CloneRecordingData recordingData)
     {
@@ -26,8 +30,12 @@ public class ClonePlayback : MonoBehaviour
         poseIndex = 0;
         interactionIndex = 0;
         carryActionIndex = 0;
+        inputActionIndex = 0;
         playbackTime = 0f;
         isFinished = false;
+        IsLeftInputHeld = false;
+        RightInputPressedThisFrame = false;
+        ScrollInputThisFrame = 0f;
 
         if (recording.Poses.Count > 0)
             ApplyPose(recording.Poses[0]);
@@ -39,10 +47,13 @@ public class ClonePlayback : MonoBehaviour
             return;
 
         playbackTime += Time.deltaTime;
+        RightInputPressedThisFrame = false;
+        ScrollInputThisFrame = 0f;
 
         UpdatePose();
         UpdateInteractions();
         UpdateCarryActions();
+        UpdateInputActions();
 
         if (playbackTime >= recording.Duration)
             StopPlayback();
@@ -134,6 +145,28 @@ public class ClonePlayback : MonoBehaviour
         }
     }
 
+    private void UpdateInputActions()
+    {
+        while (inputActionIndex < recording.InputActions.Count &&
+               recording.InputActions[inputActionIndex].Time <= playbackTime)
+        {
+            RecordedInputAction action = recording.InputActions[inputActionIndex];
+
+            if (action.Type == RecordedInputType.LeftPressed)
+                IsLeftInputHeld = true;
+            else if (action.Type == RecordedInputType.LeftReleased)
+                IsLeftInputHeld = false;
+            else if (action.Type == RecordedInputType.RightPressed)
+                RightInputPressedThisFrame = true;
+            else if (action.Type == RecordedInputType.ScrollUp)
+                ScrollInputThisFrame += 1f;
+            else
+                ScrollInputThisFrame -= 1f;
+
+            inputActionIndex++;
+        }
+    }
+
     public void StopPlayback()
     {
         if (isFinished)
@@ -155,6 +188,9 @@ public class ClonePlayback : MonoBehaviour
         }
 
         activeInteractions.Clear();
+        IsLeftInputHeld = false;
+        RightInputPressedThisFrame = false;
+        ScrollInputThisFrame = 0f;
 
         if (carryController != null)
             carryController.StopCarrying();

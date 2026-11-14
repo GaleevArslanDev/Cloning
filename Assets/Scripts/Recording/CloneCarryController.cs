@@ -9,10 +9,12 @@ public class CloneCarryController : MonoBehaviour
     [SerializeField] private float dropDuration = 0.35f;
     [SerializeField] private float followSpeed = 14f;
     [SerializeField] private float movementSway = 0.02f;
+    [SerializeField] private float rotationStep = 15f;
 
     private CarryableItem heldItem;
     private Vector3 transitionStartPosition;
     private Quaternion transitionStartRotation;
+    private Quaternion holdRotation;
     private Vector3 dropPosition;
     private Quaternion dropRotation;
     private float transitionTime;
@@ -45,7 +47,10 @@ public class CloneCarryController : MonoBehaviour
         if (state == CloneCarryState.Lifting)
             UpdateLifting();
         else if (state == CloneCarryState.Holding)
+        {
+            UpdateRotation();
             UpdateHolding();
+        }
         else if (state == CloneCarryState.Dropping)
             UpdateDropping();
     }
@@ -64,6 +69,13 @@ public class CloneCarryController : MonoBehaviour
             return;
 
         heldItem = item;
+        Quaternion relativeRotation = Quaternion.Inverse(transform.rotation) * item.transform.rotation;
+        Vector3 defaultRotation = item.HoldRotationOffset;
+        holdRotation = Quaternion.Euler(
+            defaultRotation.x,
+            relativeRotation.eulerAngles.y,
+            defaultRotation.z
+        );
         transitionStartPosition = item.transform.position;
         transitionStartRotation = item.transform.rotation;
         transitionTime = 0f;
@@ -141,7 +153,16 @@ public class CloneCarryController : MonoBehaviour
 
     private Quaternion GetHoldRotation()
     {
-        return carryPoint.rotation * Quaternion.Euler(heldItem.HoldRotationOffset);
+        return carryPoint.rotation * holdRotation;
+    }
+
+    private void UpdateRotation()
+    {
+        if (playback == null || Mathf.Abs(playback.ScrollInputThisFrame) < 0.01f)
+            return;
+
+        float angle = Mathf.Sign(playback.ScrollInputThisFrame) * rotationStep;
+        holdRotation = Quaternion.AngleAxis(angle, Vector3.up) * holdRotation;
     }
 
     private float SmoothProgress(float time, float duration)
