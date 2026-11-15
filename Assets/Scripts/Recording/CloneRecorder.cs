@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class CloneRecorder : MonoBehaviour
 {
@@ -22,6 +23,7 @@ public class CloneRecorder : MonoBehaviour
     private float recordingTime;
     private float nextSampleTime;
     private bool isRecording;
+    private bool previousLeftInput;
 
     private void Awake()
     {
@@ -73,6 +75,7 @@ public class CloneRecorder : MonoBehaviour
             return;
 
         recordingTime += Time.deltaTime;
+        RecordInput();
 
         if (recordingTime >= nextSampleTime)
         {
@@ -136,7 +139,49 @@ public class CloneRecorder : MonoBehaviour
         recordingTime = 0f;
         nextSampleTime = Mathf.Max(0.02f, sampleInterval);
         isRecording = true;
+        previousLeftInput = Mouse.current != null && Mouse.current.leftButton.isPressed;
         RecordPose();
+    }
+
+    private void RecordInput()
+    {
+        if (Mouse.current == null)
+            return;
+
+        bool leftInput = Mouse.current.leftButton.isPressed;
+
+        if (leftInput != previousLeftInput)
+        {
+            recording.InputActions.Add(new RecordedInputAction
+            {
+                Time = recordingTime,
+                Type = leftInput ? RecordedInputType.LeftPressed : RecordedInputType.LeftReleased
+            });
+
+            previousLeftInput = leftInput;
+        }
+
+        if (Mouse.current.rightButton.wasPressedThisFrame)
+        {
+            recording.InputActions.Add(new RecordedInputAction
+            {
+                Time = recordingTime,
+                Type = RecordedInputType.RightPressed
+            });
+        }
+
+        float scroll = Mouse.current.scroll.ReadValue().y;
+
+        if (Mathf.Abs(scroll) >= 0.01f)
+        {
+            recording.InputActions.Add(new RecordedInputAction
+            {
+                Time = recordingTime,
+                Type = scroll > 0f
+                    ? RecordedInputType.ScrollUp
+                    : RecordedInputType.ScrollDown
+            });
+        }
     }
 
     private void RecordPose()

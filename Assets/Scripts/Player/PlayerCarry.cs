@@ -16,6 +16,7 @@ public class PlayerCarry : MonoBehaviour
     [SerializeField] private float rotationStep = 15f;
 
     private CarryableItem heldItem;
+    private Transform holdTransform;
     private Vector3 transitionStartPosition;
     private Quaternion transitionStartRotation;
     private Vector3 dropPosition;
@@ -24,6 +25,8 @@ public class PlayerCarry : MonoBehaviour
     private float transitionTime;
     private float swayTime;
     private bool canDrop;
+    private bool useMouseInput = true;
+    private Vector3 dropDirection = Vector3.down;
     private CarryState state;
 
     public bool IsBusy => heldItem != null;
@@ -45,6 +48,9 @@ public class PlayerCarry : MonoBehaviour
             playerCamera = GetComponentInChildren<Camera>();
         if (playerMovement == null)
             playerMovement = GetComponent<PlayerMovement>();
+
+        if (playerCamera != null)
+            holdTransform = playerCamera.transform;
     }
 
     private void Update()
@@ -54,6 +60,9 @@ public class PlayerCarry : MonoBehaviour
             state = CarryState.None;
             return;
         }
+
+        if (!useMouseInput)
+            return;
 
         if (!canDrop)
         {
@@ -77,7 +86,7 @@ public class PlayerCarry : MonoBehaviour
 
     private void LateUpdate()
     {
-        if (heldItem == null || playerCamera == null)
+        if (heldItem == null || holdTransform == null)
             return;
 
         if (state == CarryState.Lifting)
@@ -105,11 +114,34 @@ public class PlayerCarry : MonoBehaviour
         transitionStartRotation = item.transform.rotation;
         transitionTime = 0f;
         swayTime = 0f;
-        canDrop = false;
+        canDrop = !useMouseInput;
         state = CarryState.Lifting;
 
         ItemPickedUp?.Invoke(item);
         return true;
+    }
+
+    public void ConfigureExternalInput(Transform newHoldTransform, Vector3 newDropDirection)
+    {
+        holdTransform = newHoldTransform;
+        playerMovement = null;
+        useMouseInput = false;
+        dropDirection = newDropDirection.normalized;
+    }
+
+    public void RequestDrop()
+    {
+        if (heldItem != null && state == CarryState.Holding)
+            StartDrop();
+    }
+
+    public void RequestRotation(float scroll)
+    {
+        if (heldItem == null || state != CarryState.Holding || Mathf.Abs(scroll) < 0.01f)
+            return;
+
+        float angle = Mathf.Sign(scroll) * rotationStep;
+        holdRotation = Quaternion.AngleAxis(angle, Vector3.up) * holdRotation;
     }
 
     private void UpdateLifting()
@@ -177,12 +209,12 @@ public class PlayerCarry : MonoBehaviour
             sway.y = Mathf.Sin(swayTime) * movementSway * 0.25f;
         }
 
-        return playerCamera.transform.TransformPoint(holdOffset + heldItem.HoldPositionOffset + sway);
+        return holdTransform.TransformPoint(holdOffset + heldItem.HoldPositionOffset + sway);
     }
 
     private Quaternion GetHoldRotation()
     {
-        return playerCamera.transform.rotation * holdRotation;
+        return holdTransform.rotation * holdRotation;
     }
 
     private void UpdateRotationInput()
@@ -190,22 +222,16 @@ public class PlayerCarry : MonoBehaviour
         if (Mouse.current == null)
             return;
 
-        float scroll = Mouse.current.scroll.ReadValue().y;
-
-        if (Mathf.Abs(scroll) < 0.01f)
-            return;
-
-        float angle = Mathf.Sign(scroll) * rotationStep;
-        holdRotation = Quaternion.AngleAxis(angle, Vector3.up) * holdRotation;
+        RequestRotation(Mouse.current.scroll.ReadValue().y);
     }
 
     private void FindDropPose(out Vector3 position, out Quaternion rotation)
     {
         rotation = heldItem.transform.rotation;
-        Vector3 origin = heldItem.transform.position + Vector3.up * 0.2f;
+        Vector3 origin = heldItem.transform.position - dropDirection * 0.2f;
         RaycastHit[] hits = Physics.RaycastAll(
             origin,
-            Vector3.down,
+            dropDirection,
             dropSearchDistance,
             dropSurfaceLayers,
             QueryTriggerInteraction.Ignore
