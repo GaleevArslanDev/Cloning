@@ -594,61 +594,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1500939590}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &328359779
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 328359781}
-  - component: {fileID: 328359780}
-  m_Layer: 0
-  m_Name: Level2
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &328359780
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 328359779}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3def936d658ebef48a4ec20328f6aab0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LevelStage
-  playerStartPoint: {fileID: 1322484611}
-  transitionDuration: 2
-  onLevelStarted:
-    m_PersistentCalls:
-      m_Calls: []
-  onTransitionStarted:
-    m_PersistentCalls:
-      m_Calls: []
-  onTransitionFinished:
-    m_PersistentCalls:
-      m_Calls: []
---- !u!4 &328359781
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 328359779}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1523026147}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &356723523
 GameObject:
   m_ObjectHideFlags: 0
@@ -4720,6 +4665,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1523026147}
   - component: {fileID: 1523026146}
+  - component: {fileID: 1523026148}
   m_Layer: 0
   m_Name: LevelSystem
   m_TagString: Untagged
@@ -4739,12 +4685,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ee2f64207303db44ade1cdad102eae4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LevelManager
-  levels:
-  - {fileID: 1991492879}
-  - {fileID: 328359780}
+  level: {fileID: 1523026148}
   cloneRecorder: {fileID: 693672899}
   playerControl: {fileID: 693672901}
-  onAllLevelsCompleted:
+  onLevelCompleted:
     m_PersistentCalls:
       m_Calls: []
 --- !u!4 &1523026147
@@ -4759,11 +4703,57 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1991492880}
-  - {fileID: 328359781}
+  m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1523026148
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1523026145}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3def936d658ebef48a4ec20328f6aab0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LevelStage
+  playerStartPoint: {fileID: 1322484611}
+  nextSceneName: 
+  transitionDuration: 2
+  onLevelStarted:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 693672902}
+        m_TargetAssemblyTypeName: TwoPointsController, Assembly-CSharp
+        m_MethodName: Activate
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  onTransitionStarted:
+    m_PersistentCalls:
+      m_Calls: []
+  onTransitionFinished:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 693672902}
+        m_TargetAssemblyTypeName: TwoPointsController, Assembly-CSharp
+        m_MethodName: Deactivate
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &1650041486
 GameObject:
   m_ObjectHideFlags: 0
@@ -5395,85 +5385,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1450276112}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1991492878
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1991492880}
-  - component: {fileID: 1991492879}
-  m_Layer: 0
-  m_Name: Level1
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1991492879
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1991492878}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3def936d658ebef48a4ec20328f6aab0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LevelStage
-  playerStartPoint: {fileID: 1322484611}
-  transitionDuration: 2
-  onLevelStarted:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 693672902}
-        m_TargetAssemblyTypeName: TwoPointsController, Assembly-CSharp
-        m_MethodName: Activate
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  onTransitionStarted:
-    m_PersistentCalls:
-      m_Calls: []
-  onTransitionFinished:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 693672902}
-        m_TargetAssemblyTypeName: TwoPointsController, Assembly-CSharp
-        m_MethodName: Deactivate
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
---- !u!4 &1991492880
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1991492878}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1523026147}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2008166895
 GameObject:
