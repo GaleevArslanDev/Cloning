@@ -1,49 +1,71 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 
 [DefaultExecutionOrder(100)]
 public class LevelManager : MonoBehaviour
 {
-    [SerializeField] private LevelStage[] levels;
+    [SerializeField] private LevelStage level;
     [SerializeField] private CloneRecorder cloneRecorder;
     [SerializeField] private PlayerControlLock playerControl;
-    [SerializeField] private UnityEvent onAllLevelsCompleted;
+    [SerializeField] private RoomTransitionController roomTransition;
+    [FormerlySerializedAs("onAllLevelsCompleted")]
+    [SerializeField] private UnityEvent onLevelCompleted;
 
-    private int currentLevelIndex;
     private bool isTransitioning;
+    private static bool enteringFromTransition;
 
-    public int CurrentLevelIndex => currentLevelIndex;
     public bool IsTransitioning => isTransitioning;
+    public LevelStage Level => level;
+    public string NextSceneName => level != null ? level.NextSceneName : string.Empty;
 
     private void Awake()
     {
+        if (level == null)
+            level = FindFirstObjectByType<LevelStage>();
         if (cloneRecorder == null)
             cloneRecorder = FindFirstObjectByType<CloneRecorder>();
         if (playerControl == null)
             playerControl = FindFirstObjectByType<PlayerControlLock>();
+        if (roomTransition == null)
+            roomTransition = FindFirstObjectByType<RoomTransitionController>();
     }
 
-    private void Start()
+    private IEnumerator Start()
     {
-        if (levels == null || levels.Length == 0 || levels[0] == null)
-            return;
+        if (level == null)
+            yield break;
 
-        levels[0].StartLevel();
+        if (playerControl != null)
+            playerControl.SetControlEnabled(false);
+
+        level.StartLevel();
+
+        bool shouldBuild = enteringFromTransition ||
+                           roomTransition != null && roomTransition.BuildWhenSceneStarts;
+        enteringFromTransition = false;
+
+        if (shouldBuild && roomTransition != null)
+            yield return roomTransition.BuildLevel();
 
         if (cloneRecorder != null)
-            cloneRecorder.StartNewLevel(levels[0].PlayerStartPoint);
+            cloneRecorder.StartNewLevel(level.PlayerStartPoint);
+
+        if (playerControl != null)
+            playerControl.SetControlEnabled(true);
     }
 
     public void CompleteCurrentLevel()
     {
-        if (isTransitioning || levels == null || currentLevelIndex >= levels.Length)
+        if (isTransitioning || level == null)
             return;
 
-        StartCoroutine(TransitionToNextLevel());
+        StartCoroutine(CompleteLevel());
     }
 
-    private IEnumerator TransitionToNextLevel()
+    private IEnumerator CompleteLevel()
     {
         isTransitioning = true;
 
@@ -52,39 +74,23 @@ public class LevelManager : MonoBehaviour
         if (playerControl != null)
             playerControl.SetControlEnabled(false);
 
-        LevelStage currentLevel = levels[currentLevelIndex];
+        level.StartTransition();
 
-        if (currentLevel != null)
-        {
-            currentLevel.StartTransition();
+        if (roomTransition != null)
+            yield return roomTransition.HideLevel();
+        else if (level.TransitionDuration > 0f)
+            yield return new WaitForSeconds(level.TransitionDuration);
 
-            if (currentLevel.TransitionDuration > 0f)
-                yield return new WaitForSeconds(currentLevel.TransitionDuration);
+        level.FinishTransition();
+        onLevelCompleted?.Invoke();
 
-            currentLevel.FinishTransition();
-        }
-
-        currentLevelIndex++;
-
-        if (currentLevelIndex >= levels.Length)
-        {
-            onAllLevelsCompleted?.Invoke();
+        if (string.IsNullOrWhiteSpace(level.NextSceneName))
             yield break;
-        }
 
-        LevelStage nextLevel = levels[currentLevelIndex];
+        if (!Application.CanStreamedLevelBeLoaded(level.NextSceneName))
+            yield break;
 
-        if (nextLevel != null)
-        {
-            nextLevel.StartLevel();
-
-            if (cloneRecorder != null)
-                cloneRecorder.StartNewLevel(nextLevel.PlayerStartPoint);
-        }
-
-        if (playerControl != null)
-            playerControl.SetControlEnabled(true);
-
-        isTransitioning = false;
+        enteringFromTransition = true;
+        yield return SceneManager.LoadSceneAsync(level.NextSceneName);
     }
 }

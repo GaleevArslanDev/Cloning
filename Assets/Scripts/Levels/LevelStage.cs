@@ -4,12 +4,14 @@ using UnityEngine.Events;
 public class LevelStage : MonoBehaviour
 {
     [SerializeField] private Transform playerStartPoint;
+    [SerializeField] private string nextSceneName;
     [SerializeField] private float transitionDuration = 2f;
     [SerializeField] private UnityEvent onLevelStarted;
     [SerializeField] private UnityEvent onTransitionStarted;
     [SerializeField] private UnityEvent onTransitionFinished;
 
     public Transform PlayerStartPoint => playerStartPoint;
+    public string NextSceneName => nextSceneName;
     public float TransitionDuration => Mathf.Max(0f, transitionDuration);
 
     public void StartLevel()

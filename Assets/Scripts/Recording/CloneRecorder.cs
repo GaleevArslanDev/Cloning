@@ -65,6 +65,9 @@ public class CloneRecorder : MonoBehaviour
 
     private void Start()
     {
+        if (FindFirstObjectByType<LevelManager>() != null)
+            return;
+
         MovePlayerToStart();
         BeginRecording();
     }
@@ -110,8 +113,6 @@ public class CloneRecorder : MonoBehaviour
             playerCarry.CancelCarry();
         if (playerClimber != null)
             playerClimber.Dismount();
-
-        ResetItems();
     }
 
     public void StartNewLevel(Transform levelStartPoint)
