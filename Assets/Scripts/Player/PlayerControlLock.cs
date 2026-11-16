@@ -30,4 +30,16 @@ public class PlayerControlLock : MonoBehaviour
         if (playerCamera != null)
             playerCamera.enabled = isEnabled;
     }
+
+    public void SetTransitionControl()
+    {
+        if (playerMovement != null)
+            playerMovement.enabled = false;
+        if (playerInteractor != null)
+            playerInteractor.enabled = false;
+        if (playerCarry != null)
+            playerCarry.enabled = false;
+        if (playerCamera != null)
+            playerCamera.enabled = true;
+    }
 }

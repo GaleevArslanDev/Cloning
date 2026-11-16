@@ -15,9 +15,11 @@ public class LevelManager : MonoBehaviour
     [SerializeField] private UnityEvent onLevelCompleted;
 
     private bool isTransitioning;
+    private bool levelConditionCompleted;
     private static bool enteringFromTransition;
 
     public bool IsTransitioning => isTransitioning;
+    public bool LevelConditionCompleted => levelConditionCompleted;
     public LevelStage Level => level;
     public string NextSceneName => level != null ? level.NextSceneName : string.Empty;
 
@@ -39,7 +41,7 @@ public class LevelManager : MonoBehaviour
             yield break;
 
         if (playerControl != null)
-            playerControl.SetControlEnabled(false);
+            playerControl.SetTransitionControl();
 
         level.StartLevel();
 
@@ -59,10 +61,34 @@ public class LevelManager : MonoBehaviour
 
     public void CompleteCurrentLevel()
     {
-        if (isTransitioning || level == null)
+        CompleteLevelCondition();
+    }
+
+    public void CompleteLevelCondition()
+    {
+        if (isTransitioning)
             return;
 
+        levelConditionCompleted = true;
+    }
+
+    public bool TryCompleteFromStart(GameObject interactor)
+    {
+        if (!levelConditionCompleted || isTransitioning || level == null)
+            return false;
+
+        CloneRecorder interactorRecorder = interactor != null
+            ? interactor.GetComponent<CloneRecorder>()
+            : null;
+
+        if (interactorRecorder == null ||
+            cloneRecorder != null && interactorRecorder != cloneRecorder)
+        {
+            return false;
+        }
+
         StartCoroutine(CompleteLevel());
+        return true;
     }
 
     private IEnumerator CompleteLevel()
@@ -72,7 +98,7 @@ public class LevelManager : MonoBehaviour
         if (cloneRecorder != null)
             cloneRecorder.EndCurrentLevel();
         if (playerControl != null)
-            playerControl.SetControlEnabled(false);
+            playerControl.SetTransitionControl();
 
         level.StartTransition();
 

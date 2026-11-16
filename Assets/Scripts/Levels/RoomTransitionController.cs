@@ -8,6 +8,7 @@ public class RoomTransitionController : MonoBehaviour
     [SerializeField] private Transform levelObjectsRoot;
     [SerializeField] private float objectMoveDuration = 4f;
     [SerializeField] private float roomMoveDuration = 3f;
+    [SerializeField] private float breathingSettleDuration = 1.5f;
     [SerializeField] private float objectDelay = 0.12f;
     [SerializeField] private float hiddenDepth = 2f;
     [SerializeField] private bool buildWhenSceneStarts;
@@ -55,6 +56,7 @@ public class RoomTransitionController : MonoBehaviour
         PrepareObjects(false);
         yield return AnimateObjects(0f, 1f);
         yield return AnimateRoom(0f, 1f);
+        yield return AnimateBreathing(1f, 0f);
 
         if (roomCubes != null)
             roomCubes.SetFrozen(true);
@@ -65,12 +67,14 @@ public class RoomTransitionController : MonoBehaviour
         if (roomCubes != null)
         {
             roomCubes.SetFlatness(1f);
+            roomCubes.SetBreathingStrength(0f);
             roomCubes.SetFrozen(false);
         }
 
         PrepareObjects(true);
         SetObjectProgress(1f);
         yield return AnimateRoom(1f, 0f);
+        yield return AnimateBreathing(0f, 1f);
         yield return AnimateObjects(1f, 0f);
         RestoreObjects();
     }
@@ -114,7 +118,9 @@ public class RoomTransitionController : MonoBehaviour
         Vector3 localPosition = FlatRoomCenter.InverseTransformPoint(item.StartPosition);
         Vector3 halfSize = FlatRoomSize * 0.5f;
         float floorDistance = Mathf.Abs(localPosition.y + halfSize.y);
-        float ceilingDistance = Mathf.Abs(halfSize.y - localPosition.y);
+        float ceilingDistance = roomCubes != null && roomCubes.HasCeiling
+            ? Mathf.Abs(halfSize.y - localPosition.y)
+            : float.MaxValue;
         float leftDistance = Mathf.Abs(localPosition.x + halfSize.x);
         float rightDistance = Mathf.Abs(halfSize.x - localPosition.x);
         float backDistance = Mathf.Abs(localPosition.z + halfSize.z);
@@ -248,6 +254,25 @@ public class RoomTransitionController : MonoBehaviour
         }
 
         roomCubes.SetFlatness(to);
+    }
+
+    private IEnumerator AnimateBreathing(float from, float to)
+    {
+        if (roomCubes == null)
+            yield break;
+
+        float duration = Mathf.Max(0.01f, breathingSettleDuration);
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float progress = Smooth(Mathf.Clamp01(elapsed / duration));
+            roomCubes.SetBreathingStrength(Mathf.Lerp(from, to, progress));
+            yield return null;
+        }
+
+        roomCubes.SetBreathingStrength(to);
     }
 
     private void DisableObject(TransitionObject item)
