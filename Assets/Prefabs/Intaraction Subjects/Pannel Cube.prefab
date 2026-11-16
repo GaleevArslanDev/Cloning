@@ -97,10 +97,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a82d7deb40647ea4ea7af83e0bede30a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ActorPressurePlate
-  plateVisual: {fileID: 0}
+  plateVisual: {fileID: 1846655423062175001}
   pressedOffset: {x: 0, y: -0.08, z: 0}
   movementSpeed: 0.5
-  stateRenderer: {fileID: 0}
+  stateRenderer: {fileID: 6629164866515331985}
   releasedColor: {r: 1, g: 1, b: 1, a: 1}
   pressedColor: {r: 0.45, g: 0.85, b: 0.45, a: 1}
   colorSpeed: 8

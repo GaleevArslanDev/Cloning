@@ -18582,14 +18582,6 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 42671985439889698, guid: 10d2ac44704e46e47a7502beb6853439, type: 3}
-      propertyPath: plateVisual
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 42671985439889698, guid: 10d2ac44704e46e47a7502beb6853439, type: 3}
-      propertyPath: stateRenderer
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 42671985439889698, guid: 10d2ac44704e46e47a7502beb6853439, type: 3}
       propertyPath: onPressed.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1247424672}
@@ -32071,6 +32063,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3991713826359145005, guid: c57e872fa76d9714eb1408f887163d63, type: 3}
+      propertyPath: 'objectsToHide.Array.data[0]'
+      value: 
+      objectReference: {fileID: 1297146982}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
