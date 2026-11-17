@@ -16,6 +16,7 @@ public class LevelManager : MonoBehaviour
 
     private bool isTransitioning;
     private bool levelConditionCompleted;
+    private bool finishAnimationSignalReceived;
     private static bool enteringFromTransition;
 
     public bool IsTransitioning => isTransitioning;
@@ -91,6 +92,19 @@ public class LevelManager : MonoBehaviour
         return true;
     }
 
+    public void ReachFinish()
+    {
+        if (isTransitioning || level == null)
+            return;
+
+        StartCoroutine(CompleteLevel());
+    }
+
+    public void ContinueAfterFinishAnimation()
+    {
+        finishAnimationSignalReceived = true;
+    }
+
     private IEnumerator CompleteLevel()
     {
         isTransitioning = true;
@@ -100,6 +114,20 @@ public class LevelManager : MonoBehaviour
         if (playerControl != null)
             playerControl.SetTransitionControl();
 
+        finishAnimationSignalReceived = false;
+        level.StartFinishAnimation();
+
+        if (level.WaitForFinishAnimationSignal)
+        {
+            while (!finishAnimationSignalReceived)
+                yield return null;
+        }
+        else if (level.FinishAnimationDuration > 0f)
+        {
+            yield return new WaitForSeconds(level.FinishAnimationDuration);
+        }
+
+        level.FinishFinishAnimation();
         level.StartTransition();
 
         if (roomTransition != null)
