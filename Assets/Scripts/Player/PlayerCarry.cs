@@ -12,6 +12,8 @@ public class PlayerCarry : MonoBehaviour
     [SerializeField] private float followSpeed = 14f;
     [SerializeField] private float dropSearchDistance = 8f;
     [SerializeField] private LayerMask dropSurfaceLayers = ~0;
+    [SerializeField] private LayerMask dropBlockingLayers = ~0;
+    [SerializeField] private float allowedDropOverlap = 0.002f;
     [SerializeField] private float movementSway = 0.025f;
     [SerializeField] private float rotationStep = 15f;
 
@@ -166,9 +168,11 @@ public class PlayerCarry : MonoBehaviour
 
     private void StartDrop()
     {
+        if (!TryFindDropPose(out dropPosition, out dropRotation))
+            return;
+
         transitionStartPosition = heldItem.transform.position;
         transitionStartRotation = heldItem.transform.rotation;
-        FindDropPose(out dropPosition, out dropRotation);
         transitionTime = 0f;
         state = CarryState.Dropping;
 
@@ -225,7 +229,7 @@ public class PlayerCarry : MonoBehaviour
         RequestRotation(Mouse.current.scroll.ReadValue().y);
     }
 
-    private void FindDropPose(out Vector3 position, out Quaternion rotation)
+    private bool TryFindDropPose(out Vector3 position, out Quaternion rotation)
     {
         rotation = heldItem.transform.rotation;
         Vector3 origin = heldItem.transform.position - dropDirection * 0.2f;
@@ -260,7 +264,7 @@ public class PlayerCarry : MonoBehaviour
         if (!surfaceFound)
         {
             position = heldItem.transform.position;
-            return;
+            return false;
         }
 
         Vector3 surfacePoint = nearestHit.point;
@@ -276,6 +280,70 @@ public class PlayerCarry : MonoBehaviour
 
         float bottomOffset = GetBottomOffset(rotation, surfaceNormal);
         position = surfacePoint + surfaceNormal * (bottomOffset + 0.01f);
+        return IsDropPoseClear(position, rotation);
+    }
+
+    private bool IsDropPoseClear(Vector3 position, Quaternion rotation)
+    {
+        Vector3 currentPosition = heldItem.transform.position;
+        Quaternion currentRotation = heldItem.transform.rotation;
+        heldItem.transform.SetPositionAndRotation(position, rotation);
+        Physics.SyncTransforms();
+
+        Collider[] itemColliders = heldItem.GetComponentsInChildren<Collider>();
+        bool isClear = true;
+
+        foreach (Collider itemCollider in itemColliders)
+        {
+            if (itemCollider == null || !itemCollider.enabled)
+                continue;
+
+            Bounds bounds = itemCollider.bounds;
+            Collider[] overlaps = Physics.OverlapBox(
+                bounds.center,
+                bounds.extents,
+                Quaternion.identity,
+                dropBlockingLayers,
+                QueryTriggerInteraction.Ignore
+            );
+
+            foreach (Collider other in overlaps)
+            {
+                if (other == null ||
+                    other.transform.IsChildOf(heldItem.transform) ||
+                    other.transform.IsChildOf(transform))
+                {
+                    continue;
+                }
+
+                if (!Physics.ComputePenetration(
+                        itemCollider,
+                        itemCollider.transform.position,
+                        itemCollider.transform.rotation,
+                        other,
+                        other.transform.position,
+                        other.transform.rotation,
+                        out Vector3 direction,
+                        out float distance
+                    ))
+                {
+                    continue;
+                }
+
+                if (distance > allowedDropOverlap)
+                {
+                    isClear = false;
+                    break;
+                }
+            }
+
+            if (!isClear)
+                break;
+        }
+
+        heldItem.transform.SetPositionAndRotation(currentPosition, currentRotation);
+        Physics.SyncTransforms();
+        return isClear;
     }
 
     private float GetBottomOffset(Quaternion targetRotation, Vector3 surfaceNormal)
