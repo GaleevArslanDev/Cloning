@@ -4,10 +4,13 @@ public class CloneClimbInteractable : MonoBehaviour, IInteractable
 {
     [SerializeField] private ClonePlayback playback;
     [SerializeField] private Transform mountPoint;
+    [SerializeField] private float stackHorizontalDistance = 0.75f;
+    [SerializeField] private float minimumStackHeight = 1.2f;
+    [SerializeField] private float maximumStackHeight = 2.6f;
 
     private PlayerClimber rider;
 
-    public bool CanInteract => playback != null;
+    public bool CanInteract => playback != null && !HasCloneBelow();
     public bool RecordInteraction => false;
 
     private void Awake()
@@ -44,5 +47,14 @@ public class CloneClimbInteractable : MonoBehaviour, IInteractable
     {
         if (rider != null)
             rider.DismountFrom(playback);
+    }
+
+    private bool HasCloneBelow()
+    {
+        return playback != null && playback.HasCloneBelow(
+            stackHorizontalDistance,
+            minimumStackHeight,
+            maximumStackHeight
+        );
     }
 }

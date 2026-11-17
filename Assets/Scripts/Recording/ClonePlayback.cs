@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class ClonePlayback : MonoBehaviour
 {
+    private static readonly HashSet<ClonePlayback> activeClones = new HashSet<ClonePlayback>();
+
     [SerializeField] private Transform head;
     [SerializeField] private float standingSpeed = 0.05f;
     [SerializeField] private CloneCarryController carryController;
@@ -20,6 +22,49 @@ public class ClonePlayback : MonoBehaviour
     public bool IsLeftInputHeld { get; private set; }
     public bool RightInputPressedThisFrame { get; private set; }
     public float ScrollInputThisFrame { get; private set; }
+
+    private void OnEnable()
+    {
+        activeClones.Add(this);
+    }
+
+    private void OnDisable()
+    {
+        activeClones.Remove(this);
+    }
+
+    public bool HasCloneBelow(
+        float horizontalDistance,
+        float minimumVerticalDistance,
+        float maximumVerticalDistance
+    )
+    {
+        Vector3 up = Physics.gravity.sqrMagnitude > 0.001f
+            ? -Physics.gravity.normalized
+            : Vector3.up;
+
+        foreach (ClonePlayback clone in activeClones)
+        {
+            if (clone == null || clone == this || !clone.gameObject.activeInHierarchy)
+                continue;
+
+            Vector3 difference = transform.position - clone.transform.position;
+            float verticalDistance = Vector3.Dot(difference, up);
+
+            if (verticalDistance < minimumVerticalDistance ||
+                verticalDistance > maximumVerticalDistance)
+            {
+                continue;
+            }
+
+            Vector3 horizontalOffset = Vector3.ProjectOnPlane(difference, up);
+
+            if (horizontalOffset.magnitude <= horizontalDistance)
+                return true;
+        }
+
+        return false;
+    }
 
     public void Initialize(CloneRecordingData recordingData)
     {
