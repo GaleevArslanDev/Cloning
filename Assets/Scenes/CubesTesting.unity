@@ -5036,7 +5036,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!64 &105839406
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -30917,7 +30917,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &596341415
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -36507,7 +36507,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &693672893
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -51296,7 +51296,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &963989372
 Transform:
   m_ObjectHideFlags: 0
@@ -51327,11 +51327,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RoomCubeField
   cubesRoot: {fileID: 1586845381}
   flatRoomCenter: {fileID: 1864910228}
-  flatRoomSize: {x: 20.000359, y: 9.999626, z: 13.913464}
+  flatRoomSize: {x: 19.725065, y: 9.869624, z: 13.623873}
   hasCeiling: 0
   detectRoomAutomatically: 0
   detectionStep: 0.05
-  showRoomPreview: 0
+  showRoomPreview: 1
   previewColor: {r: 0.1, g: 0.85, b: 1, a: 0.2}
   breathingAmplitude: 0.03
   floorBreathingAmplitude: 0.01
@@ -61033,7 +61033,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1111170981
 Transform:
   m_ObjectHideFlags: 0
@@ -101124,7 +101124,7 @@ Transform:
   m_GameObject: {fileID: 1864910227}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.6887779, y: -2.8819818, z: -1.1799536}
+  m_LocalPosition: {x: 0.8266144, y: -2.946981, z: -1.0351543}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
