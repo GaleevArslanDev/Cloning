@@ -6,12 +6,13 @@ public class FloorCubeLiftAction : MonoBehaviour
     [SerializeField] private Transform[] floorCubes;
     [SerializeField] private float liftHeight = 2f;
     [SerializeField] private float movementSpeed = 1f;
+    [SerializeField] private int requiredSignals = 2;
 
     private int activeRequests;
     private float currentHeight;
     private bool registered;
 
-    public bool IsActive => activeRequests > 0;
+    public bool IsActive => activeRequests >= Mathf.Max(1, requiredSignals);
 
     private void Start()
     {
