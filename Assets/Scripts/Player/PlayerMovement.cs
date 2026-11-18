@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+[DefaultExecutionOrder(-100)]
 [RequireComponent(typeof(CharacterController))]
 public class PlayerMovement : MonoBehaviour
 {
@@ -13,6 +14,9 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 horizontalVelocity;
     private float verticalVelocity;
     private Vector2 moveInput;
+    private Rigidbody groundPlatform;
+    private Vector3 groundPlatformPosition;
+    private bool groundContactFound;
 
     public bool IsMoving => moveInput.sqrMagnitude > 0.01f && controller.isGrounded;
     public bool IsRunning { get; private set; }
@@ -22,10 +26,64 @@ public class PlayerMovement : MonoBehaviour
         controller = GetComponent<CharacterController>();
     }
 
+    private void OnDisable()
+    {
+        ClearGroundPlatform();
+    }
+
     private void Update()
     {
+        ApplyPlatformMovement();
+        groundContactFound = false;
         ReadInput();
         Move();
+
+        if (!groundContactFound && !controller.isGrounded)
+            ClearGroundPlatform();
+
+        if (groundPlatform != null)
+            groundPlatformPosition = groundPlatform.transform.position;
+    }
+
+    private void ApplyPlatformMovement()
+    {
+        if (groundPlatform == null)
+            return;
+
+        Vector3 platformPosition = groundPlatform.transform.position;
+        Vector3 movement = platformPosition - groundPlatformPosition;
+
+        if (movement.sqrMagnitude > 0.0000001f)
+            controller.Move(movement);
+
+        groundPlatformPosition = platformPosition;
+    }
+
+    private void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        if (Vector3.Dot(hit.normal, Vector3.up) < 0.5f)
+            return;
+
+        groundContactFound = true;
+        Rigidbody hitBody = hit.rigidbody;
+
+        if (hitBody == null || !hitBody.isKinematic)
+        {
+            ClearGroundPlatform();
+            return;
+        }
+
+        if (groundPlatform == hitBody)
+            return;
+
+        groundPlatform = hitBody;
+        groundPlatformPosition = hitBody.transform.position;
+    }
+
+    private void ClearGroundPlatform()
+    {
+        groundPlatform = null;
+        groundPlatformPosition = Vector3.zero;
     }
 
     private void ReadInput()
@@ -68,5 +126,27 @@ public class PlayerMovement : MonoBehaviour
         verticalVelocity = -2f;
         moveInput = Vector2.zero;
         IsRunning = false;
+        ClearGroundPlatform();
+    }
+
+    public bool MoveTo(Vector3 targetPosition, float speed, float stopDistance)
+    {
+        Vector3 difference = targetPosition - transform.position;
+        float distance = difference.magnitude;
+
+        if (distance <= stopDistance)
+            return true;
+
+        horizontalVelocity = Vector3.zero;
+        verticalVelocity = -2f;
+        moveInput = Vector2.zero;
+        IsRunning = false;
+
+        float movement = Mathf.Min(
+            distance,
+            Mathf.Max(0f, speed) * Time.deltaTime
+        );
+        controller.Move(difference.normalized * movement);
+        return Vector3.Distance(transform.position, targetPosition) <= stopDistance;
     }
 }

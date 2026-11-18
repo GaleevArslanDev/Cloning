@@ -117,7 +117,14 @@ public class CloneRecorder : MonoBehaviour
 
     public void StartNewLevel(Transform levelStartPoint)
     {
+        PrepareNewLevel(levelStartPoint);
+        BeginPreparedLevel();
+    }
+
+    public void PrepareNewLevel(Transform levelStartPoint)
+    {
         isRecording = false;
+        recording = null;
         savedRecordings.Clear();
         StopActiveClones();
 
@@ -131,6 +138,13 @@ public class CloneRecorder : MonoBehaviour
 
         CaptureLevelItems();
         MovePlayerToStart();
+    }
+
+    public void BeginPreparedLevel()
+    {
+        if (isRecording)
+            return;
+
         BeginRecording();
     }
 
