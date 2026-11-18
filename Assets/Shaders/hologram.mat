@@ -41,11 +41,12 @@ Material:
     m_Floats:
     - _QueueControl: 0
     - _line_alfa: 0.55
-    - _noise: 1.1
+    - _noise: 1.29
     - _noise_line_size: -0.39
-    - _power_line: 2
-    - _vertex: 0.1
-    - _vertex_speed: 0.01
+    - _noise_speed: 0.085
+    - _power_line: 0.99
+    - _vertex: 0.136
+    - _vertex_speed: 0.0349
     m_Colors:
     - _Color_line: {r: 0, g: 0.84328365, b: 1, a: 1}
     - _main_color: {r: 0, g: 0.23381662, b: 1, a: 1}
