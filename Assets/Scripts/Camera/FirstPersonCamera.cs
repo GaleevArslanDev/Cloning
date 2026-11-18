@@ -95,4 +95,22 @@ public class FirstPersonCamera : MonoBehaviour
         transform.localPosition = startPosition;
         transform.localRotation = Quaternion.identity;
     }
+
+    public Quaternion BodyRotation => playerBody != null
+        ? playerBody.rotation
+        : Quaternion.identity;
+
+    public float Pitch => pitch;
+
+    public void SetLook(Quaternion bodyRotation, float newPitch)
+    {
+        if (playerBody != null)
+            playerBody.rotation = bodyRotation;
+
+        pitch = Mathf.Clamp(newPitch, -verticalLimit, verticalLimit);
+        bobTime = 0f;
+        currentOffset = Vector3.zero;
+        transform.localPosition = startPosition;
+        transform.localRotation = Quaternion.Euler(pitch, 0f, 0f);
+    }
 }

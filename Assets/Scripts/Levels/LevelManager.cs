@@ -18,6 +18,9 @@ public class LevelManager : MonoBehaviour
     private bool levelConditionCompleted;
     private bool finishAnimationSignalReceived;
     private static bool enteringFromTransition;
+    private static bool hasPreservedLook;
+    private static Quaternion preservedBodyRotation;
+    private static float preservedPitch;
 
     public bool IsTransitioning => isTransitioning;
     public bool LevelConditionCompleted => levelConditionCompleted;
@@ -46,7 +49,22 @@ public class LevelManager : MonoBehaviour
 
         level.StartLevel();
 
-        bool shouldBuild = enteringFromTransition ||
+        if (cloneRecorder != null)
+            cloneRecorder.PrepareNewLevel(level.PlayerStartPoint);
+
+        bool cameFromTransition = enteringFromTransition;
+
+        if (cameFromTransition && hasPreservedLook)
+        {
+            FirstPersonCamera playerCamera = FindFirstObjectByType<FirstPersonCamera>();
+
+            if (playerCamera != null)
+                playerCamera.SetLook(preservedBodyRotation, preservedPitch);
+
+            hasPreservedLook = false;
+        }
+
+        bool shouldBuild = cameFromTransition ||
                            roomTransition != null && roomTransition.BuildWhenSceneStarts;
         enteringFromTransition = false;
 
@@ -54,7 +72,7 @@ public class LevelManager : MonoBehaviour
             yield return roomTransition.BuildLevel();
 
         if (cloneRecorder != null)
-            cloneRecorder.StartNewLevel(level.PlayerStartPoint);
+            cloneRecorder.BeginPreparedLevel();
 
         if (playerControl != null)
             playerControl.SetControlEnabled(true);
@@ -183,6 +201,15 @@ public class LevelManager : MonoBehaviour
 
         if (!Application.CanStreamedLevelBeLoaded(level.NextSceneName))
             yield break;
+
+        FirstPersonCamera currentCamera = FindFirstObjectByType<FirstPersonCamera>();
+
+        if (currentCamera != null)
+        {
+            preservedBodyRotation = currentCamera.BodyRotation;
+            preservedPitch = currentCamera.Pitch;
+            hasPreservedLook = true;
+        }
 
         enteringFromTransition = true;
         yield return SceneManager.LoadSceneAsync(level.NextSceneName);
