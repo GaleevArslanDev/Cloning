@@ -19,6 +19,7 @@ public class ClonePlayback : MonoBehaviour
     private bool isFinished;
 
     public bool IsStandingStill { get; private set; }
+    public bool IsJumping { get; private set; }
     public bool IsLeftInputHeld { get; private set; }
     public bool RightInputPressedThisFrame { get; private set; }
     public float ScrollInputThisFrame { get; private set; }
@@ -68,6 +69,9 @@ public class ClonePlayback : MonoBehaviour
 
     public void Initialize(CloneRecordingData recordingData)
     {
+        if (GetComponent<CharacterAnimationController>() == null)
+            gameObject.AddComponent<CharacterAnimationController>();
+
         if (carryController == null)
             carryController = GetComponent<CloneCarryController>();
 
@@ -79,6 +83,7 @@ public class ClonePlayback : MonoBehaviour
         playbackTime = 0f;
         isFinished = false;
         IsLeftInputHeld = false;
+        IsJumping = false;
         RightInputPressedThisFrame = false;
         ScrollInputThisFrame = 0f;
 
@@ -128,6 +133,7 @@ public class ClonePlayback : MonoBehaviour
             : 0f;
 
         IsStandingStill = speed <= standingSpeed;
+        IsJumping = current.IsJumping || next.IsJumping;
     }
 
     private void ApplyPose(RecordedPose pose)
@@ -136,6 +142,8 @@ public class ClonePlayback : MonoBehaviour
 
         if (head != null)
             head.localRotation = pose.HeadRotation;
+
+        IsJumping = pose.IsJumping;
     }
 
     private void UpdateInteractions()
@@ -234,6 +242,7 @@ public class ClonePlayback : MonoBehaviour
 
         activeInteractions.Clear();
         IsLeftInputHeld = false;
+        IsJumping = false;
         RightInputPressedThisFrame = false;
         ScrollInputThisFrame = 0f;
 

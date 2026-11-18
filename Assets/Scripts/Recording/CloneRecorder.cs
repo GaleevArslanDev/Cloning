@@ -209,7 +209,8 @@ public class CloneRecorder : MonoBehaviour
             Time = recordingTime,
             Position = playerBody.position,
             BodyRotation = playerBody.rotation,
-            HeadRotation = playerHead.localRotation
+            HeadRotation = playerHead.localRotation,
+            IsJumping = playerClimber != null && playerClimber.IsJumping
         });
     }
 

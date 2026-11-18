@@ -6,15 +6,18 @@ public class PlayerClimber : MonoBehaviour
 {
     [SerializeField] private PlayerMovement playerMovement;
     [SerializeField] private float ledgeClimbDuration = 0.4f;
+    [SerializeField] private float mountJumpDuration = 0.45f;
 
     private CharacterController controller;
     private ClonePlayback mountedClone;
     private Transform originalParent;
     private bool canDismount;
     private Coroutine climbRoutine;
+    private float jumpAnimationTime;
 
     public bool IsMounted => mountedClone != null;
     public bool IsClimbing => climbRoutine != null;
+    public bool IsJumping => IsClimbing || jumpAnimationTime > 0f;
 
     private void Awake()
     {
@@ -25,6 +28,12 @@ public class PlayerClimber : MonoBehaviour
         originalParent = transform.parent;
     }
 
+    private void Update()
+    {
+        if (jumpAnimationTime > 0f)
+            jumpAnimationTime -= Time.deltaTime;
+    }
+
     public void Mount(ClonePlayback clone, Transform mountPoint)
     {
         if (clone == null || mountPoint == null)
@@ -33,6 +42,7 @@ public class PlayerClimber : MonoBehaviour
         Dismount();
         mountedClone = clone;
         canDismount = false;
+        jumpAnimationTime = mountJumpDuration;
 
         if (playerMovement != null)
             playerMovement.enabled = false;
@@ -100,6 +110,7 @@ public class PlayerClimber : MonoBehaviour
         transform.SetParent(originalParent, true);
         mountedClone = null;
         canDismount = false;
+        jumpAnimationTime = Mathf.Max(jumpAnimationTime, ledgeClimbDuration);
         climbRoutine = StartCoroutine(ClimbToLedge(ledge.LandingPosition));
     }
 

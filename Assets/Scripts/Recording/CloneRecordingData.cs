@@ -13,6 +13,7 @@ public struct RecordedPose
     public Vector3 Position;
     public Quaternion BodyRotation;
     public Quaternion HeadRotation;
+    public bool IsJumping;
 }
 
 public struct RecordedInteraction

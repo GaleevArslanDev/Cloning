@@ -24,6 +24,9 @@ public class PlayerMovement : MonoBehaviour
     private void Awake()
     {
         controller = GetComponent<CharacterController>();
+
+        if (GetComponent<CharacterAnimationController>() == null)
+            gameObject.AddComponent<CharacterAnimationController>();
     }
 
     private void OnDisable()
