@@ -23,6 +23,9 @@ public class RoomCubeField : MonoBehaviour
     [SerializeField] private float waveRadius = 1.25f;
     [SerializeField] private float waveHeight = 0.18f;
     [SerializeField] private int randomSeed = 731;
+    [SerializeField] private bool randomizeTransition = true;
+    [SerializeField, Range(0f, 0.9f)] private float maximumTransitionDelay = 0.55f;
+    [SerializeField, Range(0.05f, 1f)] private float minimumTransitionDuration = 0.3f;
 
     private readonly List<CubeState> cubes = new List<CubeState>();
     private readonly List<RoomWave> waves = new List<RoomWave>();
@@ -41,6 +44,8 @@ public class RoomCubeField : MonoBehaviour
         public Vector3 Normal;
         public float Phase;
         public float Speed;
+        public float TransitionStart;
+        public float TransitionEnd;
         public float AppliedOffset;
         public Rigidbody Body;
         public bool IsFloor;
@@ -87,22 +92,18 @@ public class RoomCubeField : MonoBehaviour
             Vector3 basePosition = Vector3.Lerp(
                 cube.FinalPosition,
                 cube.FlatPosition,
-                Smooth(flatness)
+                GetCubeFlatness(cube)
             );
 
             float wave = GetWave(cube, basePosition);
             float lift = GetLift(cube);
             float offset = wave + lift;
 
-            if (moveGeometry || Mathf.Abs(offset - cube.AppliedOffset) > 0.0001f)
+            if (cube.Body == null &&
+                (moveGeometry || Mathf.Abs(offset - cube.AppliedOffset) > 0.0001f))
             {
                 Vector3 position = basePosition - cube.Normal * offset;
-
-                if (cube.Body != null)
-                    cube.Body.MovePosition(position);
-                else
-                    cube.Root.position = position;
-
+                cube.Root.position = position;
                 cube.AppliedOffset = offset;
             }
 
@@ -127,6 +128,27 @@ public class RoomCubeField : MonoBehaviour
         geometryDirty = false;
     }
 
+    private void FixedUpdate()
+    {
+        foreach (CubeState cube in cubes)
+        {
+            if (cube.Body == null)
+                continue;
+
+            Vector3 basePosition = Vector3.Lerp(
+                cube.FinalPosition,
+                cube.FlatPosition,
+                GetCubeFlatness(cube)
+            );
+            float wave = GetWave(cube, basePosition);
+            float lift = GetLift(cube);
+            float offset = wave + lift;
+            Vector3 position = basePosition - cube.Normal * offset;
+            cube.Body.MovePosition(position);
+            cube.AppliedOffset = offset;
+        }
+    }
+
     public void SetFlatness(float value)
     {
         flatness = Mathf.Clamp01(value);
@@ -145,7 +167,7 @@ public class RoomCubeField : MonoBehaviour
             cube.Root.position = Vector3.Lerp(
                 cube.FinalPosition,
                 cube.FlatPosition,
-                Smooth(flatness)
+                GetCubeFlatness(cube)
             );
 
             if (cube.Visual != null)
@@ -291,7 +313,7 @@ public class RoomCubeField : MonoBehaviour
                 out bool isFloor
             );
 
-            cubes.Add(new CubeState
+            CubeState state = new CubeState
             {
                 Root = cubeRoot,
                 Visual = CreateVisual(sourceRenderer, sourceFilter),
@@ -304,8 +326,22 @@ public class RoomCubeField : MonoBehaviour
                     1f + speedRandomness,
                     GetValue(finalPosition, randomSeed + 41)
                 ),
+                TransitionStart = GetValue(finalPosition, randomSeed + 83) *
+                                  maximumTransitionDelay,
                 IsFloor = isFloor
-            });
+            };
+
+            float minimumDuration = Mathf.Clamp(
+                minimumTransitionDuration,
+                0.05f,
+                1f - state.TransitionStart
+            );
+            state.TransitionEnd = Mathf.Lerp(
+                state.TransitionStart + minimumDuration,
+                1f,
+                GetValue(finalPosition, randomSeed + 127)
+            );
+            cubes.Add(state);
         }
     }
 
@@ -698,6 +734,19 @@ public class RoomCubeField : MonoBehaviour
     private float Smooth(float value)
     {
         return value * value * (3f - 2f * value);
+    }
+
+    private float GetCubeFlatness(CubeState cube)
+    {
+        if (!randomizeTransition)
+            return Smooth(flatness);
+
+        float progress = Mathf.InverseLerp(
+            cube.TransitionStart,
+            cube.TransitionEnd,
+            flatness
+        );
+        return Smooth(progress);
     }
 
     private void OnDrawGizmosSelected()

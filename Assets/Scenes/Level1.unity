@@ -32758,6 +32758,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Button (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 2519632694301198950, guid: 896e24629803a674e89bce4514d9efe8, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5318133033033616803, guid: 896e24629803a674e89bce4514d9efe8, type: 3}
       propertyPath: onPressed.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -49716,6 +49720,9 @@ MonoBehaviour:
   waveRadius: 1.25
   waveHeight: 0.18
   randomSeed: 731
+  randomizeTransition: 1
+  maximumTransitionDelay: 0.55
+  minimumTransitionDuration: 0.3
 --- !u!114 &963989374
 MonoBehaviour:
   m_ObjectHideFlags: 0
