@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 432737919072759057}
   - component: {fileID: 5627851322262033078}
   - component: {fileID: 5552526910951666075}
+  - component: {fileID: 2355475937913463327}
   m_Layer: 0
   m_Name: Cube.018
   m_TagString: Untagged
@@ -90,6 +91,27 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &2355475937913463327
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1022156091872048911}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.03, y: 0.012186075, z: 0.04399999}
+  m_Center: {x: 0.0049999403, y: 0.008369457, z: 0.011999996}
 --- !u!1 &4276050635254890253
 GameObject:
   m_ObjectHideFlags: 0
@@ -101,6 +123,7 @@ GameObject:
   - component: {fileID: 6188416909095063040}
   - component: {fileID: 2547501697957729085}
   - component: {fileID: 5990804256202463504}
+  - component: {fileID: 6828204931783668321}
   m_Layer: 0
   m_Name: Cube.017
   m_TagString: Untagged
@@ -180,6 +203,27 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &6828204931783668321
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4276050635254890253}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.03, y: 0.012186075, z: 0.04399999}
+  m_Center: {x: 0.0049999403, y: 0.008369695, z: 0.011999996}
 --- !u!1 &5038296857297686139
 GameObject:
   m_ObjectHideFlags: 0
@@ -191,6 +235,8 @@ GameObject:
   - component: {fileID: 6154217737505891452}
   - component: {fileID: 1874427349410695507}
   - component: {fileID: 3060619972741513489}
+  - component: {fileID: 5606957589609029708}
+  - component: {fileID: 6989792923662291370}
   m_Layer: 0
   m_Name: Cube.015
   m_TagString: Untagged
@@ -270,6 +316,48 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &5606957589609029708
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5038296857297686139}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.02084779, y: 0.029999996, z: 0.24999997}
+  m_Center: {x: 0.14957677, y: 1.184238e-15, z: 0.11499997}
+--- !u!65 &6989792923662291370
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5038296857297686139}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.021264099, y: 0.029999996, z: 0.24999997}
+  m_Center: {x: -0.1493688, y: 1.184238e-15, z: 0.11499997}
 --- !u!1 &6840132828728409620
 GameObject:
   m_ObjectHideFlags: 0
@@ -296,7 +384,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -31.803778, y: -0.9619995, z: -2.45}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.6, y: 0.6, z: -0.6}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6154217737505891452}
