@@ -88,7 +88,7 @@ public class LevelManager : MonoBehaviour
             return false;
         }
 
-        StartCoroutine(CompleteLevel());
+        StartCoroutine(CompleteLevel(null, null, 0f, 0f));
         return true;
     }
 
@@ -97,7 +97,25 @@ public class LevelManager : MonoBehaviour
         if (isTransitioning || level == null)
             return;
 
-        StartCoroutine(CompleteLevel());
+        StartCoroutine(CompleteLevel(null, null, 0f, 0f));
+    }
+
+    public void ReachFinish(
+        PlayerMovement player,
+        Transform centerPoint,
+        float centeringSpeed,
+        float maximumCenteringTime
+    )
+    {
+        if (isTransitioning || level == null)
+            return;
+
+        StartCoroutine(CompleteLevel(
+            player,
+            centerPoint,
+            centeringSpeed,
+            maximumCenteringTime
+        ));
     }
 
     public void ContinueAfterFinishAnimation()
@@ -105,7 +123,12 @@ public class LevelManager : MonoBehaviour
         finishAnimationSignalReceived = true;
     }
 
-    private IEnumerator CompleteLevel()
+    private IEnumerator CompleteLevel(
+        PlayerMovement player,
+        Transform centerPoint,
+        float centeringSpeed,
+        float maximumCenteringTime
+    )
     {
         isTransitioning = true;
 
@@ -113,6 +136,23 @@ public class LevelManager : MonoBehaviour
             cloneRecorder.EndCurrentLevel();
         if (playerControl != null)
             playerControl.SetTransitionControl();
+
+        if (player != null && centerPoint != null)
+        {
+            float elapsed = 0f;
+            float maximumTime = Mathf.Max(0.01f, maximumCenteringTime);
+            Vector3 targetPosition = centerPoint.position;
+            targetPosition.y = player.transform.position.y;
+
+            while (elapsed < maximumTime &&
+                   !player.MoveTo(targetPosition, centeringSpeed, 0.02f))
+            {
+                elapsed += Time.deltaTime;
+                yield return null;
+            }
+
+            player.Teleport(targetPosition, player.transform.rotation);
+        }
 
         finishAnimationSignalReceived = false;
         level.StartFinishAnimation();

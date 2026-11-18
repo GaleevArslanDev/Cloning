@@ -4,6 +4,9 @@ using UnityEngine;
 public class LevelFinishTrigger : MonoBehaviour
 {
     [SerializeField] private LevelManager levelManager;
+    [SerializeField] private Transform centerPoint;
+    [SerializeField] private float centeringSpeed = 2.5f;
+    [SerializeField] private float maximumCenteringTime = 2f;
 
     private bool activated;
 
@@ -14,6 +17,8 @@ public class LevelFinishTrigger : MonoBehaviour
 
         if (levelManager == null)
             levelManager = FindFirstObjectByType<LevelManager>();
+        if (centerPoint == null)
+            centerPoint = transform;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -27,6 +32,11 @@ public class LevelFinishTrigger : MonoBehaviour
             return;
 
         activated = true;
-        levelManager.ReachFinish();
+        levelManager.ReachFinish(
+            player,
+            centerPoint,
+            centeringSpeed,
+            maximumCenteringTime
+        );
     }
 }

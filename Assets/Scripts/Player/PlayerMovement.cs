@@ -128,4 +128,25 @@ public class PlayerMovement : MonoBehaviour
         IsRunning = false;
         ClearGroundPlatform();
     }
+
+    public bool MoveTo(Vector3 targetPosition, float speed, float stopDistance)
+    {
+        Vector3 difference = targetPosition - transform.position;
+        float distance = difference.magnitude;
+
+        if (distance <= stopDistance)
+            return true;
+
+        horizontalVelocity = Vector3.zero;
+        verticalVelocity = -2f;
+        moveInput = Vector2.zero;
+        IsRunning = false;
+
+        float movement = Mathf.Min(
+            distance,
+            Mathf.Max(0f, speed) * Time.deltaTime
+        );
+        controller.Move(difference.normalized * movement);
+        return Vector3.Distance(transform.position, targetPosition) <= stopDistance;
+    }
 }
