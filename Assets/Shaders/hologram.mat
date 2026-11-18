@@ -40,13 +40,13 @@ Material:
     m_Ints: []
     m_Floats:
     - _QueueControl: 0
-    - _line_alfa: 0.55
+    - _line_alfa: 0.271
     - _noise: 1.29
     - _noise_line_size: -0.39
     - _noise_speed: 0.085
     - _power_line: 0.99
-    - _vertex: 0.136
-    - _vertex_speed: 0.0349
+    - _vertex: 0.053
+    - _vertex_speed: 0.0034
     m_Colors:
     - _Color_line: {r: 0, g: 0.84328365, b: 1, a: 1}
     - _main_color: {r: 0, g: 0.23381662, b: 1, a: 1}
