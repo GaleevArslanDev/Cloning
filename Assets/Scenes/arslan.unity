@@ -5293,6 +5293,12 @@ MonoBehaviour:
   playerMovement: {fileID: 693672893}
   sensitivity: 0.12
   verticalLimit: 85
+  animatedHead: {fileID: 373187405740092220}
+  followAnimatedHead: 1
+  hideHeadInFirstPerson: 1
+  animationMovement: 0.65
+  animationSmoothness: 14
+  maximumAnimationOffset: 0.08
   walkFrequency: 8
   runFrequency: 11
   walkAmount: 0.035

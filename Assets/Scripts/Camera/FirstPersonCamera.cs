@@ -8,6 +8,11 @@ public class FirstPersonCamera : MonoBehaviour
     [SerializeField] private float sensitivity = 0.12f;
     [SerializeField] private float verticalLimit = 85f;
 
+    [Header("Animated Body")]
+    [SerializeField] private Transform animatedHead;
+    [SerializeField] private bool followAnimatedHead = true;
+    [SerializeField] private float animationSmoothness = 14f;
+
     [Header("Head Bob")]
     [SerializeField] private float walkFrequency = 8f;
     [SerializeField] private float runFrequency = 11f;
@@ -21,8 +26,11 @@ public class FirstPersonCamera : MonoBehaviour
 
     private Vector3 startPosition;
     private Vector3 currentOffset;
+    private Vector3 cameraPositionInHeadSpace;
+    private Vector3 animatedCameraPosition;
     private float pitch;
     private float bobTime;
+    private bool animatedHeadReferenceReady;
 
     private void Awake()
     {
@@ -33,17 +41,24 @@ public class FirstPersonCamera : MonoBehaviour
             playerMovement = playerBody.GetComponent<PlayerMovement>();
 
         startPosition = transform.localPosition;
+        FindAnimatedHead();
     }
 
     private void OnEnable()
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        animatedHeadReferenceReady = false;
+        animatedCameraPosition = transform.localPosition;
     }
 
     private void Update()
     {
         Look();
+    }
+
+    private void LateUpdate()
+    {
         UpdateCameraMotion();
     }
 
@@ -56,13 +71,32 @@ public class FirstPersonCamera : MonoBehaviour
 
         pitch = Mathf.Clamp(pitch - mouseDelta.y, -verticalLimit, verticalLimit);
         playerBody.Rotate(Vector3.up * mouseDelta.x);
+        transform.localRotation = Quaternion.Euler(pitch, 0f, 0f);
     }
 
     private void UpdateCameraMotion()
     {
         Vector3 targetOffset = Vector3.zero;
 
-        if (playerMovement != null && playerMovement.IsMoving)
+        if (followAnimatedHead && animatedHead != null && playerBody != null)
+        {
+            if (!animatedHeadReferenceReady)
+            {
+                cameraPositionInHeadSpace = animatedHead.InverseTransformPoint(transform.position);
+                animatedCameraPosition = transform.localPosition;
+                animatedHeadReferenceReady = true;
+            }
+
+            Vector3 targetPosition = playerBody.InverseTransformPoint(
+                animatedHead.TransformPoint(cameraPositionInHeadSpace)
+            );
+            animatedCameraPosition = Vector3.Lerp(
+                animatedCameraPosition,
+                targetPosition,
+                1f - Mathf.Exp(-animationSmoothness * Time.deltaTime)
+            );
+        }
+        else if (playerMovement != null && playerMovement.IsMoving)
         {
             float frequency = playerMovement.IsRunning ? runFrequency : walkFrequency;
             float amount = playerMovement.IsRunning ? runAmount : walkAmount;
@@ -83,8 +117,10 @@ public class FirstPersonCamera : MonoBehaviour
             bobSmoothness * Time.deltaTime
         );
 
-        transform.localPosition = startPosition + currentOffset;
-        transform.localRotation = Quaternion.Euler(pitch, 0f, 0f);
+        Vector3 basePosition = followAnimatedHead && animatedHead != null
+            ? animatedCameraPosition
+            : startPosition;
+        transform.localPosition = basePosition + currentOffset;
     }
 
     public void ResetLook()
@@ -92,6 +128,8 @@ public class FirstPersonCamera : MonoBehaviour
         pitch = 0f;
         bobTime = 0f;
         currentOffset = Vector3.zero;
+        animatedHeadReferenceReady = false;
+        animatedCameraPosition = startPosition;
         transform.localPosition = startPosition;
         transform.localRotation = Quaternion.identity;
     }
@@ -110,7 +148,34 @@ public class FirstPersonCamera : MonoBehaviour
         pitch = Mathf.Clamp(newPitch, -verticalLimit, verticalLimit);
         bobTime = 0f;
         currentOffset = Vector3.zero;
+        animatedHeadReferenceReady = false;
+        animatedCameraPosition = startPosition;
         transform.localPosition = startPosition;
         transform.localRotation = Quaternion.Euler(pitch, 0f, 0f);
     }
+
+    private void FindAnimatedHead()
+    {
+        if (animatedHead != null || playerBody == null)
+            return;
+
+        CharacterAnimationController animationController =
+            playerBody.GetComponent<CharacterAnimationController>();
+
+        if (animationController != null && animationController.HeadBone != null)
+        {
+            animatedHead = animationController.HeadBone;
+            return;
+        }
+
+        foreach (Transform child in playerBody.GetComponentsInChildren<Transform>(true))
+        {
+            if (child.name == "mixamorig:Head" || child.name == "Head")
+            {
+                animatedHead = child;
+                return;
+            }
+        }
+    }
+
 }
