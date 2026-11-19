@@ -628,6 +628,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 69067c6a8646f0443a2e035b07ffb132, type: 3}
+--- !u!114 &7002464 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2071936540595996078, guid: 69067c6a8646f0443a2e035b07ffb132, type: 3}
+  m_PrefabInstance: {fileID: 7002463}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa8d47198a374c4aaa2b2e8fd5535bc1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HoldDoorAction
 --- !u!1 &9361003
 GameObject:
   m_ObjectHideFlags: 0
@@ -4817,6 +4828,30 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 42671985439889698, guid: 10d2ac44704e46e47a7502beb6853439, type: 3}
+      propertyPath: onPressed.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1920049585}
+    - target: {fileID: 42671985439889698, guid: 10d2ac44704e46e47a7502beb6853439, type: 3}
+      propertyPath: onReleased.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1920049585}
+    - target: {fileID: 42671985439889698, guid: 10d2ac44704e46e47a7502beb6853439, type: 3}
+      propertyPath: onPressed.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: Close
+      objectReference: {fileID: 0}
+    - target: {fileID: 42671985439889698, guid: 10d2ac44704e46e47a7502beb6853439, type: 3}
+      propertyPath: onReleased.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: Open
+      objectReference: {fileID: 0}
+    - target: {fileID: 42671985439889698, guid: 10d2ac44704e46e47a7502beb6853439, type: 3}
+      propertyPath: onPressed.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: HoldDoorAction, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 42671985439889698, guid: 10d2ac44704e46e47a7502beb6853439, type: 3}
+      propertyPath: onReleased.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: HoldDoorAction, Assembly-CSharp
+      objectReference: {fileID: 0}
     - target: {fileID: 152930997721959477, guid: 10d2ac44704e46e47a7502beb6853439, type: 3}
       propertyPath: m_Name
       value: Pannel Cube
@@ -41190,7 +41225,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5726408035638590266, guid: 0503f93d8731c504aa42df098b3dabb3, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 4.71
+      value: 4.802
       objectReference: {fileID: 0}
     - target: {fileID: 5726408035638590266, guid: 0503f93d8731c504aa42df098b3dabb3, type: 3}
       propertyPath: m_LocalPosition.z
@@ -70798,6 +70833,30 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 42671985439889698, guid: c57e872fa76d9714eb1408f887163d63, type: 3}
+      propertyPath: onPressed.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 7002464}
+    - target: {fileID: 42671985439889698, guid: c57e872fa76d9714eb1408f887163d63, type: 3}
+      propertyPath: onReleased.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 7002464}
+    - target: {fileID: 42671985439889698, guid: c57e872fa76d9714eb1408f887163d63, type: 3}
+      propertyPath: onPressed.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: Open
+      objectReference: {fileID: 0}
+    - target: {fileID: 42671985439889698, guid: c57e872fa76d9714eb1408f887163d63, type: 3}
+      propertyPath: onReleased.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: Close
+      objectReference: {fileID: 0}
+    - target: {fileID: 42671985439889698, guid: c57e872fa76d9714eb1408f887163d63, type: 3}
+      propertyPath: onPressed.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: HoldDoorAction, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 42671985439889698, guid: c57e872fa76d9714eb1408f887163d63, type: 3}
+      propertyPath: onReleased.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: HoldDoorAction, Assembly-CSharp
+      objectReference: {fileID: 0}
     - target: {fileID: 152930997721959477, guid: c57e872fa76d9714eb1408f887163d63, type: 3}
       propertyPath: m_Name
       value: PannelClone
@@ -70842,7 +70901,8 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 3991713826359145005, guid: c57e872fa76d9714eb1408f887163d63, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -72541,6 +72601,17 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1371901376}
   m_Mesh: {fileID: 4300000, guid: 5dd76c6be56086e45be8c579081c06e8, type: 2}
+--- !u!114 &1373373237 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2071936540595996078, guid: 69067c6a8646f0443a2e035b07ffb132, type: 3}
+  m_PrefabInstance: {fileID: 1491276331}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa8d47198a374c4aaa2b2e8fd5535bc1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HoldDoorAction
 --- !u!1 &1374522242
 GameObject:
   m_ObjectHideFlags: 0
@@ -96167,7 +96238,7 @@ Transform:
   m_GameObject: {fileID: 1821610395}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -45.57, y: 2.2275, z: 12.05}
+  m_LocalPosition: {x: -52.55, y: 7.41, z: 12.42}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -102343,6 +102414,17 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 2, y: 1, z: 2}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1920049585 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2071936540595996078, guid: 69067c6a8646f0443a2e035b07ffb132, type: 3}
+  m_PrefabInstance: {fileID: 934561286}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa8d47198a374c4aaa2b2e8fd5535bc1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HoldDoorAction
 --- !u!1 &1920064466
 GameObject:
   m_ObjectHideFlags: 0
@@ -113375,6 +113457,30 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 42671985439889698, guid: c57e872fa76d9714eb1408f887163d63, type: 3}
+      propertyPath: onPressed.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 2118843663}
+    - target: {fileID: 42671985439889698, guid: c57e872fa76d9714eb1408f887163d63, type: 3}
+      propertyPath: onReleased.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 2118843663}
+    - target: {fileID: 42671985439889698, guid: c57e872fa76d9714eb1408f887163d63, type: 3}
+      propertyPath: onPressed.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: Raise
+      objectReference: {fileID: 0}
+    - target: {fileID: 42671985439889698, guid: c57e872fa76d9714eb1408f887163d63, type: 3}
+      propertyPath: onReleased.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: Lower
+      objectReference: {fileID: 0}
+    - target: {fileID: 42671985439889698, guid: c57e872fa76d9714eb1408f887163d63, type: 3}
+      propertyPath: onPressed.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: FloorCubeLiftAction, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 42671985439889698, guid: c57e872fa76d9714eb1408f887163d63, type: 3}
+      propertyPath: onReleased.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: FloorCubeLiftAction, Assembly-CSharp
+      objectReference: {fileID: 0}
     - target: {fileID: 152930997721959477, guid: c57e872fa76d9714eb1408f887163d63, type: 3}
       propertyPath: m_Name
       value: PannelClone (1)
@@ -113419,11 +113525,41 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 3991713826359145005, guid: c57e872fa76d9714eb1408f887163d63, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 152930997721959477, guid: c57e872fa76d9714eb1408f887163d63, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2118843663}
   m_SourcePrefab: {fileID: 100100000, guid: c57e872fa76d9714eb1408f887163d63, type: 3}
+--- !u!1 &2118843662 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 152930997721959477, guid: c57e872fa76d9714eb1408f887163d63, type: 3}
+  m_PrefabInstance: {fileID: 2118843661}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2118843663
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2118843662}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7f413bdd4a32164688b200dae1bd3c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FloorCubeLiftAction
+  roomCubes: {fileID: 2005043108}
+  floorCubes:
+  - {fileID: 1925429910}
+  - {fileID: 2024823544}
+  - {fileID: 1862013104}
+  - {fileID: 569887546}
+  liftHeight: 2
+  movementSpeed: 1
+  requiredSignals: 1
 --- !u!1 &2121398750
 GameObject:
   m_ObjectHideFlags: 0
@@ -113669,26 +113805,26 @@ PrefabInstance:
     - target: {fileID: 5318133033033616803, guid: 896e24629803a674e89bce4514d9efe8, type: 3}
       propertyPath: onPressed.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 2122024194}
+      objectReference: {fileID: 1373373237}
     - target: {fileID: 5318133033033616803, guid: 896e24629803a674e89bce4514d9efe8, type: 3}
       propertyPath: onReleased.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 2122024194}
+      objectReference: {fileID: 1373373237}
     - target: {fileID: 5318133033033616803, guid: 896e24629803a674e89bce4514d9efe8, type: 3}
       propertyPath: onPressed.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: Activate
+      value: Open
       objectReference: {fileID: 0}
     - target: {fileID: 5318133033033616803, guid: 896e24629803a674e89bce4514d9efe8, type: 3}
       propertyPath: onReleased.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: Deactivate
+      value: Close
       objectReference: {fileID: 0}
     - target: {fileID: 5318133033033616803, guid: 896e24629803a674e89bce4514d9efe8, type: 3}
       propertyPath: onPressed.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: FloorCubeLiftAction, Assembly-CSharp
+      value: HoldDoorAction, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 5318133033033616803, guid: 896e24629803a674e89bce4514d9efe8, type: 3}
       propertyPath: onReleased.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: FloorCubeLiftAction, Assembly-CSharp
+      value: HoldDoorAction, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 8295528913730644121, guid: 896e24629803a674e89bce4514d9efe8, type: 3}
       propertyPath: m_LocalPosition.x
@@ -113733,42 +113869,13 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 543692563048413187, guid: 896e24629803a674e89bce4514d9efe8, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 2122024194}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 896e24629803a674e89bce4514d9efe8, type: 3}
 --- !u!4 &2122024192 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8295528913730644121, guid: 896e24629803a674e89bce4514d9efe8, type: 3}
   m_PrefabInstance: {fileID: 2122024191}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &2122024193 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 543692563048413187, guid: 896e24629803a674e89bce4514d9efe8, type: 3}
-  m_PrefabInstance: {fileID: 2122024191}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &2122024194
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2122024193}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c7f413bdd4a32164688b200dae1bd3c8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FloorCubeLiftAction
-  roomCubes: {fileID: 2005043108}
-  floorCubes:
-  - {fileID: 1021517491}
-  - {fileID: 1606366572}
-  - {fileID: 1760604558}
-  - {fileID: 933292936}
-  liftHeight: 2
-  movementSpeed: 1
-  requiredSignals: 2
 --- !u!1 &2122068371
 GameObject:
   m_ObjectHideFlags: 0

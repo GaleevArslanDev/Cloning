@@ -367,6 +367,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9116384124283946787}
+  - component: {fileID: 8981973769494908855}
+  - component: {fileID: 2071936540595996078}
   m_Layer: 0
   m_Name: Door
   m_TagString: Untagged
@@ -392,3 +394,42 @@ Transform:
   - {fileID: 432737919072759057}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!95 &8981973769494908855
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6840132828728409620}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: c63cd629746e2f340b8b4eef9dbc8325, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &2071936540595996078
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6840132828728409620}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa8d47198a374c4aaa2b2e8fd5535bc1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HoldDoorAction
+  doorAnimator: {fileID: 8981973769494908855}
+  openingClip: {fileID: 7400000, guid: 8c804b5cae8838046beb5d7ad7d7512e, type: 2}
+  playbackSpeed: 1
+  isPressed: 0
+  progress: 0
