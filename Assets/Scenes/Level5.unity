@@ -35982,6 +35982,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerClimber
   playerMovement: {fileID: 693672893}
   ledgeClimbDuration: 0.4
+  mountJumpDuration: 0.45
+  mountJumpHeight: 0.2
 --- !u!114 &693672899
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -41560,7 +41562,7 @@ MonoBehaviour:
   doorAnimator: {fileID: 803342144}
   openingClip: {fileID: 7400000, guid: 8c804b5cae8838046beb5d7ad7d7512e, type: 2}
   playbackSpeed: 1
-  isPressed: 0
+  requiredSignals: 1
   progress: 0
 --- !u!95 &803342144
 Animator:
@@ -79881,7 +79883,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LevelStage
   playerStartPoint: {fileID: 1322484611}
-  nextSceneName: Level2
+  nextSceneName: Level6
   finishAnimationDuration: 2
   waitForFinishAnimationSignal: 0
   transitionDuration: 2
@@ -108921,6 +108923,10 @@ MonoBehaviour:
   playerMovement: {fileID: 693672893}
   sensitivity: 0.12
   verticalLimit: 85
+  animatedHead: {fileID: 0}
+  followAnimatedHead: 1
+  animationSmoothness: 14
+  maximumHeadFollowLag: 0.015
   walkFrequency: 8
   runFrequency: 11
   walkAmount: 0.035

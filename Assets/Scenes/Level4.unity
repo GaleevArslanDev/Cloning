@@ -50404,7 +50404,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LevelStage
   playerStartPoint: {fileID: 1172348999}
-  nextSceneName: Level2
+  nextSceneName: Level5
   finishAnimationDuration: 2
   waitForFinishAnimationSignal: 0
   transitionDuration: 2
@@ -57601,6 +57601,10 @@ MonoBehaviour:
   playerMovement: {fileID: 1821610401}
   sensitivity: 0.12
   verticalLimit: 85
+  animatedHead: {fileID: 0}
+  followAnimatedHead: 1
+  animationSmoothness: 14
+  maximumHeadFollowLag: 0.015
   walkFrequency: 8
   runFrequency: 11
   walkAmount: 0.035
@@ -96325,6 +96329,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerClimber
   playerMovement: {fileID: 1821610401}
   ledgeClimbDuration: 0.4
+  mountJumpDuration: 0.45
+  mountJumpHeight: 0.2
 --- !u!114 &1821610399
 MonoBehaviour:
   m_ObjectHideFlags: 0
