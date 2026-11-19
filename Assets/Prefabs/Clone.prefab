@@ -325,8 +325,13 @@ MonoBehaviour:
   headBone: {fileID: 4852947070996380350}
   walkingSpeed: 3.5
   turningSpeed: 180
+  turnAnimationSensitivity: 6
   movementSmoothness: 10
   turnSmoothness: 12
+  turnStartSmoothness: 5
+  turnDirectionChangeSmoothness: 2
+  turnResponsePower: 0.35
+  turnReleaseDelay: 0.12
   movementThreshold: 0.05
   turningThreshold: 0.05
   jumpVelocityThreshold: 0.8
