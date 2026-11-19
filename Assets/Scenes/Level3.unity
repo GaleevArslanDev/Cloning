@@ -36033,7 +36033,7 @@ MonoBehaviour:
   - {fileID: 1584368089}
   - {fileID: 757950574}
   - {fileID: 1121949272}
-  liftHeight: 2
+  liftHeight: 2.2
   movementSpeed: 1
   requiredSignals: 1
 --- !u!4 &658399659 stripped
@@ -85161,7 +85161,7 @@ MonoBehaviour:
   - {fileID: 706357555}
   - {fileID: 1505412219}
   - {fileID: 1609227852}
-  liftHeight: 2
+  liftHeight: 2.1
   movementSpeed: 1
   requiredSignals: 2
 --- !u!1 &1595857877
