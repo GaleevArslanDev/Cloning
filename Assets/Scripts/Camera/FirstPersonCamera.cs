@@ -12,6 +12,7 @@ public class FirstPersonCamera : MonoBehaviour
     [SerializeField] private Transform animatedHead;
     [SerializeField] private bool followAnimatedHead = true;
     [SerializeField] private float animationSmoothness = 14f;
+    [SerializeField] private float maximumHeadFollowLag = 0.015f;
 
     [Header("Head Bob")]
     [SerializeField] private float walkFrequency = 8f;
@@ -34,6 +35,9 @@ public class FirstPersonCamera : MonoBehaviour
 
     private void Awake()
     {
+        if (maximumHeadFollowLag <= 0f)
+            maximumHeadFollowLag = 0.015f;
+
         if (playerBody == null)
             playerBody = transform.parent;
 
@@ -95,6 +99,14 @@ public class FirstPersonCamera : MonoBehaviour
                 targetPosition,
                 1f - Mathf.Exp(-animationSmoothness * Time.deltaTime)
             );
+
+            Vector3 followLag = animatedCameraPosition - targetPosition;
+
+            if (followLag.magnitude > maximumHeadFollowLag)
+            {
+                animatedCameraPosition = targetPosition
+                    + followLag.normalized * maximumHeadFollowLag;
+            }
         }
         else if (playerMovement != null && playerMovement.IsMoving)
         {
