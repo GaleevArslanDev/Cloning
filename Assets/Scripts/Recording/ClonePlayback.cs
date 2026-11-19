@@ -20,6 +20,7 @@ public class ClonePlayback : MonoBehaviour
 
     public bool IsStandingStill { get; private set; }
     public bool IsJumping { get; private set; }
+    public bool IsRidingClone { get; private set; }
     public bool IsLeftInputHeld { get; private set; }
     public bool RightInputPressedThisFrame { get; private set; }
     public float ScrollInputThisFrame { get; private set; }
@@ -84,6 +85,7 @@ public class ClonePlayback : MonoBehaviour
         isFinished = false;
         IsLeftInputHeld = false;
         IsJumping = false;
+        IsRidingClone = false;
         RightInputPressedThisFrame = false;
         ScrollInputThisFrame = 0f;
 
@@ -134,6 +136,7 @@ public class ClonePlayback : MonoBehaviour
 
         IsStandingStill = speed <= standingSpeed;
         IsJumping = current.IsJumping || next.IsJumping;
+        IsRidingClone = current.IsRidingClone && next.IsRidingClone;
     }
 
     private void ApplyPose(RecordedPose pose)
@@ -144,6 +147,7 @@ public class ClonePlayback : MonoBehaviour
             head.localRotation = pose.HeadRotation;
 
         IsJumping = pose.IsJumping;
+        IsRidingClone = pose.IsRidingClone;
     }
 
     private void UpdateInteractions()
@@ -243,6 +247,7 @@ public class ClonePlayback : MonoBehaviour
         activeInteractions.Clear();
         IsLeftInputHeld = false;
         IsJumping = false;
+        IsRidingClone = false;
         RightInputPressedThisFrame = false;
         ScrollInputThisFrame = 0f;
 

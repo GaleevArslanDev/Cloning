@@ -108,6 +108,25 @@ public class CharacterAnimationController : MonoBehaviour
             return;
         }
 
+        bool isRidingClone =
+            playerClimber != null && playerClimber.IsMounted && !playerClimber.IsClimbing ||
+            clonePlayback != null && clonePlayback.IsRidingClone;
+
+        if (isRidingClone)
+        {
+            currentSpeed = 0f;
+            currentTurn = 0f;
+            heldTurn = 0f;
+            turnReleaseTime = 0f;
+            SetFloat(SpeedParameter, 0f);
+            SetBool(MovingParameter, false);
+            SetFloat(TurnParameter, 0f);
+            SetBool(IdleParameter, true);
+            SetBool(JumpingParameter, false);
+            SaveTransform();
+            return;
+        }
+
         Vector3 up = Physics.gravity.sqrMagnitude > 0.001f
             ? -Physics.gravity.normalized
             : Vector3.up;

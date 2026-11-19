@@ -14,6 +14,7 @@ public struct RecordedPose
     public Quaternion BodyRotation;
     public Quaternion HeadRotation;
     public bool IsJumping;
+    public bool IsRidingClone;
 }
 
 public struct RecordedInteraction

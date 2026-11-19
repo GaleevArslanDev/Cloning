@@ -7,6 +7,7 @@ public class PlayerClimber : MonoBehaviour
     [SerializeField] private PlayerMovement playerMovement;
     [SerializeField] private float ledgeClimbDuration = 0.4f;
     [SerializeField] private float mountJumpDuration = 0.45f;
+    [SerializeField] private float mountJumpHeight = 0.2f;
 
     private CharacterController controller;
     private ClonePlayback mountedClone;
@@ -49,8 +50,8 @@ public class PlayerClimber : MonoBehaviour
         if (controller != null)
             controller.enabled = false;
 
-        transform.SetParent(mountPoint);
-        transform.localPosition = Vector3.zero;
+        transform.SetParent(mountPoint, true);
+        climbRoutine = StartCoroutine(JumpToMountPoint());
     }
 
     public void DismountFrom(ClonePlayback clone)
@@ -135,5 +136,31 @@ public class PlayerClimber : MonoBehaviour
             controller.enabled = true;
         if (playerMovement != null)
             playerMovement.enabled = true;
+    }
+
+    private IEnumerator JumpToMountPoint()
+    {
+        Vector3 startPosition = transform.localPosition;
+        float duration = Mathf.Max(0.01f, mountJumpDuration);
+        float time = 0f;
+
+        while (time < duration)
+        {
+            time += Time.deltaTime;
+            float progress = Mathf.Clamp01(time / duration);
+            float smoothProgress = Mathf.SmoothStep(0f, 1f, progress);
+            float jumpOffset = Mathf.Sin(progress * Mathf.PI) * mountJumpHeight;
+
+            transform.localPosition = Vector3.Lerp(
+                startPosition,
+                Vector3.zero,
+                smoothProgress
+            ) + Vector3.up * jumpOffset;
+
+            yield return null;
+        }
+
+        transform.localPosition = Vector3.zero;
+        climbRoutine = null;
     }
 }
