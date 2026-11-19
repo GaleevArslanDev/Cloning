@@ -52,8 +52,11 @@ public class FirstPersonCamera : MonoBehaviour
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-        animatedHeadReferenceReady = false;
-        animatedCameraPosition = transform.localPosition;
+
+        if (animatedHeadReferenceReady)
+            SnapToAnimatedHead();
+        else
+            animatedCameraPosition = transform.localPosition;
     }
 
     private void Update()
@@ -91,9 +94,7 @@ public class FirstPersonCamera : MonoBehaviour
                 animatedHeadReferenceReady = true;
             }
 
-            Vector3 targetPosition = playerBody.InverseTransformPoint(
-                animatedHead.TransformPoint(cameraPositionInHeadSpace)
-            );
+            Vector3 targetPosition = GetAnimatedCameraPosition();
             animatedCameraPosition = Vector3.Lerp(
                 animatedCameraPosition,
                 targetPosition,
@@ -140,9 +141,7 @@ public class FirstPersonCamera : MonoBehaviour
         pitch = 0f;
         bobTime = 0f;
         currentOffset = Vector3.zero;
-        animatedHeadReferenceReady = false;
-        animatedCameraPosition = startPosition;
-        transform.localPosition = startPosition;
+        SnapToAnimatedHead();
         transform.localRotation = Quaternion.identity;
     }
 
@@ -160,10 +159,25 @@ public class FirstPersonCamera : MonoBehaviour
         pitch = Mathf.Clamp(newPitch, -verticalLimit, verticalLimit);
         bobTime = 0f;
         currentOffset = Vector3.zero;
-        animatedHeadReferenceReady = false;
-        animatedCameraPosition = startPosition;
-        transform.localPosition = startPosition;
+        SnapToAnimatedHead();
         transform.localRotation = Quaternion.Euler(pitch, 0f, 0f);
+    }
+
+    private Vector3 GetAnimatedCameraPosition()
+    {
+        return playerBody.InverseTransformPoint(
+            animatedHead.TransformPoint(cameraPositionInHeadSpace)
+        );
+    }
+
+    private void SnapToAnimatedHead()
+    {
+        if (animatedHeadReferenceReady && animatedHead != null && playerBody != null)
+            animatedCameraPosition = GetAnimatedCameraPosition();
+        else
+            animatedCameraPosition = startPosition;
+
+        transform.localPosition = animatedCameraPosition;
     }
 
     private void FindAnimatedHead()

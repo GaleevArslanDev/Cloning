@@ -19,6 +19,7 @@ public class CharacterAnimationController : MonoBehaviour
     [SerializeField] private float movementThreshold = 0.05f;
     [SerializeField] private float turningThreshold = 0.05f;
     [SerializeField] private float jumpVelocityThreshold = 0.8f;
+    [SerializeField] private float minimumJumpHeight = 0.2f;
     [SerializeField] private float maximumHeadPitch = 85f;
     [SerializeField] private float maximumHeadYaw = 70f;
 
@@ -34,6 +35,9 @@ public class CharacterAnimationController : MonoBehaviour
     private float currentTurn;
     private float heldTurn;
     private float turnReleaseTime;
+    private Vector3 verticalMovementStart;
+    private float verticalMovementDirection;
+    private bool trackingVerticalMovement;
     private bool hasPreviousTransform;
 
     private static readonly int SpeedParameter = Animator.StringToHash("Speed");
@@ -54,6 +58,8 @@ public class CharacterAnimationController : MonoBehaviour
             turnDirectionChangeSmoothness = 7f;
         if (turnResponsePower <= 0f)
             turnResponsePower = 0.35f;
+        if (minimumJumpHeight <= 0f)
+            minimumJumpHeight = 0.2f;
 
         if (animator == null)
             animator = GetComponentInChildren<Animator>(true);
@@ -78,6 +84,7 @@ public class CharacterAnimationController : MonoBehaviour
         clonePlayback = GetComponent<ClonePlayback>();
         previousPosition = transform.position;
         previousRotation = transform.rotation;
+        verticalMovementStart = transform.position;
         hasPreviousTransform = true;
         CacheParameters();
     }
@@ -86,6 +93,8 @@ public class CharacterAnimationController : MonoBehaviour
     {
         previousPosition = transform.position;
         previousRotation = transform.rotation;
+        verticalMovementStart = transform.position;
+        trackingVerticalMovement = false;
         hasPreviousTransform = true;
     }
 
@@ -183,14 +192,39 @@ public class CharacterAnimationController : MonoBehaviour
 
     private bool GetIsJumping(float deltaTime, Vector3 up)
     {
-        if (playerClimber != null && playerClimber.IsJumping)
-            return true;
+        bool isTwoPointsCopy = GetComponent<TwoPointsCopy>() != null;
 
-        if (clonePlayback != null)
-            return clonePlayback.IsJumping;
+        if (!isTwoPointsCopy)
+        {
+            if (playerClimber != null)
+                return playerClimber.IsJumping;
 
-        float verticalSpeed = Vector3.Dot(transform.position - previousPosition, up) / deltaTime;
-        return Mathf.Abs(verticalSpeed) >= jumpVelocityThreshold;
+            if (clonePlayback != null)
+                return clonePlayback.IsJumping;
+        }
+
+        float verticalMovement = Vector3.Dot(transform.position - previousPosition, up);
+        float verticalSpeed = verticalMovement / deltaTime;
+
+        if (Mathf.Abs(verticalSpeed) < jumpVelocityThreshold)
+        {
+            trackingVerticalMovement = false;
+            return false;
+        }
+
+        float direction = Mathf.Sign(verticalMovement);
+
+        if (!trackingVerticalMovement || direction != verticalMovementDirection)
+        {
+            verticalMovementStart = previousPosition;
+            verticalMovementDirection = direction;
+            trackingVerticalMovement = true;
+        }
+
+        float height = Mathf.Abs(
+            Vector3.Dot(transform.position - verticalMovementStart, up)
+        );
+        return height >= minimumJumpHeight;
     }
 
     private void CacheParameters()
