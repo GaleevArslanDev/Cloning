@@ -1787,6 +1787,7 @@ MonoBehaviour:
   playerMovement: {fileID: 693672893}
   ledgeClimbDuration: 0.4
   mountJumpDuration: 0.45
+  mountJumpHeight: 0.2
 --- !u!114 &693672899
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1911,6 +1912,7 @@ MonoBehaviour:
   movementThreshold: 0.05
   turningThreshold: 0.05
   jumpVelocityThreshold: 0.8
+  minimumJumpHeight: 0.2
   maximumHeadPitch: 85
   maximumHeadYaw: 70
 --- !u!1 &732727552
@@ -5275,7 +5277,7 @@ Transform:
   m_GameObject: {fileID: 2008166895}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.769, z: 0.157}
+  m_LocalPosition: {x: 0, y: 0.775, z: 0.262}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -5301,6 +5303,7 @@ MonoBehaviour:
   animatedHead: {fileID: 373187405740092220}
   followAnimatedHead: 1
   animationSmoothness: 14
+  maximumHeadFollowLag: 0.015
   walkFrequency: 8
   runFrequency: 11
   walkAmount: 0.035
@@ -6351,7 +6354,7 @@ Transform:
   m_GameObject: {fileID: 6344043194778182405}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -1.019, z: 0}
+  m_LocalPosition: {x: 0, y: -1.078, z: 0}
   m_LocalScale: {x: 2.15, y: 2.15, z: 2.15}
   m_ConstrainProportionsScale: 0
   m_Children:
