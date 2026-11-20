@@ -111,6 +111,14 @@ public class CloneCarryController : MonoBehaviour
         transitionTime += Time.deltaTime;
         float progress = SmoothProgress(transitionTime, pickupDuration);
 
+        if (ApplyRecordedPose())
+        {
+            if (progress >= 1f)
+                state = CloneCarryState.Holding;
+
+            return;
+        }
+
         heldItem.transform.position = Vector3.Lerp(transitionStartPosition, GetHoldPosition(), progress);
         heldItem.transform.rotation = Quaternion.Slerp(transitionStartRotation, GetHoldRotation(), progress);
 
@@ -120,6 +128,9 @@ public class CloneCarryController : MonoBehaviour
 
     private void UpdateHolding()
     {
+        if (ApplyRecordedPose())
+            return;
+
         float follow = 1f - Mathf.Exp(-followSpeed * Time.deltaTime);
         heldItem.transform.position = Vector3.Lerp(heldItem.transform.position, GetHoldPosition(), follow);
         heldItem.transform.rotation = Quaternion.Slerp(heldItem.transform.rotation, GetHoldRotation(), follow);
@@ -154,6 +165,18 @@ public class CloneCarryController : MonoBehaviour
     private Quaternion GetHoldRotation()
     {
         return carryPoint.rotation * holdRotation;
+    }
+
+    private bool ApplyRecordedPose()
+    {
+        if (playback == null || !playback.HasCarryPose)
+            return false;
+
+        heldItem.transform.SetPositionAndRotation(
+            transform.TransformPoint(playback.CarryLocalPosition),
+            transform.rotation * playback.CarryLocalRotation
+        );
+        return true;
     }
 
     private void UpdateRotation()

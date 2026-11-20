@@ -204,6 +204,14 @@ public class CloneRecorder : MonoBehaviour
         if (playerBody == null || playerHead == null)
             return;
 
+        Vector3 carryLocalPosition = Vector3.zero;
+        Quaternion carryLocalRotation = Quaternion.identity;
+        bool hasCarryPose = playerCarry != null && playerCarry.TryGetHeldPose(
+            playerBody,
+            out carryLocalPosition,
+            out carryLocalRotation
+        );
+
         recording.Poses.Add(new RecordedPose
         {
             Time = recordingTime,
@@ -213,7 +221,10 @@ public class CloneRecorder : MonoBehaviour
             IsJumping = playerClimber != null && playerClimber.IsJumping,
             IsRidingClone = playerClimber != null &&
                 playerClimber.IsMounted &&
-                !playerClimber.IsClimbing
+                !playerClimber.IsClimbing,
+            HasCarryPose = hasCarryPose,
+            CarryLocalPosition = carryLocalPosition,
+            CarryLocalRotation = carryLocalRotation
         });
     }
 

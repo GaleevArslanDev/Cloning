@@ -21,6 +21,9 @@ public class ClonePlayback : MonoBehaviour
     public bool IsStandingStill { get; private set; }
     public bool IsJumping { get; private set; }
     public bool IsRidingClone { get; private set; }
+    public bool HasCarryPose { get; private set; }
+    public Vector3 CarryLocalPosition { get; private set; }
+    public Quaternion CarryLocalRotation { get; private set; }
     public bool IsLeftInputHeld { get; private set; }
     public bool RightInputPressedThisFrame { get; private set; }
     public float ScrollInputThisFrame { get; private set; }
@@ -86,6 +89,7 @@ public class ClonePlayback : MonoBehaviour
         IsLeftInputHeld = false;
         IsJumping = false;
         IsRidingClone = false;
+        HasCarryPose = false;
         RightInputPressedThisFrame = false;
         ScrollInputThisFrame = 0f;
 
@@ -137,6 +141,7 @@ public class ClonePlayback : MonoBehaviour
         IsStandingStill = speed <= standingSpeed;
         IsJumping = current.IsJumping || next.IsJumping;
         IsRidingClone = current.IsRidingClone && next.IsRidingClone;
+        UpdateCarryPose(current, next, progress);
     }
 
     private void ApplyPose(RecordedPose pose)
@@ -148,6 +153,33 @@ public class ClonePlayback : MonoBehaviour
 
         IsJumping = pose.IsJumping;
         IsRidingClone = pose.IsRidingClone;
+        HasCarryPose = pose.HasCarryPose;
+        CarryLocalPosition = pose.CarryLocalPosition;
+        CarryLocalRotation = pose.CarryLocalRotation;
+    }
+
+    private void UpdateCarryPose(RecordedPose current, RecordedPose next, float progress)
+    {
+        HasCarryPose = current.HasCarryPose || next.HasCarryPose;
+
+        if (current.HasCarryPose && next.HasCarryPose)
+        {
+            CarryLocalPosition = Vector3.Lerp(
+                current.CarryLocalPosition,
+                next.CarryLocalPosition,
+                progress
+            );
+            CarryLocalRotation = Quaternion.Slerp(
+                current.CarryLocalRotation,
+                next.CarryLocalRotation,
+                progress
+            );
+            return;
+        }
+
+        RecordedPose pose = current.HasCarryPose ? current : next;
+        CarryLocalPosition = pose.CarryLocalPosition;
+        CarryLocalRotation = pose.CarryLocalRotation;
     }
 
     private void UpdateInteractions()
@@ -248,6 +280,7 @@ public class ClonePlayback : MonoBehaviour
         IsLeftInputHeld = false;
         IsJumping = false;
         IsRidingClone = false;
+        HasCarryPose = false;
         RightInputPressedThisFrame = false;
         ScrollInputThisFrame = 0f;
 

@@ -15,6 +15,9 @@ public struct RecordedPose
     public Quaternion HeadRotation;
     public bool IsJumping;
     public bool IsRidingClone;
+    public bool HasCarryPose;
+    public Vector3 CarryLocalPosition;
+    public Quaternion CarryLocalRotation;
 }
 
 public struct RecordedInteraction

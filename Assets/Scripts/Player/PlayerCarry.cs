@@ -146,6 +146,24 @@ public class PlayerCarry : MonoBehaviour
         holdRotation = Quaternion.AngleAxis(angle, Vector3.up) * holdRotation;
     }
 
+    public bool TryGetHeldPose(
+        Transform relativeTo,
+        out Vector3 localPosition,
+        out Quaternion localRotation
+    )
+    {
+        if (heldItem == null || relativeTo == null)
+        {
+            localPosition = Vector3.zero;
+            localRotation = Quaternion.identity;
+            return false;
+        }
+
+        localPosition = relativeTo.InverseTransformPoint(heldItem.transform.position);
+        localRotation = Quaternion.Inverse(relativeTo.rotation) * heldItem.transform.rotation;
+        return true;
+    }
+
     private void UpdateLifting()
     {
         transitionTime += Time.deltaTime;
