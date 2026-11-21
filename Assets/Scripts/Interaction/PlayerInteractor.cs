@@ -43,6 +43,8 @@ public class PlayerInteractor : MonoBehaviour
 
     private void Update()
     {
+        if (PauseMenuController.IsGamePaused) return;
+
         if (playerClimber != null && playerClimber.IsMounted)
         {
             StopInteraction();

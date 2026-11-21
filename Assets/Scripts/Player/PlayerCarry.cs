@@ -58,6 +58,8 @@ public class PlayerCarry : MonoBehaviour
 
     private void Update()
     {
+        if (PauseMenuController.IsGamePaused) return;
+
         if (heldItem == null)
         {
             state = CarryState.None;
@@ -89,6 +91,8 @@ public class PlayerCarry : MonoBehaviour
 
     private void LateUpdate()
     {
+        if (PauseMenuController.IsGamePaused) return;
+
         if (heldItem == null || holdTransform == null)
             return;
 

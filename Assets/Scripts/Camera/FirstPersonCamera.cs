@@ -32,6 +32,7 @@ public class FirstPersonCamera : MonoBehaviour
     private float pitch;
     private float bobTime;
     private bool animatedHeadReferenceReady;
+    private bool wasPaused;
 
     private void Awake()
     {
@@ -61,11 +62,25 @@ public class FirstPersonCamera : MonoBehaviour
 
     private void Update()
     {
+        if (PauseMenuController.IsGamePaused)
+        {
+            wasPaused = true;
+            return;
+        }
+        // Relocking the cursor can produce a synthetic mouse delta.
+        if (wasPaused)
+        {
+            wasPaused = false;
+            return;
+        }
+
         Look();
     }
 
     private void LateUpdate()
     {
+        if (PauseMenuController.IsGamePaused) return;
+
         UpdateCameraMotion();
     }
 

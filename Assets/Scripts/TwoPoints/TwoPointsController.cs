@@ -53,12 +53,16 @@ public class TwoPointsController : MonoBehaviour
 
     private void LateUpdate()
     {
+        if (PauseMenuController.IsGamePaused) return;
+
         SyncUpperPlayer();
         SyncClones();
     }
 
     private void Update()
     {
+        if (PauseMenuController.IsGamePaused) return;
+
         if (upperPlayerInteractor == null || Mouse.current == null)
             return;
 

@@ -3,7 +3,9 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
+[DefaultExecutionOrder(-10000)]
 public class PauseMenuController : MonoBehaviour
 {
     [SerializeField] private GameObject menuRoot;
@@ -15,19 +17,55 @@ public class PauseMenuController : MonoBehaviour
     [SerializeField] private Color errorColor = new Color(1f, 0.35f, 0.3f);
     [SerializeField] private Color successColor = new Color(0.4f, 0.85f, 0.5f);
 
-    private PlayerControlLock playerControl;
     private float previousTimeScale = 1f;
     private bool isPaused;
+    private bool resumeRequested;
+    private bool loading;
+    private bool previousAudioPause;
+    private CursorLockMode previousCursorLock;
+    private bool previousCursorVisible;
+    public static bool IsGamePaused { get; private set; }
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetState()
+    {
+        IsGamePaused = false;
+        SceneManager.sceneLoaded -= InstallForScene;
+    }
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    private static void Register()
+    {
+        SceneManager.sceneLoaded += InstallForScene;
+    }
+
+    private static void InstallForScene(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name == "MainMenu" || FindFirstObjectByType<PauseMenuController>() != null)
+            return;
+        foreach (var root in scene.GetRootGameObjects())
+        {
+            if (root.GetComponentInChildren<PlayerMovement>(true) == null) continue;
+            var menu = new GameObject("PauseMenu");
+            SceneManager.MoveGameObjectToScene(menu, scene);
+            menu.AddComponent<PauseMenuController>();
+            break;
+        }
+    }
 
     private void Awake()
     {
-        playerControl = FindFirstObjectByType<PlayerControlLock>();
+        if (menuRoot == null)
+        {
+            menuRoot = PauseMenuView.Create(transform, Resume, RestartLevel, ExitGame);
+            pausePanel = menuRoot.transform.Find("PausePanel").gameObject;
+        }
         SetMenuVisible(false);
     }
 
     private void Update()
     {
-        if (Keyboard.current == null || !Keyboard.current.escapeKey.wasPressedThisFrame)
+        if (loading || Mouse.current == null || !Mouse.current.middleButton.wasPressedThisFrame)
             return;
 
         if (!isPaused)
@@ -44,39 +82,61 @@ public class PauseMenuController : MonoBehaviour
 
     public void Pause()
     {
-        if (isPaused)
+        if (isPaused || loading)
             return;
 
         isPaused = true;
+        IsGamePaused = true;
         previousTimeScale = Time.timeScale;
+        previousAudioPause = AudioListener.pause;
+        previousCursorLock = Cursor.lockState;
+        previousCursorVisible = Cursor.visible;
         Time.timeScale = 0f;
-
-        if (playerControl == null)
-            playerControl = FindFirstObjectByType<PlayerControlLock>();
-
-        if (playerControl != null)
-            playerControl.SetControlEnabled(false);
+        AudioListener.pause = true;
 
         SetMenuVisible(true);
         ShowPausePanel();
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
+        if (EventSystem.current != null && pausePanel != null)
+        {
+            var firstButton = pausePanel.GetComponentInChildren<Button>();
+            if (firstButton != null) EventSystem.current.SetSelectedGameObject(firstButton.gameObject);
+        }
     }
 
     public void Resume()
     {
-        if (!isPaused)
+        if (!isPaused || loading)
             return;
+        // Restore after every gameplay Update, so the UI click cannot reach gameplay.
+        resumeRequested = true;
+    }
 
-        isPaused = false;
-        Time.timeScale = previousTimeScale > 0f ? previousTimeScale : 1f;
-
-        if (playerControl != null)
-            playerControl.SetControlEnabled(true);
-
+    private void LateUpdate()
+    {
+        if (!resumeRequested) return;
+        resumeRequested = false;
+        RestorePauseState();
         SetMenuVisible(false);
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+    }
+
+    private void RestorePauseState()
+    {
+        if (!isPaused) return;
+        isPaused = false;
+        IsGamePaused = false;
+        Time.timeScale = previousTimeScale;
+        AudioListener.pause = previousAudioPause;
+        Cursor.lockState = previousCursorLock;
+        Cursor.visible = previousCursorVisible;
+    }
+
+    private void OnDisable()
+    {
+        resumeRequested = false;
+        RestorePauseState();
+        SetMenuVisible(false);
     }
 
     public void ShowPausePanel()
@@ -147,14 +207,27 @@ public class PauseMenuController : MonoBehaviour
 
     public void RestartLevel()
     {
-        Time.timeScale = 1f;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        LoadScene(SceneManager.GetActiveScene().path);
     }
 
     public void ExitGame()
     {
+        LoadScene("MainMenu");
+    }
+
+    private void LoadScene(string scene)
+    {
+        if (loading) return;
+        if (!Application.CanStreamedLevelBeLoaded(scene))
+        {
+            Debug.LogError("Scene is missing from the build scene list: " + scene, this);
+            return;
+        }
+        loading = true;
+        resumeRequested = false;
+        RestorePauseState();
         Time.timeScale = 1f;
-        Application.Quit();
+        SceneManager.LoadScene(scene, LoadSceneMode.Single);
     }
 
     private void SetMenuVisible(bool visible)

@@ -74,6 +74,8 @@ public class CloneRecorder : MonoBehaviour
 
     private void Update()
     {
+        if (PauseMenuController.IsGamePaused) return;
+
         if (!isRecording)
             return;
 

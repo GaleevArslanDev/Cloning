@@ -36,6 +36,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
+        if (PauseMenuController.IsGamePaused) return;
+
         ApplyPlatformMovement();
         groundContactFound = false;
         ReadInput();
