@@ -113,7 +113,7 @@ public class LoadSaveMenu : MonoBehaviour
             selectedSlot = slot.Name;
             SetSelectedInfo(
                 GetDisplayName(slot.Name),
-                slot.SceneName,
+                GameSaveSystem.GetLevelNumber(slot.SceneName),
                 FormatDate(slot.SavedAt)
             );
             SetButtonsEnabled(true);
@@ -141,7 +141,7 @@ public class LoadSaveMenu : MonoBehaviour
 
     public static string GetDisplayName(string slotName)
     {
-        return string.Equals(slotName, "Autosave", StringComparison.OrdinalIgnoreCase)
+        return slotName.StartsWith("Autosave", StringComparison.OrdinalIgnoreCase)
             ? "Автосохранение"
             : slotName;
     }

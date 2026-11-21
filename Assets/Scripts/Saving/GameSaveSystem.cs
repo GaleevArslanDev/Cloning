@@ -138,6 +138,28 @@ public static class GameSaveSystem
         return File.Exists(GetFilePath(GetSafeSlotName(slotName)));
     }
 
+    public static string GetLevelNumber(string sceneName)
+    {
+        if (string.IsNullOrWhiteSpace(sceneName))
+            return "-";
+
+        string number = string.Empty;
+
+        foreach (char character in sceneName)
+        {
+            if (char.IsDigit(character))
+            {
+                number += character;
+                continue;
+            }
+
+            if (number.Length > 0)
+                break;
+        }
+
+        return number.Length > 0 ? number : sceneName;
+    }
+
     public static List<SaveSlotInfo> GetSlots()
     {
         List<SaveSlotInfo> slots = new List<SaveSlotInfo>();
@@ -234,6 +256,7 @@ public class SaveLoadRunner : MonoBehaviour
 
     private IEnumerator LoadScene()
     {
+        LevelManager.PrepareForSaveLoad();
         yield return SceneManager.LoadSceneAsync(pendingSave.SceneName);
 
         LevelManager levelManager = FindFirstObjectByType<LevelManager>();

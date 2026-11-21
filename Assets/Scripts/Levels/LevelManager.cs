@@ -18,6 +18,7 @@ public class LevelManager : MonoBehaviour
     private bool levelConditionCompleted;
     private bool finishAnimationSignalReceived;
     private static bool enteringFromTransition;
+    private static bool enteringFromSave;
     private static bool hasPreservedLook;
     private static Quaternion preservedBodyRotation;
     private static float preservedPitch;
@@ -57,8 +58,10 @@ public class LevelManager : MonoBehaviour
             cloneRecorder.PrepareNewLevel(level.PlayerStartPoint);
 
         bool cameFromTransition = enteringFromTransition;
+        bool cameFromSave = enteringFromSave;
+        enteringFromSave = false;
 
-        if (cameFromTransition && hasPreservedLook)
+        if (!cameFromSave && cameFromTransition && hasPreservedLook)
         {
             FirstPersonCamera playerCamera = FindFirstObjectByType<FirstPersonCamera>();
 
@@ -68,8 +71,9 @@ public class LevelManager : MonoBehaviour
             hasPreservedLook = false;
         }
 
-        bool shouldBuild = cameFromTransition ||
-                           roomTransition != null && roomTransition.BuildWhenSceneStarts;
+        bool shouldBuild = !cameFromSave &&
+                           (cameFromTransition ||
+                            roomTransition != null && roomTransition.BuildWhenSceneStarts);
         enteringFromTransition = false;
 
         if (shouldBuild && roomTransition != null)
@@ -82,6 +86,13 @@ public class LevelManager : MonoBehaviour
             playerControl.SetControlEnabled(true);
 
         IsReady = true;
+    }
+
+    public static void PrepareForSaveLoad()
+    {
+        enteringFromSave = true;
+        enteringFromTransition = false;
+        hasPreservedLook = false;
     }
 
     public void CompleteCurrentLevel()

@@ -27,6 +27,9 @@ public class CloneRecorder : MonoBehaviour
 
     private void Awake()
     {
+        if (FindFirstObjectByType<AutosaveController>() == null)
+            gameObject.AddComponent<AutosaveController>();
+
         if (playerBody == null)
             playerBody = transform;
         if (playerMovement == null)

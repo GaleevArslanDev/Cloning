@@ -19,7 +19,7 @@ public class SaveSlotView : MonoBehaviour
         if (saveName != null)
             saveName.text = LoadSaveMenu.GetDisplayName(slot.Name);
         if (sceneName != null)
-            sceneName.text = slot.SceneName;
+            sceneName.text = GameSaveSystem.GetLevelNumber(slot.SceneName);
         if (saveDate != null)
             saveDate.text = LoadSaveMenu.FormatDate(slot.SavedAt);
     }
