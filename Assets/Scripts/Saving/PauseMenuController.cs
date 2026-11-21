@@ -212,6 +212,7 @@ public class PauseMenuController : MonoBehaviour
 
     public void ExitGame()
     {
+        AutosaveController.SaveBeforeExit();
         LoadScene("MainMenu");
     }
 
