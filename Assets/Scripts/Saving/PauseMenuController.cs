@@ -153,6 +153,7 @@ public class PauseMenuController : MonoBehaviour
 
     public void ExitGame()
     {
+        AutosaveController.SaveBeforeExit();
         Time.timeScale = 1f;
         Application.Quit();
     }
