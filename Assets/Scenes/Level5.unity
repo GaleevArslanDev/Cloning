@@ -51783,8 +51783,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RoomTransitionController
   roomCubes: {fileID: 963989373}
   levelObjectsRoot: {fileID: 1111170981}
-  roomMaterial: {fileID: 0}
-  transitionColor: {r: 1, g: 1, b: 1, a: 1}
+  roomMaterial: {fileID: 2100000, guid: 2eb9c77f1fc7f0841929afa928fdd0ad, type: 2}
+  transitionColor: {r: 0.7529412, g: 0.7529412, b: 0.7529412, a: 1}
   materialColorDuration: 4
   objectMoveDuration: 4
   roomMoveDuration: 3
