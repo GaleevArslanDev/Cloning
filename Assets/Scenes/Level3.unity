@@ -58732,24 +58732,12 @@ PrefabInstance:
       value: Glass Panel
       objectReference: {fileID: 0}
     - target: {fileID: 6426323695050525165, guid: f30825a91f305d54fbaf07c175e8eb03, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 6426323695050525165, guid: f30825a91f305d54fbaf07c175e8eb03, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 12
-      objectReference: {fileID: 0}
-    - target: {fileID: 6426323695050525165, guid: f30825a91f305d54fbaf07c175e8eb03, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 6426323695050525165, guid: f30825a91f305d54fbaf07c175e8eb03, type: 3}
       propertyPath: m_LocalPosition.x
       value: -25.826
       objectReference: {fileID: 0}
     - target: {fileID: 6426323695050525165, guid: f30825a91f305d54fbaf07c175e8eb03, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 3.6829996
+      value: 3.61
       objectReference: {fileID: 0}
     - target: {fileID: 6426323695050525165, guid: f30825a91f305d54fbaf07c175e8eb03, type: 3}
       propertyPath: m_LocalPosition.z

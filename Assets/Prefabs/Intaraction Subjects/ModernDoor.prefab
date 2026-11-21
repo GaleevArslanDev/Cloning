@@ -430,7 +430,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa8d47198a374c4aaa2b2e8fd5535bc1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HoldDoorAction
-  doorAnimator: {fileID: 2089260628262809655}
+  doorAnimator: {fileID: 0}
   openingClip: {fileID: 7400000, guid: 8c804b5cae8838046beb5d7ad7d7512e, type: 2}
   playbackSpeed: 1
   requiredSignals: 1
@@ -501,7 +501,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: ade4b3d92842a8a428a75d3f591f0a59, type: 2}
+  - {fileID: 2100000, guid: 83da4e55b6a59e7479fad24635f5b08e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -591,7 +591,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: ade4b3d92842a8a428a75d3f591f0a59, type: 2}
+  - {fileID: 2100000, guid: 83da4e55b6a59e7479fad24635f5b08e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
