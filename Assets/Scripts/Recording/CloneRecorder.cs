@@ -148,6 +148,53 @@ public class CloneRecorder : MonoBehaviour
         BeginRecording();
     }
 
+    public CloneRecorderSaveData CaptureSaveData()
+    {
+        if (isRecording && recording != null)
+        {
+            RecordPose();
+            recording.Duration = recordingTime;
+        }
+
+        CloneRecorderSaveData save = new CloneRecorderSaveData
+        {
+            RecordingTime = recordingTime,
+            IsRecording = isRecording,
+            CurrentRecording = RecordingSaveConverter.ToSaveData(recording)
+        };
+
+        foreach (CloneRecordingData savedRecording in savedRecordings)
+            save.SavedRecordings.Add(RecordingSaveConverter.ToSaveData(savedRecording));
+
+        return save;
+    }
+
+    public void RestoreSaveData(CloneRecorderSaveData save)
+    {
+        if (save == null)
+            return;
+
+        StopActiveClones();
+        savedRecordings.Clear();
+
+        foreach (RecordingSaveData savedRecording in save.SavedRecordings)
+        {
+            CloneRecordingData restored = RecordingSaveConverter.FromSaveData(savedRecording);
+
+            if (restored != null)
+                savedRecordings.Add(restored);
+        }
+
+        recording = RecordingSaveConverter.FromSaveData(save.CurrentRecording);
+        recordingTime = Mathf.Max(0f, save.RecordingTime);
+        nextSampleTime = recordingTime + Mathf.Max(0.02f, sampleInterval);
+        isRecording = save.IsRecording && recording != null;
+        previousLeftInput = Mouse.current != null && Mouse.current.leftButton.isPressed;
+
+        foreach (CloneRecordingData savedRecording in savedRecordings)
+            SpawnClone(savedRecording, recordingTime);
+    }
+
     private void BeginRecording()
     {
         recording = new CloneRecordingData();
@@ -308,8 +355,17 @@ public class CloneRecorder : MonoBehaviour
 
     private void SpawnClone(CloneRecordingData recordingToPlay)
     {
-        if (clonePrefab == null || recordingToPlay.Poses.Count == 0)
+        SpawnClone(recordingToPlay, 0f);
+    }
+
+    private void SpawnClone(CloneRecordingData recordingToPlay, float startTime)
+    {
+        if (clonePrefab == null ||
+            recordingToPlay.Poses.Count == 0 ||
+            startTime >= recordingToPlay.Duration)
+        {
             return;
+        }
 
         GameObject clone = Instantiate(clonePrefab);
         ClonePlayback playback = clone.GetComponent<ClonePlayback>();
@@ -320,7 +376,7 @@ public class CloneRecorder : MonoBehaviour
             return;
         }
 
-        playback.Initialize(recordingToPlay);
+        playback.Initialize(recordingToPlay, startTime);
         activeClones.Add(playback);
     }
 

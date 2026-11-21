@@ -3,7 +3,7 @@ using UnityEngine;
 // Scrubs a single non-looping clip through the Animator's Motion Time parameter.
 [DisallowMultipleComponent]
 [RequireComponent(typeof(Animator))]
-public sealed class HoldDoorAction : MonoBehaviour
+public sealed class HoldDoorAction : MonoBehaviour, IJsonSaveable
 {
     [SerializeField] private Animator doorAnimator;
     [SerializeField] private AnimationClip openingClip;
@@ -16,6 +16,13 @@ public sealed class HoldDoorAction : MonoBehaviour
     [SerializeField, Range(0f, 1f)] private float progress;
 
     private static readonly int ProgressParameter = Animator.StringToHash("OpenProgress");
+
+    [System.Serializable]
+    private class SaveState
+    {
+        public int ActiveSignals;
+        public float Progress;
+    }
 
     private void Awake()
     {
@@ -47,6 +54,27 @@ public sealed class HoldDoorAction : MonoBehaviour
     public void Close()
     {
         activeSignals = Mathf.Max(0, activeSignals - 1);
+    }
+
+    public string CaptureJsonState()
+    {
+        return JsonUtility.ToJson(new SaveState
+        {
+            ActiveSignals = activeSignals,
+            Progress = progress
+        });
+    }
+
+    public void RestoreJsonState(string json)
+    {
+        SaveState state = JsonUtility.FromJson<SaveState>(json);
+
+        if (state == null)
+            return;
+
+        activeSignals = Mathf.Max(0, state.ActiveSignals);
+        progress = Mathf.Clamp01(state.Progress);
+        ApplyProgress();
     }
 
     private void OnDisable()

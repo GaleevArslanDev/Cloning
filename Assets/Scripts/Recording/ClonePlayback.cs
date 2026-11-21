@@ -73,6 +73,11 @@ public class ClonePlayback : MonoBehaviour
 
     public void Initialize(CloneRecordingData recordingData)
     {
+        Initialize(recordingData, 0f);
+    }
+
+    public void Initialize(CloneRecordingData recordingData, float startTime)
+    {
         if (GetComponent<CharacterAnimationController>() == null)
             gameObject.AddComponent<CharacterAnimationController>();
 
@@ -95,6 +100,77 @@ public class ClonePlayback : MonoBehaviour
 
         if (recording.Poses.Count > 0)
             ApplyPose(recording.Poses[0]);
+
+        if (startTime > 0f)
+            Seek(startTime);
+    }
+
+    private void Seek(float time)
+    {
+        playbackTime = Mathf.Clamp(time, 0f, recording.Duration);
+        poseIndex = 0;
+        UpdatePose();
+
+        activeInteractions.Clear();
+        interactionIndex = 0;
+
+        while (interactionIndex < recording.Interactions.Count &&
+               recording.Interactions[interactionIndex].Time <= playbackTime)
+        {
+            RecordedInteraction interaction = recording.Interactions[interactionIndex];
+
+            if (interaction.Target != null)
+            {
+                if (interaction.Type == RecordedInteractionType.Begin)
+                    activeInteractions.Add(interaction.Target);
+                else
+                    activeInteractions.Remove(interaction.Target);
+            }
+
+            interactionIndex++;
+        }
+
+        foreach (MonoBehaviour target in activeInteractions)
+        {
+            if (target != null && target is IInteractable interactable)
+                interactable.BeginInteraction(gameObject);
+        }
+
+        carryActionIndex = 0;
+        RecordedCarryAction? lastCarryAction = null;
+
+        while (carryActionIndex < recording.CarryActions.Count &&
+               recording.CarryActions[carryActionIndex].Time <= playbackTime)
+        {
+            lastCarryAction = recording.CarryActions[carryActionIndex];
+            carryActionIndex++;
+        }
+
+        if (lastCarryAction.HasValue &&
+            lastCarryAction.Value.Type == RecordedCarryActionType.Pickup &&
+            carryController != null)
+        {
+            carryController.Pickup(lastCarryAction.Value.Item);
+        }
+
+        inputActionIndex = 0;
+        IsLeftInputHeld = false;
+
+        while (inputActionIndex < recording.InputActions.Count &&
+               recording.InputActions[inputActionIndex].Time <= playbackTime)
+        {
+            RecordedInputAction action = recording.InputActions[inputActionIndex];
+
+            if (action.Type == RecordedInputType.LeftPressed)
+                IsLeftInputHeld = true;
+            else if (action.Type == RecordedInputType.LeftReleased)
+                IsLeftInputHeld = false;
+
+            inputActionIndex++;
+        }
+
+        RightInputPressedThisFrame = false;
+        ScrollInputThisFrame = 0f;
     }
 
     private void Update()

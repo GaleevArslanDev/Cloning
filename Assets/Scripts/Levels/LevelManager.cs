@@ -23,6 +23,7 @@ public class LevelManager : MonoBehaviour
     private static float preservedPitch;
 
     public bool IsTransitioning => isTransitioning;
+    public bool IsReady { get; private set; }
     public bool LevelConditionCompleted => levelConditionCompleted;
     public LevelStage Level => level;
     public string NextSceneName => level != null ? level.NextSceneName : string.Empty;
@@ -42,7 +43,10 @@ public class LevelManager : MonoBehaviour
     private IEnumerator Start()
     {
         if (level == null)
+        {
+            IsReady = true;
             yield break;
+        }
 
         if (playerControl != null)
             playerControl.SetTransitionControl();
@@ -76,6 +80,8 @@ public class LevelManager : MonoBehaviour
 
         if (playerControl != null)
             playerControl.SetControlEnabled(true);
+
+        IsReady = true;
     }
 
     public void CompleteCurrentLevel()
@@ -89,6 +95,11 @@ public class LevelManager : MonoBehaviour
             return;
 
         levelConditionCompleted = true;
+    }
+
+    public void RestoreLevelCondition(bool completed)
+    {
+        levelConditionCompleted = completed;
     }
 
     public bool TryCompleteFromStart(GameObject interactor)

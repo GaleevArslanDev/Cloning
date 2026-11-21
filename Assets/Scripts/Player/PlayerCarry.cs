@@ -32,6 +32,7 @@ public class PlayerCarry : MonoBehaviour
     private CarryState state;
 
     public bool IsBusy => heldItem != null;
+    public CarryableItem HeldItem => heldItem;
 
     public event Action<CarryableItem> ItemPickedUp;
     public event Action<CarryableItem, Vector3, Quaternion> ItemDropped;
@@ -161,6 +162,22 @@ public class PlayerCarry : MonoBehaviour
 
         localPosition = relativeTo.InverseTransformPoint(heldItem.transform.position);
         localRotation = Quaternion.Inverse(relativeTo.rotation) * heldItem.transform.rotation;
+        return true;
+    }
+
+    public bool RestoreHeldItem(CarryableItem item)
+    {
+        CancelCarry();
+
+        if (item == null || holdTransform == null || !item.TryTake(gameObject))
+            return false;
+
+        heldItem = item;
+        holdRotation = Quaternion.Inverse(holdTransform.rotation) * item.transform.rotation;
+        swayTime = 0f;
+        transitionTime = 0f;
+        canDrop = true;
+        state = CarryState.Holding;
         return true;
     }
 

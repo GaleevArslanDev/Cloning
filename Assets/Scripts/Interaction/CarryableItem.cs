@@ -25,6 +25,22 @@ public class CarryableItem : MonoBehaviour, IInteractable
     public Vector3 HoldPositionOffset => holdPositionOffset;
     public Vector3 HoldRotationOffset => holdRotationOffset;
     public bool IsHeld => owner != null;
+    public bool IsKinematic
+    {
+        get
+        {
+            Initialize();
+            return owner != null ? originalKinematic : body.isKinematic;
+        }
+    }
+    public bool UsesGravity
+    {
+        get
+        {
+            Initialize();
+            return owner != null ? originalGravity : body.useGravity;
+        }
+    }
 
     private void Awake()
     {
@@ -151,5 +167,27 @@ public class CarryableItem : MonoBehaviour, IInteractable
 
         for (int i = 0; i < itemColliders.Length; i++)
             startTriggers[i] = itemColliders[i].isTrigger;
+    }
+
+    public void RestoreSavedState(
+        Vector3 position,
+        Quaternion rotation,
+        bool isKinematic,
+        bool useGravity
+    )
+    {
+        Initialize();
+        owner = null;
+        body.isKinematic = true;
+        body.useGravity = false;
+        body.linearVelocity = Vector3.zero;
+        body.angularVelocity = Vector3.zero;
+        transform.SetPositionAndRotation(position, rotation);
+
+        for (int i = 0; i < itemColliders.Length; i++)
+            itemColliders[i].isTrigger = startTriggers[i];
+
+        body.useGravity = useGravity;
+        body.isKinematic = isKinematic;
     }
 }

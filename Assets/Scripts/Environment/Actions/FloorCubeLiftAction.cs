@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class FloorCubeLiftAction : MonoBehaviour
+public class FloorCubeLiftAction : MonoBehaviour, IJsonSaveable
 {
     [SerializeField] private RoomCubeField roomCubes;
     [SerializeField] private Transform[] floorCubes;
@@ -11,6 +11,13 @@ public class FloorCubeLiftAction : MonoBehaviour
     private int activeRequests;
     private float currentHeight;
     private bool registered;
+
+    [System.Serializable]
+    private class SaveState
+    {
+        public int ActiveRequests;
+        public float CurrentHeight;
+    }
 
     public bool IsActive => activeRequests >= Mathf.Max(1, requiredSignals);
 
@@ -56,6 +63,30 @@ public class FloorCubeLiftAction : MonoBehaviour
     public void Lower()
     {
         Deactivate();
+    }
+
+    public string CaptureJsonState()
+    {
+        return JsonUtility.ToJson(new SaveState
+        {
+            ActiveRequests = activeRequests,
+            CurrentHeight = currentHeight
+        });
+    }
+
+    public void RestoreJsonState(string json)
+    {
+        SaveState state = JsonUtility.FromJson<SaveState>(json);
+
+        if (state == null)
+            return;
+
+        activeRequests = Mathf.Max(0, state.ActiveRequests);
+        currentHeight = Mathf.Clamp(state.CurrentHeight, 0f, Mathf.Max(0f, liftHeight));
+        Register();
+
+        if (roomCubes != null)
+            roomCubes.SetFloorLift(this, currentHeight);
     }
 
     private void Register()
