@@ -36342,7 +36342,7 @@ MonoBehaviour:
   - {fileID: 1584368089}
   - {fileID: 757950574}
   - {fileID: 1121949272}
-  liftHeight: 2.2
+  liftHeight: 2.15
   movementSpeed: 1
   requiredSignals: 1
 --- !u!4 &658399659 stripped
