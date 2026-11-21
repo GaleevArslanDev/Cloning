@@ -4,8 +4,14 @@ using UnityEngine;
 
 public class RoomTransitionController : MonoBehaviour
 {
+    private static readonly Dictionary<Material, Color> originalMaterialColors =
+        new Dictionary<Material, Color>();
+
     [SerializeField] private RoomCubeField roomCubes;
     [SerializeField] private Transform levelObjectsRoot;
+    [SerializeField] private Material roomMaterial;
+    [SerializeField] private Color transitionColor = Color.white;
+    [SerializeField] private float materialColorDuration = 4f;
     [SerializeField] private float objectMoveDuration = 4f;
     [SerializeField] private float roomMoveDuration = 3f;
     [SerializeField] private float breathingSettleDuration = 1.5f;
@@ -14,6 +20,8 @@ public class RoomTransitionController : MonoBehaviour
     [SerializeField] private bool buildWhenSceneStarts;
 
     private readonly List<TransitionObject> objects = new List<TransitionObject>();
+    private Color originalMaterialColor = Color.white;
+    private string materialColorProperty;
 
     private Transform FlatRoomCenter => roomCubes != null
         ? roomCubes.FlatRoomCenter
@@ -48,15 +56,23 @@ public class RoomTransitionController : MonoBehaviour
         if (roomCubes == null)
             roomCubes = FindFirstObjectByType<RoomCubeField>();
 
+        CaptureMaterialColor();
         CaptureObjects();
     }
 
     public IEnumerator HideLevel()
     {
+        Coroutine colorAnimation = StartMaterialAnimation(
+            GetMaterialColor(),
+            transitionColor
+        );
         PrepareObjects(false);
         yield return AnimateObjects(0f, 1f);
         yield return AnimateRoom(0f, 1f);
         yield return AnimateBreathing(1f, 0f);
+
+        if (colorAnimation != null)
+            yield return colorAnimation;
 
         if (roomCubes != null)
             roomCubes.SetFrozen(true);
@@ -64,6 +80,12 @@ public class RoomTransitionController : MonoBehaviour
 
     public IEnumerator BuildLevel()
     {
+        SetMaterialColor(transitionColor);
+        Coroutine colorAnimation = StartMaterialAnimation(
+            transitionColor,
+            originalMaterialColor
+        );
+
         if (roomCubes != null)
         {
             roomCubes.SetFlatness(1f);
@@ -76,7 +98,68 @@ public class RoomTransitionController : MonoBehaviour
         yield return AnimateRoom(1f, 0f);
         yield return AnimateBreathing(0f, 1f);
         yield return AnimateObjects(1f, 0f);
+
+        if (colorAnimation != null)
+            yield return colorAnimation;
+
         RestoreObjects();
+    }
+
+    private void CaptureMaterialColor()
+    {
+        if (roomMaterial == null)
+            return;
+
+        if (roomMaterial.HasProperty("_BaseColor"))
+            materialColorProperty = "_BaseColor";
+        else if (roomMaterial.HasProperty("_Color"))
+            materialColorProperty = "_Color";
+        else
+            return;
+
+        if (!originalMaterialColors.TryGetValue(roomMaterial, out originalMaterialColor))
+        {
+            originalMaterialColor = roomMaterial.GetColor(materialColorProperty);
+            originalMaterialColors.Add(roomMaterial, originalMaterialColor);
+        }
+    }
+
+    private Coroutine StartMaterialAnimation(Color from, Color to)
+    {
+        if (roomMaterial == null || string.IsNullOrEmpty(materialColorProperty))
+            return null;
+
+        return StartCoroutine(AnimateMaterialColor(from, to));
+    }
+
+    private IEnumerator AnimateMaterialColor(Color from, Color to)
+    {
+        float duration = Mathf.Max(0.01f, materialColorDuration);
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float progress = Smooth(Mathf.Clamp01(elapsed / duration));
+            SetMaterialColor(Color.Lerp(from, to, progress));
+            yield return null;
+        }
+
+        SetMaterialColor(to);
+    }
+
+    private Color GetMaterialColor()
+    {
+        if (roomMaterial == null || string.IsNullOrEmpty(materialColorProperty))
+            return originalMaterialColor;
+
+        return roomMaterial.GetColor(materialColorProperty);
+    }
+
+    private void SetMaterialColor(Color color)
+    {
+        if (roomMaterial != null && !string.IsNullOrEmpty(materialColorProperty))
+            roomMaterial.SetColor(materialColorProperty, color);
     }
 
     private void CaptureObjects()
