@@ -9,7 +9,8 @@ public class RoomTransitionController : MonoBehaviour
 
     [SerializeField] private RoomCubeField roomCubes;
     [SerializeField] private Transform levelObjectsRoot;
-    [SerializeField] private Material roomMaterial;
+    [SerializeField, HideInInspector] private Material roomMaterial;
+    [SerializeField] private Material[] roomMaterials;
     [SerializeField] private Color transitionColor = Color.white;
     [SerializeField] private float materialColorDuration = 4f;
     [SerializeField] private float objectMoveDuration = 4f;
@@ -20,8 +21,7 @@ public class RoomTransitionController : MonoBehaviour
     [SerializeField] private bool buildWhenSceneStarts;
 
     private readonly List<TransitionObject> objects = new List<TransitionObject>();
-    private Color originalMaterialColor = Color.white;
-    private string materialColorProperty;
+    private readonly List<TransitionMaterial> transitionMaterials = new List<TransitionMaterial>();
 
     private Transform FlatRoomCenter => roomCubes != null
         ? roomCubes.FlatRoomCenter
@@ -49,6 +49,15 @@ public class RoomTransitionController : MonoBehaviour
         public bool[] BehaviourStates;
     }
 
+    private class TransitionMaterial
+    {
+        public Material Material;
+        public string ColorProperty;
+        public Color OriginalColor;
+        public Color StartColor;
+        public Color TargetColor;
+    }
+
     public bool BuildWhenSceneStarts => buildWhenSceneStarts;
 
     private void Awake()
@@ -56,16 +65,13 @@ public class RoomTransitionController : MonoBehaviour
         if (roomCubes == null)
             roomCubes = FindFirstObjectByType<RoomCubeField>();
 
-        CaptureMaterialColor();
+        CaptureMaterialColors();
         CaptureObjects();
     }
 
     public IEnumerator HideLevel()
     {
-        Coroutine colorAnimation = StartMaterialAnimation(
-            GetMaterialColor(),
-            transitionColor
-        );
+        Coroutine colorAnimation = StartMaterialAnimation(true);
         PrepareObjects(false);
         yield return AnimateObjects(0f, 1f);
         yield return AnimateRoom(0f, 1f);
@@ -80,11 +86,8 @@ public class RoomTransitionController : MonoBehaviour
 
     public IEnumerator BuildLevel()
     {
-        SetMaterialColor(transitionColor);
-        Coroutine colorAnimation = StartMaterialAnimation(
-            transitionColor,
-            originalMaterialColor
-        );
+        SetTransitionMaterialColors();
+        Coroutine colorAnimation = StartMaterialAnimation(false);
 
         if (roomCubes != null)
         {
@@ -105,34 +108,69 @@ public class RoomTransitionController : MonoBehaviour
         RestoreObjects();
     }
 
-    private void CaptureMaterialColor()
+    private void CaptureMaterialColors()
     {
-        if (roomMaterial == null)
+        transitionMaterials.Clear();
+        AddTransitionMaterial(roomMaterial);
+
+        if (roomMaterials == null)
             return;
 
-        if (roomMaterial.HasProperty("_BaseColor"))
-            materialColorProperty = "_BaseColor";
-        else if (roomMaterial.HasProperty("_Color"))
-            materialColorProperty = "_Color";
+        foreach (Material material in roomMaterials)
+            AddTransitionMaterial(material);
+    }
+
+    private void AddTransitionMaterial(Material material)
+    {
+        if (material == null)
+            return;
+
+        foreach (TransitionMaterial item in transitionMaterials)
+        {
+            if (item.Material == material)
+                return;
+        }
+
+        string colorProperty;
+
+        if (material.HasProperty("_BaseColor"))
+            colorProperty = "_BaseColor";
+        else if (material.HasProperty("_Color"))
+            colorProperty = "_Color";
         else
             return;
 
-        if (!originalMaterialColors.TryGetValue(roomMaterial, out originalMaterialColor))
+        if (!originalMaterialColors.TryGetValue(material, out Color originalColor))
         {
-            originalMaterialColor = roomMaterial.GetColor(materialColorProperty);
-            originalMaterialColors.Add(roomMaterial, originalMaterialColor);
+            originalColor = material.GetColor(colorProperty);
+            originalMaterialColors.Add(material, originalColor);
         }
+
+        transitionMaterials.Add(new TransitionMaterial
+        {
+            Material = material,
+            ColorProperty = colorProperty,
+            OriginalColor = originalColor
+        });
     }
 
-    private Coroutine StartMaterialAnimation(Color from, Color to)
+    private Coroutine StartMaterialAnimation(bool toTransitionColor)
     {
-        if (roomMaterial == null || string.IsNullOrEmpty(materialColorProperty))
+        if (transitionMaterials.Count == 0)
             return null;
 
-        return StartCoroutine(AnimateMaterialColor(from, to));
+        foreach (TransitionMaterial item in transitionMaterials)
+        {
+            item.StartColor = item.Material.GetColor(item.ColorProperty);
+            item.TargetColor = toTransitionColor
+                ? transitionColor
+                : item.OriginalColor;
+        }
+
+        return StartCoroutine(AnimateMaterialColors());
     }
 
-    private IEnumerator AnimateMaterialColor(Color from, Color to)
+    private IEnumerator AnimateMaterialColors()
     {
         float duration = Mathf.Max(0.01f, materialColorDuration);
         float elapsed = 0f;
@@ -141,25 +179,26 @@ public class RoomTransitionController : MonoBehaviour
         {
             elapsed += Time.deltaTime;
             float progress = Smooth(Mathf.Clamp01(elapsed / duration));
-            SetMaterialColor(Color.Lerp(from, to, progress));
+
+            foreach (TransitionMaterial item in transitionMaterials)
+            {
+                item.Material.SetColor(
+                    item.ColorProperty,
+                    Color.Lerp(item.StartColor, item.TargetColor, progress)
+                );
+            }
+
             yield return null;
         }
 
-        SetMaterialColor(to);
+        foreach (TransitionMaterial item in transitionMaterials)
+            item.Material.SetColor(item.ColorProperty, item.TargetColor);
     }
 
-    private Color GetMaterialColor()
+    private void SetTransitionMaterialColors()
     {
-        if (roomMaterial == null || string.IsNullOrEmpty(materialColorProperty))
-            return originalMaterialColor;
-
-        return roomMaterial.GetColor(materialColorProperty);
-    }
-
-    private void SetMaterialColor(Color color)
-    {
-        if (roomMaterial != null && !string.IsNullOrEmpty(materialColorProperty))
-            roomMaterial.SetColor(materialColorProperty, color);
+        foreach (TransitionMaterial item in transitionMaterials)
+            item.Material.SetColor(item.ColorProperty, transitionColor);
     }
 
     private void CaptureObjects()
