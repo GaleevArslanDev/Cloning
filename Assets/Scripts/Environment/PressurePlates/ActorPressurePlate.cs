@@ -14,6 +14,11 @@ public class ActorPressurePlate : PressurePlate
         if (clone != null)
             return clone.gameObject;
 
+        TwoPointsCopy upperCopy = other.GetComponentInParent<TwoPointsCopy>();
+
+        if (upperCopy != null)
+            return upperCopy.gameObject;
+
         return null;
     }
 }
