@@ -19,6 +19,11 @@ public class PlayerClimber : MonoBehaviour
     public bool IsMounted => mountedClone != null;
     public bool IsClimbing => climbRoutine != null;
     public bool IsJumping => IsClimbing || jumpAnimationTime > 0f;
+    public bool CanStartClimb => !IsClimbing &&
+                                 (IsMounted ||
+                                  controller != null &&
+                                  controller.enabled &&
+                                  controller.isGrounded);
 
     private void Awake()
     {
@@ -100,7 +105,7 @@ public class PlayerClimber : MonoBehaviour
 
     public void ClimbTo(ClimbableLedge ledge)
     {
-        if (ledge == null || IsClimbing)
+        if (ledge == null || !CanStartClimb)
             return;
 
         if (playerMovement != null)

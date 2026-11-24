@@ -45,10 +45,21 @@ public class PlayerInteractor : MonoBehaviour
     {
         if (PauseMenuController.IsGamePaused) return;
 
+        if (playerClimber != null && playerClimber.IsClimbing)
+        {
+            StopInteraction();
+            SetPanelVisible(false);
+            SetPanelColor(false);
+            SetRightMouseHint(false);
+            return;
+        }
+
         if (playerClimber != null && playerClimber.IsMounted)
         {
             StopInteraction();
-            ClimbableLedge ledge = FindClimbableLedge();
+            ClimbableLedge ledge = playerClimber.CanStartClimb
+                ? FindClimbableLedge()
+                : null;
             bool climbPressed = Mouse.current != null && Mouse.current.rightButton.wasPressedThisFrame;
 
             SetPanelVisible(ledge != null);
@@ -62,15 +73,6 @@ public class PlayerInteractor : MonoBehaviour
             return;
         }
 
-        if (playerClimber != null && playerClimber.IsClimbing)
-        {
-            StopInteraction();
-            SetPanelVisible(false);
-            SetPanelColor(false);
-            SetRightMouseHint(false);
-            return;
-        }
-
         if (playerCarry != null && playerCarry.IsBusy)
         {
             StopInteraction();
@@ -80,7 +82,9 @@ public class PlayerInteractor : MonoBehaviour
             return;
         }
 
-        ClimbableLedge climbableLedge = FindClimbableLedge();
+        ClimbableLedge climbableLedge = playerClimber != null && playerClimber.CanStartClimb
+            ? FindClimbableLedge()
+            : null;
         IInteractable interactable = FindInteractable();
         bool groundClimbPressed = Mouse.current != null && Mouse.current.rightButton.wasPressedThisFrame;
 
