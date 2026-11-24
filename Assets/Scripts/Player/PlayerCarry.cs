@@ -16,6 +16,9 @@ public class PlayerCarry : MonoBehaviour
     [SerializeField] private float allowedDropOverlap = 0.002f;
     [SerializeField] private float movementSway = 0.025f;
     [SerializeField] private float rotationStep = 15f;
+    [SerializeField] private AudioSource carryAudioSource;
+    [SerializeField] private AudioClip pickupSound;
+    [SerializeField] private AudioClip dropSound;
 
     private CarryableItem heldItem;
     private Transform holdTransform;
@@ -124,6 +127,7 @@ public class PlayerCarry : MonoBehaviour
         canDrop = !useMouseInput;
         state = CarryState.Lifting;
 
+        PlaySound(pickupSound);
         ItemPickedUp?.Invoke(item);
         return true;
     }
@@ -234,6 +238,13 @@ public class PlayerCarry : MonoBehaviour
         heldItem = null;
         state = CarryState.None;
         item.Release(gameObject, dropPosition, dropRotation);
+        PlaySound(dropSound);
+    }
+
+    private void PlaySound(AudioClip clip)
+    {
+        if (carryAudioSource != null && clip != null)
+            carryAudioSource.PlayOneShot(clip);
     }
 
     private Vector3 GetHoldPosition()

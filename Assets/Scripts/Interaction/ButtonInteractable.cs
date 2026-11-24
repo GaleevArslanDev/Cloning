@@ -4,6 +4,9 @@ using UnityEngine.Events;
 
 public class ButtonInteractable : MonoBehaviour, IInteractable
 {
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip pressedSound;
+    [SerializeField] private AudioClip releasedSound;
     [SerializeField] private UnityEvent onPressed;
     [SerializeField] private UnityEvent onReleased;
     [SerializeField, HideInInspector] private GameObject[] objectsToHide;
@@ -24,6 +27,7 @@ public class ButtonInteractable : MonoBehaviour, IInteractable
             return;
 
         legacyActionActive = !HasConfiguredEvents();
+        PlaySound(pressedSound);
         onPressed?.Invoke();
 
         if (legacyActionActive)
@@ -39,13 +43,25 @@ public class ButtonInteractable : MonoBehaviour, IInteractable
         if (!interactors.Remove(interactor) || interactors.Count > 0)
             return;
 
-        onReleased?.Invoke();
+        ReleaseButton();
 
         if (legacyActionActive)
         {
             ShowLegacyObjects();
             legacyActionActive = false;
         }
+    }
+
+    private void ReleaseButton()
+    {
+        PlaySound(releasedSound);
+        onReleased?.Invoke();
+    }
+
+    private void PlaySound(AudioClip clip)
+    {
+        if (audioSource != null && clip != null)
+            audioSource.PlayOneShot(clip);
     }
 
     private bool HasConfiguredEvents()
@@ -90,7 +106,7 @@ public class ButtonInteractable : MonoBehaviour, IInteractable
             return;
 
         interactors.Clear();
-        onReleased?.Invoke();
+        ReleaseButton();
 
         if (legacyActionActive)
         {

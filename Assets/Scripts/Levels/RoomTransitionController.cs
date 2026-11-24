@@ -18,6 +18,8 @@ public class RoomTransitionController : MonoBehaviour
     [SerializeField] private float objectDelay = 0.12f;
     [SerializeField] private float hiddenDepth = 2f;
     [SerializeField] private bool buildWhenSceneStarts;
+    [SerializeField] private AudioSource rebuildAudioSource;
+    [SerializeField] private AudioClip rebuildSound;
 
     private readonly List<TransitionObject> objects = new List<TransitionObject>();
     private Color originalMaterialColor = Color.white;
@@ -62,6 +64,7 @@ public class RoomTransitionController : MonoBehaviour
 
     public IEnumerator HideLevel()
     {
+        StartRebuildSound();
         Coroutine colorAnimation = StartMaterialAnimation(
             GetMaterialColor(),
             transitionColor
@@ -76,10 +79,13 @@ public class RoomTransitionController : MonoBehaviour
 
         if (roomCubes != null)
             roomCubes.SetFrozen(true);
+
+        StopRebuildSound();
     }
 
     public IEnumerator BuildLevel()
     {
+        StartRebuildSound();
         SetMaterialColor(transitionColor);
         Coroutine colorAnimation = StartMaterialAnimation(
             transitionColor,
@@ -103,6 +109,28 @@ public class RoomTransitionController : MonoBehaviour
             yield return colorAnimation;
 
         RestoreObjects();
+        StopRebuildSound();
+    }
+
+    private void StartRebuildSound()
+    {
+        if (rebuildAudioSource == null || rebuildSound == null)
+            return;
+
+        rebuildAudioSource.clip = rebuildSound;
+        rebuildAudioSource.loop = true;
+        rebuildAudioSource.Play();
+    }
+
+    private void StopRebuildSound()
+    {
+        if (rebuildAudioSource != null)
+            rebuildAudioSource.Stop();
+    }
+
+    private void OnDisable()
+    {
+        StopRebuildSound();
     }
 
     private void CaptureMaterialColor()

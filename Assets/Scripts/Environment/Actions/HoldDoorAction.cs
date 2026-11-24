@@ -9,6 +9,8 @@ public sealed class HoldDoorAction : MonoBehaviour, IJsonSaveable
     [SerializeField] private AnimationClip openingClip;
     [SerializeField, Min(0.01f)] private float playbackSpeed = 1f;
     [SerializeField, Min(1)] private int requiredSignals = 1;
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip openingSound;
     private int activeSignals;
 
     public int ActiveSignals => activeSignals;
@@ -47,7 +49,11 @@ public sealed class HoldDoorAction : MonoBehaviour, IJsonSaveable
     [ContextMenu("Open")]
     public void Open()
     {
+        bool wasPressed = IsPressed;
         activeSignals++;
+
+        if (!wasPressed && IsPressed && audioSource != null && openingSound != null)
+            audioSource.PlayOneShot(openingSound);
     }
 
     [ContextMenu("Close")]
