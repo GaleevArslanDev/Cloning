@@ -124,15 +124,15 @@ Material:
     - _Cutoff: 0.5
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
-    - _DirtAmount: 0.566
-    - _Distortion: 0.275
-    - _DistortionScale: 4
+    - _DirtAmount: 0
+    - _Distortion: 0
+    - _DistortionScale: 1
     - _DstBlend: 0
     - _DstBlendAlpha: 0
     - _EnvironmentReflections: 1
-    - _FresnelPower: 3.67
+    - _FresnelPower: 4.42
     - _Ghosting: 0.003
-    - _GlassOpacity: 0.31
+    - _GlassOpacity: 0.393
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
@@ -143,8 +143,8 @@ Material:
     - _Parallax: 0.005
     - _QueueOffset: 0
     - _ReceiveShadows: 1
-    - _Reflectivity: 0
-    - _Smoothness: 0
+    - _Reflectivity: 0.534
+    - _Smoothness: 1
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
@@ -157,7 +157,7 @@ Material:
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _DirtColor: {r: 0.72955966, g: 0.72955966, b: 0.72955966, a: 1}
+    - _DirtColor: {r: 0.3301887, g: 0.32370177, b: 0.28502136, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _FallbackReflectionColor: {r: 0.6, g: 0.7, b: 0.8, a: 1}
     - _GlassTint: {r: 0.6509434, g: 0.6509434, b: 0.6509434, a: 1}
