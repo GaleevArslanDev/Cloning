@@ -6307,7 +6307,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LevelStage
   playerStartPoint: {fileID: 2126579925}
-  nextSceneName: Level5
+  nextSceneName: Level8
   finishAnimationDuration: 2
   waitForFinishAnimationSignal: 0
   transitionDuration: 2
