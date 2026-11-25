@@ -80526,7 +80526,10 @@ MonoBehaviour:
   roomMaterials:
   - {fileID: 2100000, guid: 2eb9c77f1fc7f0841929afa928fdd0ad, type: 2}
   - {fileID: 2100000, guid: 3f0ae67da41ffa0439b09d7a004cd239, type: 2}
-  transitionColor: {r: 0.7529412, g: 0.7529412, b: 0.7529412, a: 1}
+  - {fileID: 2100000, guid: ecd496c887e53cd479ae4a50e0fb7f12, type: 2}
+  - {fileID: 2100000, guid: 3f6310f45a7e9a74f8fea7dbbee86cf6, type: 2}
+  - {fileID: 2100000, guid: b5cdf94cde37f9542b96894b46f4fcd8, type: 2}
+  transitionColor: {r: 0.87058824, g: 0.87058824, b: 0.87058824, a: 1}
   materialColorDuration: 4
   objectMoveDuration: 4
   roomMoveDuration: 3

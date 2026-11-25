@@ -15260,12 +15260,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 291050430}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -56.401, y: 5.28668, z: 22.02}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -9.567192, y: -3.5904894, z: 6.3117104}
   m_LocalScale: {x: 1, y: 11.078, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 963989372}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &292667182
 GameObject:
@@ -51448,6 +51448,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1864910228}
+  - {fileID: 291050434}
   m_Father: {fileID: 659785401}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &963989373
@@ -51496,9 +51497,13 @@ MonoBehaviour:
   levelObjectsRoot: {fileID: 1111170981}
   roomMaterial: {fileID: 2100000, guid: 2eb9c77f1fc7f0841929afa928fdd0ad, type: 2}
   roomMaterials:
-  - {fileID: 2100000, guid: 3f0ae67da41ffa0439b09d7a004cd239, type: 2}
+  - {fileID: 2100000, guid: ecd496c887e53cd479ae4a50e0fb7f12, type: 2}
   - {fileID: 2100000, guid: 2eb9c77f1fc7f0841929afa928fdd0ad, type: 2}
-  transitionColor: {r: 0.7529412, g: 0.7529412, b: 0.7529412, a: 1}
+  - {fileID: 2100000, guid: ecd496c887e53cd479ae4a50e0fb7f12, type: 2}
+  - {fileID: 2100000, guid: 3f6310f45a7e9a74f8fea7dbbee86cf6, type: 2}
+  - {fileID: 2100000, guid: 2eb9c77f1fc7f0841929afa928fdd0ad, type: 2}
+  - {fileID: 2100000, guid: 3f0ae67da41ffa0439b09d7a004cd239, type: 2}
+  transitionColor: {r: 0.87058824, g: 0.87058824, b: 0.87058824, a: 1}
   materialColorDuration: 4
   objectMoveDuration: 4
   roomMoveDuration: 3
@@ -117617,7 +117622,6 @@ SceneRoots:
   - {fileID: 1401803010}
   - {fileID: 1523026147}
   - {fileID: 659785401}
-  - {fileID: 291050434}
   - {fileID: 1583274579}
   - {fileID: 942116665}
   - {fileID: 753039187}
