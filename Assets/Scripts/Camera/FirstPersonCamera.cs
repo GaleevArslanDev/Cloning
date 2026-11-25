@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+[DefaultExecutionOrder(200)]
 public class FirstPersonCamera : MonoBehaviour
 {
     [SerializeField] private Transform playerBody;
@@ -110,18 +111,28 @@ public class FirstPersonCamera : MonoBehaviour
             }
 
             Vector3 targetPosition = GetAnimatedCameraPosition();
+            float follow = 1f - Mathf.Exp(-animationSmoothness * Time.deltaTime);
             animatedCameraPosition = Vector3.Lerp(
                 animatedCameraPosition,
                 targetPosition,
-                1f - Mathf.Exp(-animationSmoothness * Time.deltaTime)
+                follow
             );
 
             Vector3 followLag = animatedCameraPosition - targetPosition;
 
-            if (followLag.magnitude > maximumHeadFollowLag)
+            if (maximumHeadFollowLag > 0f &&
+                followLag.magnitude > maximumHeadFollowLag)
             {
-                animatedCameraPosition = targetPosition
+                Vector3 nearestSmoothPosition = targetPosition
                     + followLag.normalized * maximumHeadFollowLag;
+                float catchUp = 1f - Mathf.Exp(
+                    -animationSmoothness * 0.5f * Time.deltaTime
+                );
+                animatedCameraPosition = Vector3.Lerp(
+                    animatedCameraPosition,
+                    nearestSmoothPosition,
+                    catchUp
+                );
             }
         }
         else if (playerMovement != null && playerMovement.IsMoving)

@@ -14,6 +14,8 @@ public class PlayerCarry : MonoBehaviour
     [SerializeField] private LayerMask dropSurfaceLayers = ~0;
     [SerializeField] private LayerMask dropBlockingLayers = ~0;
     [SerializeField] private float allowedDropOverlap = 0.002f;
+    [SerializeField] private float dropCorrectionDistance = 0.8f;
+    [SerializeField] private float dropCorrectionStep = 0.1f;
     [SerializeField] private float movementSway = 0.025f;
     [SerializeField] private float rotationStep = 15f;
     [SerializeField] private AudioSource carryAudioSource;
@@ -281,8 +283,85 @@ public class PlayerCarry : MonoBehaviour
 
     private bool TryFindDropPose(out Vector3 position, out Quaternion rotation)
     {
+        Vector3 itemPosition = heldItem.transform.position;
+
+        if (!TryGetDropPoseAt(
+                itemPosition,
+                out position,
+                out rotation,
+                out Vector3 surfaceNormal,
+                out Collider surfaceCollider
+            ))
+            return false;
+
+        if (IsDropPoseClear(position, rotation) &&
+            IsDropPathClear(position, surfaceCollider))
+            return true;
+
+        Vector3 towardPlayer = Vector3.ProjectOnPlane(
+            transform.position - position,
+            surfaceNormal
+        );
+
+        if (towardPlayer.sqrMagnitude < 0.001f)
+        {
+            Vector3 fallbackDirection = holdTransform != null
+                ? -holdTransform.forward
+                : -transform.forward;
+            towardPlayer = Vector3.ProjectOnPlane(fallbackDirection, surfaceNormal);
+        }
+
+        if (towardPlayer.sqrMagnitude < 0.001f)
+            towardPlayer = Vector3.Cross(surfaceNormal, Vector3.right);
+
+        towardPlayer.Normalize();
+        float step = Mathf.Max(0.02f, dropCorrectionStep);
+        float maximumDistance = Mathf.Max(0f, dropCorrectionDistance);
+        float[] angles = { 0f, 30f, -30f, 60f, -60f, 90f, -90f, 135f, -135f, 180f };
+
+        for (float distance = step; distance <= maximumDistance + 0.001f; distance += step)
+        {
+            foreach (float angle in angles)
+            {
+                Vector3 direction = Quaternion.AngleAxis(angle, surfaceNormal) * towardPlayer;
+                Vector3 searchPosition = itemPosition + direction * distance;
+
+                if (!TryGetDropPoseAt(
+                        searchPosition,
+                        out Vector3 correctedPosition,
+                        out Quaternion correctedRotation,
+                        out _,
+                        out Collider correctedSurface
+                    ))
+                {
+                    continue;
+                }
+
+                if (!IsDropPoseClear(correctedPosition, correctedRotation) ||
+                    !IsDropPathClear(correctedPosition, correctedSurface))
+                    continue;
+
+                position = correctedPosition;
+                rotation = correctedRotation;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private bool TryGetDropPoseAt(
+        Vector3 itemPosition,
+        out Vector3 position,
+        out Quaternion rotation,
+        out Vector3 surfaceNormal,
+        out Collider surfaceCollider
+    )
+    {
         rotation = heldItem.transform.rotation;
-        Vector3 origin = heldItem.transform.position - dropDirection * 0.2f;
+        surfaceNormal = -dropDirection;
+        surfaceCollider = null;
+        Vector3 origin = itemPosition - dropDirection * 0.2f;
         RaycastHit[] hits = Physics.RaycastAll(
             origin,
             dropDirection,
@@ -313,12 +392,13 @@ public class PlayerCarry : MonoBehaviour
 
         if (!surfaceFound)
         {
-            position = heldItem.transform.position;
+            position = itemPosition;
             return false;
         }
 
         Vector3 surfacePoint = nearestHit.point;
-        Vector3 surfaceNormal = nearestHit.normal.normalized;
+        surfaceNormal = nearestHit.normal.normalized;
+        surfaceCollider = nearestHit.collider;
         MirrorPlacement mirrorPlacement = heldItem.GetComponent<MirrorPlacement>();
 
         if (mirrorPlacement != null)
@@ -330,7 +410,43 @@ public class PlayerCarry : MonoBehaviour
 
         float bottomOffset = GetBottomOffset(rotation, surfaceNormal);
         position = surfacePoint + surfaceNormal * (bottomOffset + 0.01f);
-        return IsDropPoseClear(position, rotation);
+        return true;
+    }
+
+    private bool IsDropPathClear(Vector3 targetPosition, Collider surfaceCollider)
+    {
+        Vector3 origin = holdTransform != null
+            ? holdTransform.position
+            : transform.position;
+        Vector3 direction = targetPosition - origin;
+        float distance = direction.magnitude;
+
+        if (distance < 0.01f)
+            return true;
+
+        RaycastHit[] hits = Physics.RaycastAll(
+            origin,
+            direction / distance,
+            distance,
+            dropBlockingLayers,
+            QueryTriggerInteraction.Ignore
+        );
+
+        foreach (RaycastHit hit in hits)
+        {
+            if (hit.collider == null ||
+                hit.collider == surfaceCollider ||
+                hit.collider.transform.IsChildOf(heldItem.transform) ||
+                hit.collider.transform.IsChildOf(transform))
+            {
+                continue;
+            }
+
+            if (hit.distance < distance - 0.05f)
+                return false;
+        }
+
+        return true;
     }
 
     private bool IsDropPoseClear(Vector3 position, Quaternion rotation)
