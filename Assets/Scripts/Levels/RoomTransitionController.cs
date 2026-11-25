@@ -47,6 +47,8 @@ public class RoomTransitionController : MonoBehaviour
         public Rigidbody[] Bodies;
         public bool[] KinematicStates;
         public bool[] GravityStates;
+        public Collider[] Colliders;
+        public bool[] ColliderStates;
         public MonoBehaviour[] Behaviours;
         public bool[] BehaviourStates;
     }
@@ -427,6 +429,16 @@ public class RoomTransitionController : MonoBehaviour
 
     private void DisableObject(TransitionObject item)
     {
+        item.Colliders = item.GameObject.GetComponentsInChildren<Collider>(true);
+        item.ColliderStates = new bool[item.Colliders.Length];
+
+        for (int i = 0; i < item.Colliders.Length; i++)
+        {
+            Collider itemCollider = item.Colliders[i];
+            item.ColliderStates[i] = itemCollider.enabled;
+            itemCollider.enabled = false;
+        }
+
         item.Bodies = item.GameObject.GetComponentsInChildren<Rigidbody>(true);
         item.KinematicStates = new bool[item.Bodies.Length];
         item.GravityStates = new bool[item.Bodies.Length];
@@ -469,6 +481,12 @@ public class RoomTransitionController : MonoBehaviour
 
                 item.Bodies[i].useGravity = item.GravityStates[i];
                 item.Bodies[i].isKinematic = item.KinematicStates[i];
+            }
+
+            for (int i = 0; i < item.Colliders.Length; i++)
+            {
+                if (item.Colliders[i] != null)
+                    item.Colliders[i].enabled = item.ColliderStates[i];
             }
 
             for (int i = 0; i < item.Behaviours.Length; i++)

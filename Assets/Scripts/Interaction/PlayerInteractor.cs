@@ -18,6 +18,8 @@ public class PlayerInteractor : MonoBehaviour
 
     private IInteractable currentInteractable;
     private Vector3 mouseButtonScale;
+    private CharacterController characterController;
+    private readonly Collider[] insideCloneColliders = new Collider[8];
 
     public event Action<IInteractable> InteractionStarted;
     public event Action<IInteractable> InteractionEnded;
@@ -30,6 +32,8 @@ public class PlayerInteractor : MonoBehaviour
             playerCarry = GetComponent<PlayerCarry>();
         if (playerClimber == null)
             playerClimber = GetComponent<PlayerClimber>();
+
+        characterController = GetComponent<CharacterController>();
 
         if (interactionPanelImage == null && interactionPanel != null)
             interactionPanelImage = interactionPanel.GetComponentInChildren<Image>(true);
@@ -134,6 +138,11 @@ public class PlayerInteractor : MonoBehaviour
         if (interactionCamera == null)
             return null;
 
+        CloneClimbInteractable containingClone = FindContainingClone();
+
+        if (containingClone != null && containingClone.CanInteract)
+            return containingClone;
+
         Ray ray = new Ray(interactionCamera.transform.position, interactionCamera.transform.forward);
 
         if (!Physics.Raycast(ray, out RaycastHit hit, interactionDistance, interactionLayers))
@@ -145,6 +154,49 @@ public class PlayerInteractor : MonoBehaviour
             return null;
 
         return interactable;
+    }
+
+    private CloneClimbInteractable FindContainingClone()
+    {
+        Vector3 playerCenter = characterController != null
+            ? characterController.bounds.center
+            : transform.position;
+        CloneClimbInteractable clone = FindContainingCloneAt(playerCenter);
+
+        if (clone != null)
+            return clone;
+
+        return FindContainingCloneAt(interactionCamera.transform.position);
+    }
+
+    private CloneClimbInteractable FindContainingCloneAt(Vector3 position)
+    {
+        int count = Physics.OverlapSphereNonAlloc(
+            position,
+            0.05f,
+            insideCloneColliders,
+            interactionLayers,
+            QueryTriggerInteraction.Collide
+        );
+
+        for (int i = 0; i < count; i++)
+        {
+            Collider itemCollider = insideCloneColliders[i];
+
+            if (itemCollider == null ||
+                (itemCollider.ClosestPoint(position) - position).sqrMagnitude > 0.000001f)
+            {
+                continue;
+            }
+
+            CloneClimbInteractable clone =
+                itemCollider.GetComponentInParent<CloneClimbInteractable>();
+
+            if (clone != null)
+                return clone;
+        }
+
+        return null;
     }
 
     private ClimbableLedge FindClimbableLedge()
