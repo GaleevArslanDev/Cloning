@@ -76207,7 +76207,7 @@ Transform:
   m_GameObject: {fileID: 1389012634}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.775, z: 0.262}
+  m_LocalPosition: {x: 0, y: 0.775, z: 0.309}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -76229,7 +76229,7 @@ MonoBehaviour:
   playerBody: {fileID: 268687969}
   playerMovement: {fileID: 268687966}
   sensitivity: 0.12
-  verticalLimit: 85
+  verticalLimit: 70
   animatedHead: {fileID: 1044969032}
   followAnimatedHead: 1
   animationSmoothness: 14

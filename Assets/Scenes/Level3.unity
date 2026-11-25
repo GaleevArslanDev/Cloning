@@ -28242,6 +28242,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1cf3fbe558d5a64797c2c572bc0e4dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WaterResetTrigger
+  waterAudioSource: {fileID: 0}
+  respawnAudioSource: {fileID: 0}
+  waterSound: {fileID: 0}
+  respawnSound: {fileID: 0}
 --- !u!65 &470495429
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -29607,6 +29611,9 @@ MonoBehaviour:
   cloneRecorder: {fileID: 0}
   playerControl: {fileID: 0}
   roomTransition: {fileID: 2087060056}
+  transitionAudioSource: {fileID: 0}
+  flaskClosingSound: {fileID: 0}
+  flaskOpeningSound: {fileID: 0}
   onLevelCompleted:
     m_PersistentCalls:
       m_Calls: []
@@ -36499,6 +36506,8 @@ MonoBehaviour:
   liftHeight: 2.15
   movementSpeed: 1
   requiredSignals: 1
+  movementAudioSource: {fileID: 0}
+  movementSound: {fileID: 0}
 --- !u!4 &658399659 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1321038448815434788, guid: c57e872fa76d9714eb1408f887163d63, type: 3}
@@ -60586,6 +60595,8 @@ MonoBehaviour:
   liftHeight: 2
   movementSpeed: 1
   requiredSignals: 2
+  movementAudioSource: {fileID: 0}
+  movementSound: {fileID: 0}
 --- !u!4 &1087716413 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8295528913730644121, guid: 896e24629803a674e89bce4514d9efe8, type: 3}
@@ -63586,6 +63597,8 @@ MonoBehaviour:
   openingClip: {fileID: 7400000, guid: 8c804b5cae8838046beb5d7ad7d7512e, type: 2}
   playbackSpeed: 1
   requiredSignals: 1
+  audioSource: {fileID: 0}
+  openingSound: {fileID: 0}
   progress: 0
 --- !u!1 &1139015918
 GameObject:
@@ -64376,8 +64389,13 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   allowedDropOverlap: 0.002
+  dropCorrectionDistance: 0.8
+  dropCorrectionStep: 0.1
   movementSway: 0.025
   rotationStep: 15
+  carryAudioSource: {fileID: 0}
+  pickupSound: {fileID: 0}
+  dropSound: {fileID: 0}
 --- !u!114 &1154855537
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -64394,6 +64412,8 @@ MonoBehaviour:
   ledgeClimbDuration: 0.4
   mountJumpDuration: 0.45
   mountJumpHeight: 0.2
+  climbAudioSource: {fileID: 0}
+  climbSound: {fileID: 0}
 --- !u!114 &1154855538
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -64458,6 +64478,12 @@ MonoBehaviour:
   runSpeed: 5.5
   acceleration: 14
   gravity: -20
+  movementAudioSource: {fileID: 0}
+  footstepSounds: []
+  fallSound: {fileID: 0}
+  walkStepInterval: 0.5
+  runStepInterval: 0.35
+  fallSoundDelay: 0
 --- !u!143 &1154855541
 CharacterController:
   m_ObjectHideFlags: 0
@@ -80870,6 +80896,8 @@ MonoBehaviour:
   liftHeight: 2
   movementSpeed: 1
   requiredSignals: 2
+  movementAudioSource: {fileID: 0}
+  movementSound: {fileID: 0}
 --- !u!1 &1467511430
 GameObject:
   m_ObjectHideFlags: 0
@@ -87162,6 +87190,8 @@ MonoBehaviour:
   liftHeight: 2.1
   movementSpeed: 1
   requiredSignals: 2
+  movementAudioSource: {fileID: 0}
+  movementSound: {fileID: 0}
 --- !u!1 &1595857877
 GameObject:
   m_ObjectHideFlags: 0
@@ -91006,6 +91036,8 @@ MonoBehaviour:
   liftHeight: 2
   movementSpeed: 1
   requiredSignals: 2
+  movementAudioSource: {fileID: 0}
+  movementSound: {fileID: 0}
 --- !u!1 &1665583696
 GameObject:
   m_ObjectHideFlags: 0
@@ -103592,7 +103624,7 @@ Transform:
   m_GameObject: {fileID: 1890577012}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.775, z: 0.262}
+  m_LocalPosition: {x: 0, y: 0.775, z: 0.309}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -103614,7 +103646,7 @@ MonoBehaviour:
   playerBody: {fileID: 1154855543}
   playerMovement: {fileID: 1154855540}
   sensitivity: 0.12
-  verticalLimit: 85
+  verticalLimit: 70
   animatedHead: {fileID: 851642532}
   followAnimatedHead: 1
   animationSmoothness: 14
@@ -115234,6 +115266,7 @@ MonoBehaviour:
   roomCubes: {fileID: 2087060057}
   levelObjectsRoot: {fileID: 1165782849}
   roomMaterial: {fileID: 2100000, guid: 2eb9c77f1fc7f0841929afa928fdd0ad, type: 2}
+  roomMaterials: []
   transitionColor: {r: 0.7529412, g: 0.7529412, b: 0.7529412, a: 1}
   materialColorDuration: 4
   objectMoveDuration: 4
@@ -115242,6 +115275,8 @@ MonoBehaviour:
   objectDelay: 0.12
   hiddenDepth: 2
   buildWhenSceneStarts: 1
+  rebuildAudioSource: {fileID: 0}
+  rebuildSound: {fileID: 0}
 --- !u!114 &2087060057
 MonoBehaviour:
   m_ObjectHideFlags: 0

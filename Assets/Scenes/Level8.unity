@@ -105296,7 +105296,7 @@ MonoBehaviour:
   playerBody: {fileID: 2067630611}
   playerMovement: {fileID: 2067630608}
   sensitivity: 0.12
-  verticalLimit: 85
+  verticalLimit: 70
   animatedHead: {fileID: 2081729172}
   followAnimatedHead: 1
   animationSmoothness: 14
