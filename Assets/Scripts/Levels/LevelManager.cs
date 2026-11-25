@@ -11,6 +11,9 @@ public class LevelManager : MonoBehaviour
     [SerializeField] private CloneRecorder cloneRecorder;
     [SerializeField] private PlayerControlLock playerControl;
     [SerializeField] private RoomTransitionController roomTransition;
+    [SerializeField] private AudioSource transitionAudioSource;
+    [SerializeField] private AudioClip flaskClosingSound;
+    [SerializeField] private AudioClip flaskOpeningSound;
     [FormerlySerializedAs("onAllLevelsCompleted")]
     [SerializeField] private UnityEvent onLevelCompleted;
 
@@ -84,6 +87,9 @@ public class LevelManager : MonoBehaviour
 
         if (playerControl != null)
             playerControl.SetControlEnabled(true);
+
+        if (cameFromTransition)
+            PlayTransitionSound(flaskOpeningSound);
 
         IsReady = true;
     }
@@ -177,6 +183,8 @@ public class LevelManager : MonoBehaviour
         if (playerControl != null)
             playerControl.SetTransitionControl();
 
+        PlayTransitionSound(flaskClosingSound);
+
         if (player != null && centerPoint != null)
         {
             float elapsed = 0f;
@@ -235,5 +243,11 @@ public class LevelManager : MonoBehaviour
 
         enteringFromTransition = true;
         yield return SceneManager.LoadSceneAsync(level.NextSceneName);
+    }
+
+    private void PlayTransitionSound(AudioClip clip)
+    {
+        if (transitionAudioSource != null && clip != null)
+            transitionAudioSource.PlayOneShot(clip);
     }
 }

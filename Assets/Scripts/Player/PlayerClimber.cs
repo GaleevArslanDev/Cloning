@@ -8,6 +8,8 @@ public class PlayerClimber : MonoBehaviour
     [SerializeField] private float ledgeClimbDuration = 0.4f;
     [SerializeField] private float mountJumpDuration = 0.45f;
     [SerializeField] private float mountJumpHeight = 0.2f;
+    [SerializeField] private AudioSource climbAudioSource;
+    [SerializeField] private AudioClip climbSound;
 
     private CharacterController controller;
     private ClonePlayback mountedClone;
@@ -44,6 +46,7 @@ public class PlayerClimber : MonoBehaviour
         mountedClone = clone;
         canDismount = false;
         jumpAnimationTime = mountJumpDuration;
+        PlayClimbSound();
 
         if (playerMovement != null)
             playerMovement.enabled = false;
@@ -112,7 +115,14 @@ public class PlayerClimber : MonoBehaviour
         mountedClone = null;
         canDismount = false;
         jumpAnimationTime = Mathf.Max(jumpAnimationTime, ledgeClimbDuration);
+        PlayClimbSound();
         climbRoutine = StartCoroutine(ClimbToLedge(ledge.LandingPosition));
+    }
+
+    private void PlayClimbSound()
+    {
+        if (climbAudioSource != null && climbSound != null)
+            climbAudioSource.PlayOneShot(climbSound);
     }
 
     private IEnumerator ClimbToLedge(Vector3 targetPosition)

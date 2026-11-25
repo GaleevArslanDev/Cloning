@@ -9,6 +9,12 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float runSpeed = 5.5f;
     [SerializeField] private float acceleration = 14f;
     [SerializeField] private float gravity = -20f;
+    [SerializeField] private AudioSource movementAudioSource;
+    [SerializeField] private AudioClip[] footstepSounds;
+    [SerializeField] private AudioClip fallSound;
+    [SerializeField] private float walkStepInterval = 0.5f;
+    [SerializeField] private float runStepInterval = 0.35f;
+    [SerializeField] private float fallSoundDelay;
 
     private CharacterController controller;
     private Vector3 horizontalVelocity;
@@ -17,6 +23,9 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody groundPlatform;
     private Vector3 groundPlatformPosition;
     private bool groundContactFound;
+    private float stepTimer;
+    private float fallTimer;
+    private bool fallSoundPlayed;
 
     public bool IsMoving => moveInput.sqrMagnitude > 0.01f && controller.isGrounded;
     public bool IsRunning { get; private set; }
@@ -42,12 +51,61 @@ public class PlayerMovement : MonoBehaviour
         groundContactFound = false;
         ReadInput();
         Move();
+        UpdateMovementSounds();
 
         if (!groundContactFound && !controller.isGrounded)
             ClearGroundPlatform();
 
         if (groundPlatform != null)
             groundPlatformPosition = groundPlatform.transform.position;
+    }
+
+    private void UpdateMovementSounds()
+    {
+        if (IsMoving && horizontalVelocity.sqrMagnitude > 0.1f)
+        {
+            stepTimer -= Time.deltaTime;
+
+            if (stepTimer <= 0f)
+            {
+                PlayRandomFootstep();
+                stepTimer = IsRunning ? runStepInterval : walkStepInterval;
+            }
+        }
+        else
+        {
+            stepTimer = 0f;
+        }
+
+        if (!controller.isGrounded && verticalVelocity < 0f)
+        {
+            fallTimer += Time.deltaTime;
+
+            if (!fallSoundPlayed && fallTimer >= fallSoundDelay)
+            {
+                PlaySound(fallSound);
+                fallSoundPlayed = true;
+            }
+        }
+        else
+        {
+            fallTimer = 0f;
+            fallSoundPlayed = false;
+        }
+    }
+
+    private void PlayRandomFootstep()
+    {
+        if (footstepSounds == null || footstepSounds.Length == 0)
+            return;
+
+        PlaySound(footstepSounds[Random.Range(0, footstepSounds.Length)]);
+    }
+
+    private void PlaySound(AudioClip clip)
+    {
+        if (movementAudioSource != null && clip != null)
+            movementAudioSource.PlayOneShot(clip);
     }
 
     private void ApplyPlatformMovement()
@@ -131,6 +189,9 @@ public class PlayerMovement : MonoBehaviour
         verticalVelocity = -2f;
         moveInput = Vector2.zero;
         IsRunning = false;
+        stepTimer = 0f;
+        fallTimer = 0f;
+        fallSoundPlayed = false;
         ClearGroundPlatform();
     }
 

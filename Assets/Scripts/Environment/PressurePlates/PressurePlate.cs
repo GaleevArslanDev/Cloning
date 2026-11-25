@@ -12,6 +12,9 @@ public abstract class PressurePlate : MonoBehaviour
     [SerializeField] private Color releasedColor = Color.white;
     [SerializeField] private Color pressedColor = new Color(0.45f, 0.85f, 0.45f);
     [SerializeField] private float colorSpeed = 8f;
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip pressedSound;
+    [SerializeField] private AudioClip releasedSound;
     [SerializeField] private UnityEvent onPressed;
     [SerializeField] private UnityEvent onReleased;
 
@@ -143,11 +146,18 @@ public abstract class PressurePlate : MonoBehaviour
             return;
 
         IsPressed = shouldBePressed;
+        PlaySound(IsPressed ? pressedSound : releasedSound);
 
         if (IsPressed)
             onPressed?.Invoke();
         else
             onReleased?.Invoke();
+    }
+
+    private void PlaySound(AudioClip clip)
+    {
+        if (audioSource != null && clip != null)
+            audioSource.PlayOneShot(clip);
     }
 
     private void UpdateVisual()
@@ -181,6 +191,7 @@ public abstract class PressurePlate : MonoBehaviour
         if (IsPressed)
         {
             IsPressed = false;
+            PlaySound(releasedSound);
             onReleased?.Invoke();
         }
     }

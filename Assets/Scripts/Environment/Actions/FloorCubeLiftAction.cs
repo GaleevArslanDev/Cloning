@@ -7,6 +7,8 @@ public class FloorCubeLiftAction : MonoBehaviour, IJsonSaveable
     [SerializeField] private float liftHeight = 2f;
     [SerializeField] private float movementSpeed = 1f;
     [SerializeField] private int requiredSignals = 2;
+    [SerializeField] private AudioSource movementAudioSource;
+    [SerializeField] private AudioClip movementSound;
 
     private int activeRequests;
     private float currentHeight;
@@ -35,6 +37,7 @@ public class FloorCubeLiftAction : MonoBehaviour, IJsonSaveable
             Register();
 
         float targetHeight = IsActive ? Mathf.Max(0f, liftHeight) : 0f;
+        float previousHeight = currentHeight;
         currentHeight = Mathf.MoveTowards(
             currentHeight,
             targetHeight,
@@ -43,6 +46,25 @@ public class FloorCubeLiftAction : MonoBehaviour, IJsonSaveable
 
         if (roomCubes != null)
             roomCubes.SetFloorLift(this, currentHeight);
+
+        UpdateMovementSound(!Mathf.Approximately(previousHeight, currentHeight));
+    }
+
+    private void UpdateMovementSound(bool isMoving)
+    {
+        if (movementAudioSource == null || movementSound == null)
+            return;
+
+        if (isMoving && !movementAudioSource.isPlaying)
+        {
+            movementAudioSource.clip = movementSound;
+            movementAudioSource.loop = true;
+            movementAudioSource.Play();
+        }
+        else if (!isMoving && movementAudioSource.isPlaying)
+        {
+            movementAudioSource.Stop();
+        }
     }
 
     public void Activate()
@@ -105,6 +127,9 @@ public class FloorCubeLiftAction : MonoBehaviour, IJsonSaveable
 
         if (roomCubes != null)
             roomCubes.SetFloorLift(this, 0f);
+
+        if (movementAudioSource != null)
+            movementAudioSource.Stop();
     }
 
     private void OnDestroy()

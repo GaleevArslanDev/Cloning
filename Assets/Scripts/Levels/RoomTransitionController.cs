@@ -19,6 +19,8 @@ public class RoomTransitionController : MonoBehaviour
     [SerializeField] private float objectDelay = 0.12f;
     [SerializeField] private float hiddenDepth = 2f;
     [SerializeField] private bool buildWhenSceneStarts;
+    [SerializeField] private AudioSource rebuildAudioSource;
+    [SerializeField] private AudioClip rebuildSound;
 
     private readonly List<TransitionObject> objects = new List<TransitionObject>();
     private readonly List<TransitionMaterial> transitionMaterials = new List<TransitionMaterial>();
@@ -71,7 +73,11 @@ public class RoomTransitionController : MonoBehaviour
 
     public IEnumerator HideLevel()
     {
-        Coroutine colorAnimation = StartMaterialAnimation(true);
+        Coroutine colorAnimation = StartMaterialAnimation(
+            GetMaterialColor(),
+            transitionColor
+        );
+        StartRebuildSound();
         PrepareObjects(false);
         yield return AnimateObjects(0f, 1f);
         yield return AnimateRoom(0f, 1f);
@@ -82,10 +88,13 @@ public class RoomTransitionController : MonoBehaviour
 
         if (roomCubes != null)
             roomCubes.SetFrozen(true);
+
+        StopRebuildSound();
     }
 
     public IEnumerator BuildLevel()
     {
+        StartRebuildSound();
         SetTransitionMaterialColors();
         Coroutine colorAnimation = StartMaterialAnimation(false);
 
@@ -106,6 +115,28 @@ public class RoomTransitionController : MonoBehaviour
             yield return colorAnimation;
 
         RestoreObjects();
+        StopRebuildSound();
+    }
+
+    private void StartRebuildSound()
+    {
+        if (rebuildAudioSource == null || rebuildSound == null)
+            return;
+
+        rebuildAudioSource.clip = rebuildSound;
+        rebuildAudioSource.loop = true;
+        rebuildAudioSource.Play();
+    }
+
+    private void StopRebuildSound()
+    {
+        if (rebuildAudioSource != null)
+            rebuildAudioSource.Stop();
+    }
+
+    private void OnDisable()
+    {
+        StopRebuildSound();
     }
 
     private void CaptureMaterialColors()
