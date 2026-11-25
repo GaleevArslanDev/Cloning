@@ -51887,8 +51887,8 @@ MonoBehaviour:
   levelObjectsRoot: {fileID: 1111170981}
   roomMaterial: {fileID: 2100000, guid: 2eb9c77f1fc7f0841929afa928fdd0ad, type: 2}
   roomMaterials:
+  - {fileID: 2100000, guid: 3f0ae67da41ffa0439b09d7a004cd239, type: 2}
   - {fileID: 2100000, guid: 2eb9c77f1fc7f0841929afa928fdd0ad, type: 2}
-  - {fileID: 2100000, guid: 3f6310f45a7e9a74f8fea7dbbee86cf6, type: 2}
   transitionColor: {r: 0.7529412, g: 0.7529412, b: 0.7529412, a: 1}
   materialColorDuration: 4
   objectMoveDuration: 4

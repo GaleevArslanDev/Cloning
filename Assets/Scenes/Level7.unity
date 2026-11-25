@@ -69084,7 +69084,9 @@ MonoBehaviour:
   roomCubes: {fileID: 1272040966}
   levelObjectsRoot: {fileID: 260838946}
   roomMaterial: {fileID: 0}
-  roomMaterials: []
+  roomMaterials:
+  - {fileID: 2100000, guid: 2eb9c77f1fc7f0841929afa928fdd0ad, type: 2}
+  - {fileID: 2100000, guid: 3f0ae67da41ffa0439b09d7a004cd239, type: 2}
   transitionColor: {r: 1, g: 1, b: 1, a: 1}
   materialColorDuration: 4
   objectMoveDuration: 4

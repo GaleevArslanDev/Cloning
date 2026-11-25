@@ -42222,72 +42222,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 617152863}
   m_Mesh: {fileID: 4300000, guid: 5dd76c6be56086e45be8c579081c06e8, type: 2}
---- !u!1001 &620899877
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 1793602206}
-    m_Modifications:
-    - target: {fileID: 5987575739447400824, guid: f30825a91f305d54fbaf07c175e8eb03, type: 3}
-      propertyPath: m_Name
-      value: Glass Panel (4)
-      objectReference: {fileID: 0}
-    - target: {fileID: 6426323695050525165, guid: f30825a91f305d54fbaf07c175e8eb03, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 9
-      objectReference: {fileID: 0}
-    - target: {fileID: 6426323695050525165, guid: f30825a91f305d54fbaf07c175e8eb03, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -14.587349
-      objectReference: {fileID: 0}
-    - target: {fileID: 6426323695050525165, guid: f30825a91f305d54fbaf07c175e8eb03, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 9.542
-      objectReference: {fileID: 0}
-    - target: {fileID: 6426323695050525165, guid: f30825a91f305d54fbaf07c175e8eb03, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -14.817459
-      objectReference: {fileID: 0}
-    - target: {fileID: 6426323695050525165, guid: f30825a91f305d54fbaf07c175e8eb03, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.7071068
-      objectReference: {fileID: 0}
-    - target: {fileID: 6426323695050525165, guid: f30825a91f305d54fbaf07c175e8eb03, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0.7071068
-      objectReference: {fileID: 0}
-    - target: {fileID: 6426323695050525165, guid: f30825a91f305d54fbaf07c175e8eb03, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6426323695050525165, guid: f30825a91f305d54fbaf07c175e8eb03, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6426323695050525165, guid: f30825a91f305d54fbaf07c175e8eb03, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: -90
-      objectReference: {fileID: 0}
-    - target: {fileID: 6426323695050525165, guid: f30825a91f305d54fbaf07c175e8eb03, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6426323695050525165, guid: f30825a91f305d54fbaf07c175e8eb03, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: f30825a91f305d54fbaf07c175e8eb03, type: 3}
---- !u!4 &620899878 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 6426323695050525165, guid: f30825a91f305d54fbaf07c175e8eb03, type: 3}
-  m_PrefabInstance: {fileID: 620899877}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &621190848
 GameObject:
   m_ObjectHideFlags: 0
@@ -80589,7 +80523,9 @@ MonoBehaviour:
   roomCubes: {fileID: 1151583249}
   levelObjectsRoot: {fileID: 1793602206}
   roomMaterial: {fileID: 2100000, guid: 2eb9c77f1fc7f0841929afa928fdd0ad, type: 2}
-  roomMaterials: []
+  roomMaterials:
+  - {fileID: 2100000, guid: 2eb9c77f1fc7f0841929afa928fdd0ad, type: 2}
+  - {fileID: 2100000, guid: 3f0ae67da41ffa0439b09d7a004cd239, type: 2}
   transitionColor: {r: 0.7529412, g: 0.7529412, b: 0.7529412, a: 1}
   materialColorDuration: 4
   objectMoveDuration: 4
@@ -122995,7 +122931,6 @@ Transform:
   - {fileID: 1383294670}
   - {fileID: 864955580}
   - {fileID: 1184556475}
-  - {fileID: 620899878}
   - {fileID: 911931592}
   - {fileID: 1706226570}
   - {fileID: 413105308}
