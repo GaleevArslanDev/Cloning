@@ -11965,7 +11965,7 @@ Transform:
   m_GameObject: {fileID: 239893098}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.7071068, z: -0, w: 0.70710677}
-  m_LocalPosition: {x: -6.47, y: 1.35, z: 4.671}
+  m_LocalPosition: {x: -6.387, y: 1.415, z: 4.671}
   m_LocalScale: {x: 1.9863017, y: 0.19569999, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -42751,6 +42751,8 @@ MonoBehaviour:
   openingClip: {fileID: 7400000, guid: 8c804b5cae8838046beb5d7ad7d7512e, type: 2}
   playbackSpeed: 1
   requiredSignals: 1
+  audioSource: {fileID: 0}
+  openingSound: {fileID: 0}
   progress: 0
 --- !u!95 &803342144
 Animator:
@@ -46470,7 +46472,7 @@ Transform:
   m_GameObject: {fileID: 866030133}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.7071068, z: -0, w: 0.70710677}
-  m_LocalPosition: {x: -6.463, y: 2.36, z: 6.582}
+  m_LocalPosition: {x: -6.398, y: 2.426, z: 6.582}
   m_LocalScale: {x: 1.9863017, y: 0.19569999, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -51884,6 +51886,9 @@ MonoBehaviour:
   roomCubes: {fileID: 963989373}
   levelObjectsRoot: {fileID: 1111170981}
   roomMaterial: {fileID: 2100000, guid: 2eb9c77f1fc7f0841929afa928fdd0ad, type: 2}
+  roomMaterials:
+  - {fileID: 2100000, guid: 2eb9c77f1fc7f0841929afa928fdd0ad, type: 2}
+  - {fileID: 2100000, guid: 3f6310f45a7e9a74f8fea7dbbee86cf6, type: 2}
   transitionColor: {r: 0.7529412, g: 0.7529412, b: 0.7529412, a: 1}
   materialColorDuration: 4
   objectMoveDuration: 4
@@ -51892,6 +51897,8 @@ MonoBehaviour:
   objectDelay: 0.12
   hiddenDepth: 2
   buildWhenSceneStarts: 1
+  rebuildAudioSource: {fileID: 0}
+  rebuildSound: {fileID: 0}
 --- !u!1 &964503108
 GameObject:
   m_ObjectHideFlags: 0
@@ -73486,8 +73493,13 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   allowedDropOverlap: 0.002
+  dropCorrectionDistance: 0.8
+  dropCorrectionStep: 0.1
   movementSway: 0.025
   rotationStep: 15
+  carryAudioSource: {fileID: 0}
+  pickupSound: {fileID: 0}
+  dropSound: {fileID: 0}
 --- !u!114 &1383550483
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -73504,6 +73516,8 @@ MonoBehaviour:
   ledgeClimbDuration: 0.4
   mountJumpDuration: 0.45
   mountJumpHeight: 0.2
+  climbAudioSource: {fileID: 0}
+  climbSound: {fileID: 0}
 --- !u!114 &1383550484
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -73568,6 +73582,12 @@ MonoBehaviour:
   runSpeed: 5.5
   acceleration: 14
   gravity: -20
+  movementAudioSource: {fileID: 0}
+  footstepSounds: []
+  fallSound: {fileID: 0}
+  walkStepInterval: 0.5
+  runStepInterval: 0.35
+  fallSoundDelay: 0
 --- !u!143 &1383550487
 CharacterController:
   m_ObjectHideFlags: 0
@@ -82362,6 +82382,9 @@ MonoBehaviour:
   cloneRecorder: {fileID: 0}
   playerControl: {fileID: 0}
   roomTransition: {fileID: 963989374}
+  transitionAudioSource: {fileID: 0}
+  flaskClosingSound: {fileID: 0}
+  flaskOpeningSound: {fileID: 0}
   onLevelCompleted:
     m_PersistentCalls:
       m_Calls: []
@@ -101063,7 +101086,7 @@ Transform:
   m_GameObject: {fileID: 1824961612}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -14.98, y: 2.375, z: 11.87}
+  m_LocalPosition: {x: -14.98, y: 2.465, z: 11.87}
   m_LocalScale: {x: 1.9863017, y: 0.19569999, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -103567,7 +103590,7 @@ Transform:
   m_GameObject: {fileID: 1867215953}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.7071068, z: -0, w: 0.70710677}
-  m_LocalPosition: {x: -6.463, y: 2.38, z: 2.72}
+  m_LocalPosition: {x: -6.383, y: 2.442, z: 2.72}
   m_LocalScale: {x: 1.9863017, y: 0.19569999, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -110114,6 +110137,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1cf3fbe558d5a64797c2c572bc0e4dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WaterResetTrigger
+  waterAudioSource: {fileID: 0}
+  respawnAudioSource: {fileID: 0}
+  waterSound: {fileID: 0}
+  respawnSound: {fileID: 0}
 --- !u!1 &1982715233
 GameObject:
   m_ObjectHideFlags: 0
@@ -118245,6 +118272,8 @@ MonoBehaviour:
   liftHeight: 3
   movementSpeed: 1
   requiredSignals: 1
+  movementAudioSource: {fileID: 0}
+  movementSound: {fileID: 0}
 --- !u!4 &5540240726976478977 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 9127433437904526698, guid: f33e07b8c770a594f9b0843292dab866, type: 3}

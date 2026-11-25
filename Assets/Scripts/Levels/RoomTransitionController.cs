@@ -73,10 +73,7 @@ public class RoomTransitionController : MonoBehaviour
 
     public IEnumerator HideLevel()
     {
-        Coroutine colorAnimation = StartMaterialAnimation(
-            GetMaterialColor(),
-            transitionColor
-        );
+        Coroutine colorAnimation = StartMaterialAnimation(true);
         StartRebuildSound();
         PrepareObjects(false);
         yield return AnimateObjects(0f, 1f);

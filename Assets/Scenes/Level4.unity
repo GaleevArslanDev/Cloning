@@ -5104,6 +5104,9 @@ MonoBehaviour:
   releasedColor: {r: 1, g: 1, b: 1, a: 1}
   pressedColor: {r: 0.45, g: 0.85, b: 0.45, a: 1}
   colorSpeed: 8
+  audioSource: {fileID: 0}
+  pressedSound: {fileID: 0}
+  releasedSound: {fileID: 0}
   onPressed:
     m_PersistentCalls:
       m_Calls:
@@ -14876,8 +14879,13 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   allowedDropOverlap: 0.002
+  dropCorrectionDistance: 0.8
+  dropCorrectionStep: 0.1
   movementSway: 0.025
   rotationStep: 15
+  carryAudioSource: {fileID: 0}
+  pickupSound: {fileID: 0}
+  dropSound: {fileID: 0}
 --- !u!114 &268687963
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14894,6 +14902,8 @@ MonoBehaviour:
   ledgeClimbDuration: 0.4
   mountJumpDuration: 0.45
   mountJumpHeight: 0.2
+  climbAudioSource: {fileID: 0}
+  climbSound: {fileID: 0}
 --- !u!114 &268687964
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14958,6 +14968,12 @@ MonoBehaviour:
   runSpeed: 5.5
   acceleration: 14
   gravity: -20
+  movementAudioSource: {fileID: 0}
+  footstepSounds: []
+  fallSound: {fileID: 0}
+  walkStepInterval: 0.5
+  runStepInterval: 0.35
+  fallSoundDelay: 0
 --- !u!143 &268687967
 CharacterController:
   m_ObjectHideFlags: 0
@@ -52220,6 +52236,9 @@ MonoBehaviour:
   cloneRecorder: {fileID: 0}
   playerControl: {fileID: 0}
   roomTransition: {fileID: 2005043107}
+  transitionAudioSource: {fileID: 0}
+  flaskClosingSound: {fileID: 0}
+  flaskOpeningSound: {fileID: 0}
   onLevelCompleted:
     m_PersistentCalls:
       m_Calls: []
@@ -105167,6 +105186,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1cf3fbe558d5a64797c2c572bc0e4dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WaterResetTrigger
+  waterAudioSource: {fileID: 0}
+  respawnAudioSource: {fileID: 0}
+  waterSound: {fileID: 0}
+  respawnSound: {fileID: 0}
 --- !u!65 &1919481750
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -110623,7 +110646,10 @@ MonoBehaviour:
   roomCubes: {fileID: 2005043108}
   levelObjectsRoot: {fileID: 204420731}
   roomMaterial: {fileID: 0}
-  transitionColor: {r: 1, g: 1, b: 1, a: 1}
+  roomMaterials:
+  - {fileID: 2100000, guid: 2eb9c77f1fc7f0841929afa928fdd0ad, type: 2}
+  - {fileID: 2100000, guid: 3f6310f45a7e9a74f8fea7dbbee86cf6, type: 2}
+  transitionColor: {r: 0.7529412, g: 0.7529412, b: 0.7529412, a: 1}
   materialColorDuration: 4
   objectMoveDuration: 4
   roomMoveDuration: 3
@@ -110631,6 +110657,8 @@ MonoBehaviour:
   objectDelay: 0.12
   hiddenDepth: 2
   buildWhenSceneStarts: 1
+  rebuildAudioSource: {fileID: 0}
+  rebuildSound: {fileID: 0}
 --- !u!114 &2005043108
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -116720,6 +116748,8 @@ MonoBehaviour:
   liftHeight: 1.5
   movementSpeed: 1
   requiredSignals: 1
+  movementAudioSource: {fileID: 0}
+  movementSound: {fileID: 0}
 --- !u!4 &2118843664 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1321038448815434788, guid: c57e872fa76d9714eb1408f887163d63, type: 3}
