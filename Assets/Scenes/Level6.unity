@@ -26675,8 +26675,6 @@ MonoBehaviour:
   liftHeight: 5
   movementSpeed: 1
   requiredSignals: 1
-  movementAudioSource: {fileID: 0}
-  movementSound: {fileID: 0}
 --- !u!1 &524443017
 GameObject:
   m_ObjectHideFlags: 0
@@ -43439,8 +43437,6 @@ MonoBehaviour:
   liftHeight: 7
   movementSpeed: 1
   requiredSignals: 1
-  movementAudioSource: {fileID: 0}
-  movementSound: {fileID: 0}
 --- !u!4 &781335154 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 9127433437904526698, guid: f33e07b8c770a594f9b0843292dab866, type: 3}
@@ -43577,6 +43573,7 @@ GameObject:
   - component: {fileID: 785888482}
   - component: {fileID: 785888481}
   - component: {fileID: 785888480}
+  - component: {fileID: 785888490}
   m_Layer: 2
   m_Name: Player
   m_TagString: Player
@@ -43660,9 +43657,6 @@ MonoBehaviour:
   dropCorrectionStep: 0.1
   movementSway: 0.025
   rotationStep: 15
-  carryAudioSource: {fileID: 0}
-  pickupSound: {fileID: 0}
-  dropSound: {fileID: 0}
 --- !u!114 &785888483
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -43679,8 +43673,6 @@ MonoBehaviour:
   ledgeClimbDuration: 0.4
   mountJumpDuration: 0.45
   mountJumpHeight: 0.2
-  climbAudioSource: {fileID: 0}
-  climbSound: {fileID: 0}
 --- !u!114 &785888484
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -43745,12 +43737,11 @@ MonoBehaviour:
   runSpeed: 5.5
   acceleration: 14
   gravity: -20
-  movementAudioSource: {fileID: 0}
-  footstepSounds: []
-  fallSound: {fileID: 0}
   walkStepInterval: 0.5
   runStepInterval: 0.35
   fallSoundDelay: 0
+  groundedSoundGrace: 0.15
+  minimumFallSpeed: 0.5
 --- !u!143 &785888487
 CharacterController:
   m_ObjectHideFlags: 0
@@ -43816,6 +43807,37 @@ Transform:
   - {fileID: 401380928}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
+--- !u!114 &785888490
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 785888479}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59557e849cb24297b223980d089c9e34, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameAudioClips
+  footsteps:
+  - {fileID: 8300000, guid: 8e6b163b1f339804da2214756a64cbb2, type: 3}
+  falling: {fileID: 8300000, guid: 3ba0efa6aed21e640b3ca47b911f31cb, type: 3}
+  climbing: {fileID: 8300000, guid: 5a5a42a7cacad2c42b31d534517cf9a6, type: 3}
+  pickup: {fileID: 8300000, guid: f8936add3f59c8c439faa4293645fbdd, type: 3}
+  drop: {fileID: 8300000, guid: f8936add3f59c8c439faa4293645fbdd, type: 3}
+  water: {fileID: 8300000, guid: b58ad119a04f953499096175403e7356, type: 3}
+  respawn: {fileID: 8300000, guid: 3c91964d3d506ee4fbdaebde3080f865, type: 3}
+  platePressed: {fileID: 8300000, guid: 30eeb66838f784e4e85475eb28869d1e, type: 3}
+  plateReleased: {fileID: 8300000, guid: fdc45dfa203a6a54e9f0e6a919b45914, type: 3}
+  buttonPressed: {fileID: 8300000, guid: 65b2565b7d9112445afd927fadb4e5ce, type: 3}
+  buttonReleased: {fileID: 8300000, guid: 59473558c393a3f4882d23bd6412faa8, type: 3}
+  laserLoop: {fileID: 8300000, guid: b9b5255fd2cd4b0498b3fd86a123c2fe, type: 3}
+  laserReceived: {fileID: 8300000, guid: 277bdf2ea0783e440873bc6e5ccb7af2, type: 3}
+  floorMovement: {fileID: 8300000, guid: 1aac1458c609bc6489f86c3c07969447, type: 3}
+  doorOpening: {fileID: 8300000, guid: 088038c0d834a3948ba385ec8d4a8fb5, type: 3}
+  flaskClosing: {fileID: 8300000, guid: 391af76a38bcd9d4e94b43b0667ea6b5, type: 3}
+  flaskOpening: {fileID: 8300000, guid: 088038c0d834a3948ba385ec8d4a8fb5, type: 3}
+  rebuilding: {fileID: 8300000, guid: c73252ace6f6a644382ba3da23da99c9, type: 3}
 --- !u!1 &787637714
 GameObject:
   m_ObjectHideFlags: 0
@@ -49661,8 +49683,6 @@ MonoBehaviour:
   liftHeight: 7
   movementSpeed: 1
   requiredSignals: 1
-  movementAudioSource: {fileID: 0}
-  movementSound: {fileID: 0}
 --- !u!1 &895203217
 GameObject:
   m_ObjectHideFlags: 0
@@ -51152,10 +51172,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1cf3fbe558d5a64797c2c572bc0e4dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WaterResetTrigger
-  waterAudioSource: {fileID: 0}
-  respawnAudioSource: {fileID: 0}
-  waterSound: {fileID: 0}
-  respawnSound: {fileID: 0}
+  respawnSoundDelay: 0.25
 --- !u!65 &924432645
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -61259,8 +61276,6 @@ MonoBehaviour:
   objectDelay: 0.12
   hiddenDepth: 2
   buildWhenSceneStarts: 1
-  rebuildAudioSource: {fileID: 0}
-  rebuildSound: {fileID: 0}
 --- !u!114 &1131985134
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -68702,8 +68717,6 @@ MonoBehaviour:
   liftHeight: 3
   movementSpeed: 1
   requiredSignals: 1
-  movementAudioSource: {fileID: 0}
-  movementSound: {fileID: 0}
 --- !u!1 &1272685687
 GameObject:
   m_ObjectHideFlags: 0
@@ -119137,9 +119150,6 @@ MonoBehaviour:
   cloneRecorder: {fileID: 0}
   playerControl: {fileID: 0}
   roomTransition: {fileID: 1131985133}
-  transitionAudioSource: {fileID: 0}
-  flaskClosingSound: {fileID: 0}
-  flaskOpeningSound: {fileID: 0}
   onLevelCompleted:
     m_PersistentCalls:
       m_Calls: []
