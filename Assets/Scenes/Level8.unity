@@ -44096,6 +44096,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Cube (8)
       objectReference: {fileID: 0}
+    - target: {fileID: 1674807839320991204, guid: 0503f93d8731c504aa42df098b3dabb3, type: 3}
+      propertyPath: m_UseGravity
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5726408035638590266, guid: 0503f93d8731c504aa42df098b3dabb3, type: 3}
       propertyPath: m_LocalPosition.x
       value: -32.74535
@@ -72353,6 +72357,75 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1021855058}
   m_Mesh: {fileID: 4300000, guid: 5dd76c6be56086e45be8c579081c06e8, type: 2}
+--- !u!1 &1023555579
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1023555582}
+  - component: {fileID: 1023555581}
+  - component: {fileID: 1023555580}
+  m_Layer: 0
+  m_Name: Ledge
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1023555580
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1023555579}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fca6723aa4638d84c96de81b5955a5fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ClimbableLedge
+  points:
+  - {fileID: 2025881965}
+--- !u!65 &1023555581
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1023555579}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 2.7029507, z: 1}
+  m_Center: {x: 0, y: 1.8317235, z: -0}
+--- !u!4 &1023555582
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1023555579}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0.7071068, z: -0, w: 0.70710677}
+  m_LocalPosition: {x: -54.997, y: 4.613, z: 20.43}
+  m_LocalScale: {x: 1.9863017, y: 0.19569999, z: 2.0254579}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 2025881965}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
 --- !u!1 &1027630516
 GameObject:
   m_ObjectHideFlags: 0
@@ -85683,16 +85756,78 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 42671985439889698, guid: 10d2ac44704e46e47a7502beb6853439, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 152930997721959477, guid: 10d2ac44704e46e47a7502beb6853439, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1238018951}
   m_SourcePrefab: {fileID: 100100000, guid: 10d2ac44704e46e47a7502beb6853439, type: 3}
 --- !u!4 &1238018949 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1321038448815434788, guid: 10d2ac44704e46e47a7502beb6853439, type: 3}
   m_PrefabInstance: {fileID: 1238018948}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1238018950 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 152930997721959477, guid: 10d2ac44704e46e47a7502beb6853439, type: 3}
+  m_PrefabInstance: {fileID: 1238018948}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1238018951
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1238018950}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3cd8a72b0c313a1428ac73bb4bf0d856, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CarryablePressurePlate
+  plateVisual: {fileID: 1238018949}
+  pressedOffset: {x: 0, y: -0.08, z: 0}
+  movementSpeed: 0.5
+  stateRenderer: {fileID: 0}
+  releasedColor: {r: 1, g: 1, b: 1, a: 1}
+  pressedColor: {r: 0.45, g: 0.85, b: 0.45, a: 1}
+  colorSpeed: 8
+  audioSource: {fileID: 0}
+  pressedSound: {fileID: 0}
+  releasedSound: {fileID: 0}
+  onPressed:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 756924840}
+        m_TargetAssemblyTypeName: HoldDoorAction, Assembly-CSharp
+        m_MethodName: Open
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  onReleased:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 756924840}
+        m_TargetAssemblyTypeName: HoldDoorAction, Assembly-CSharp
+        m_MethodName: Close
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  minimumHeight: 0
 --- !u!1 &1239605281
 GameObject:
   m_ObjectHideFlags: 0
@@ -114222,6 +114357,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Cube (8)
       objectReference: {fileID: 0}
+    - target: {fileID: 1674807839320991204, guid: 0503f93d8731c504aa42df098b3dabb3, type: 3}
+      propertyPath: m_UseGravity
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5726408035638590266, guid: 0503f93d8731c504aa42df098b3dabb3, type: 3}
       propertyPath: m_LocalPosition.x
       value: -32.04
@@ -118365,15 +118504,77 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 3991713826359145005, guid: 10d2ac44704e46e47a7502beb6853439, type: 3}
+    - {fileID: 42671985439889698, guid: 10d2ac44704e46e47a7502beb6853439, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 152930997721959477, guid: 10d2ac44704e46e47a7502beb6853439, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1715689817}
   m_SourcePrefab: {fileID: 100100000, guid: 10d2ac44704e46e47a7502beb6853439, type: 3}
 --- !u!4 &1715689815 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1321038448815434788, guid: 10d2ac44704e46e47a7502beb6853439, type: 3}
   m_PrefabInstance: {fileID: 1715689814}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1715689816 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 152930997721959477, guid: 10d2ac44704e46e47a7502beb6853439, type: 3}
+  m_PrefabInstance: {fileID: 1715689814}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1715689817
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1715689816}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3cd8a72b0c313a1428ac73bb4bf0d856, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CarryablePressurePlate
+  plateVisual: {fileID: 1715689815}
+  pressedOffset: {x: 0, y: -0.08, z: 0}
+  movementSpeed: 0.5
+  stateRenderer: {fileID: 0}
+  releasedColor: {r: 1, g: 1, b: 1, a: 1}
+  pressedColor: {r: 0.45, g: 0.85, b: 0.45, a: 1}
+  colorSpeed: 8
+  audioSource: {fileID: 0}
+  pressedSound: {fileID: 0}
+  releasedSound: {fileID: 0}
+  onPressed:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 756924840}
+        m_TargetAssemblyTypeName: HoldDoorAction, Assembly-CSharp
+        m_MethodName: Open
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  onReleased:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 756924840}
+        m_TargetAssemblyTypeName: HoldDoorAction, Assembly-CSharp
+        m_MethodName: Close
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  minimumHeight: 0
 --- !u!1 &1715697568
 GameObject:
   m_ObjectHideFlags: 0
@@ -125332,7 +125533,7 @@ Transform:
   m_GameObject: {fileID: 1825538243}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 334.2, z: 0}
+  m_LocalPosition: {x: 0, y: 275, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -139869,6 +140070,37 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2024282491}
   m_Mesh: {fileID: 4300000, guid: d49fea1167bbe644e87a0fe2bebca383, type: 2}
+--- !u!1 &2025881964
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2025881965}
+  m_Layer: 0
+  m_Name: LandingPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: -5487077368411116049, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2025881965
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2025881964}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 5.5937524, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1023555582}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2026211793
 GameObject:
   m_ObjectHideFlags: 0
@@ -148346,3 +148578,4 @@ SceneRoots:
   - {fileID: 959314448}
   - {fileID: 2067630611}
   - {fileID: 318838308}
+  - {fileID: 1023555582}

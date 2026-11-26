@@ -6617,7 +6617,7 @@ Transform:
   m_GameObject: {fileID: 149334367}
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
-  m_LocalPosition: {x: -30.32, y: 9.39, z: 9.97}
+  m_LocalPosition: {x: -30.08, y: 9.39, z: 9.97}
   m_LocalScale: {x: 539.4887, y: 24.75, z: 24.75}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -16518,7 +16518,7 @@ Transform:
   m_GameObject: {fileID: 312716430}
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
-  m_LocalPosition: {x: -30.320002, y: 9.39, z: 10.959999}
+  m_LocalPosition: {x: -30.080004, y: 9.39, z: 10.959999}
   m_LocalScale: {x: 539.4887, y: 24.75, z: 24.75}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -42235,7 +42235,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3655765857597905728, guid: 4763f8e52e4d69845892ec96bdadbe93, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -32.75
+      value: -32.53
       objectReference: {fileID: 0}
     - target: {fileID: 3655765857597905728, guid: 4763f8e52e4d69845892ec96bdadbe93, type: 3}
       propertyPath: m_LocalPosition.y
@@ -47786,7 +47786,7 @@ Transform:
   m_GameObject: {fileID: 866279670}
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
-  m_LocalPosition: {x: -30.31, y: 8.4, z: 9.969999}
+  m_LocalPosition: {x: -30.070002, y: 8.4, z: 9.969999}
   m_LocalScale: {x: 539.4887, y: 24.75, z: 24.75}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -52072,7 +52072,7 @@ MonoBehaviour:
   - {fileID: 496733786}
   - {fileID: 1850671756}
   - {fileID: 1864180049}
-  liftHeight: 1.5
+  liftHeight: 1
   movementSpeed: 1
   requiredSignals: 1
   movementAudioSource: {fileID: 0}
@@ -72419,7 +72419,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3655765857597905728, guid: 4763f8e52e4d69845892ec96bdadbe93, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -32.75
+      value: -32.53
       objectReference: {fileID: 0}
     - target: {fileID: 3655765857597905728, guid: 4763f8e52e4d69845892ec96bdadbe93, type: 3}
       propertyPath: m_LocalPosition.y
@@ -91999,7 +91999,7 @@ MonoBehaviour:
   - {fileID: 514291826}
   - {fileID: 1746587323}
   - {fileID: 618819202}
-  liftHeight: 1.5
+  liftHeight: 2
   movementSpeed: 1
   requiredSignals: 1
   movementAudioSource: {fileID: 0}
@@ -92027,7 +92027,7 @@ MonoBehaviour:
   - {fileID: 1653696347}
   - {fileID: 1042478750}
   - {fileID: 103842497}
-  liftHeight: 1.5
+  liftHeight: 3
   movementSpeed: 1
   requiredSignals: 1
   movementAudioSource: {fileID: 0}
@@ -106758,7 +106758,7 @@ MonoBehaviour:
   - {fileID: 1288089207}
   - {fileID: 1858663974}
   - {fileID: 476360622}
-  liftHeight: 1.5
+  liftHeight: 2
   movementSpeed: 1
   requiredSignals: 1
   movementAudioSource: {fileID: 0}
@@ -108889,7 +108889,7 @@ Transform:
   m_GameObject: {fileID: 1955006919}
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
-  m_LocalPosition: {x: -30.31, y: 8.4, z: 10.959999}
+  m_LocalPosition: {x: -30.070002, y: 8.4, z: 10.959999}
   m_LocalScale: {x: 539.4887, y: 24.75, z: 24.75}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -109307,7 +109307,7 @@ MonoBehaviour:
   - {fileID: 638867886}
   - {fileID: 573955462}
   - {fileID: 353642789}
-  liftHeight: 1.5
+  liftHeight: 2
   movementSpeed: 1
   requiredSignals: 1
   movementAudioSource: {fileID: 0}
