@@ -5,7 +5,7 @@ using UnityEngine.Events;
 public class LaserReceiver : MonoBehaviour
 {
     private AudioSource audioSource;
-    [SerializeField] private AudioClip receivedSound;
+    private AudioClip receivedSound;
     [SerializeField] private UnityEvent onActivated;
     [SerializeField] private UnityEvent onDeactivated;
 
@@ -16,6 +16,9 @@ public class LaserReceiver : MonoBehaviour
     private void Awake()
     {
         audioSource = PlayerAudioController.GetOneShotSource();
+        receivedSound = GameAudioClips.Instance != null
+            ? GameAudioClips.Instance.LaserReceived
+            : null;
     }
 
     public void Receive(LaserEmitter emitter)

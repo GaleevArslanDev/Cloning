@@ -5,8 +5,8 @@ using UnityEngine.Events;
 public class ButtonInteractable : MonoBehaviour, IInteractable
 {
     private AudioSource audioSource;
-    [SerializeField] private AudioClip pressedSound;
-    [SerializeField] private AudioClip releasedSound;
+    private AudioClip pressedSound;
+    private AudioClip releasedSound;
     [SerializeField] private UnityEvent onPressed;
     [SerializeField] private UnityEvent onReleased;
     [SerializeField, HideInInspector] private GameObject[] objectsToHide;
@@ -21,6 +21,13 @@ public class ButtonInteractable : MonoBehaviour, IInteractable
     private void Awake()
     {
         audioSource = PlayerAudioController.GetOneShotSource();
+        GameAudioClips audioClips = GameAudioClips.Instance;
+
+        if (audioClips != null)
+        {
+            pressedSound = audioClips.ButtonPressed;
+            releasedSound = audioClips.ButtonReleased;
+        }
     }
 
     public void BeginInteraction(GameObject interactor)

@@ -13,8 +13,8 @@ public abstract class PressurePlate : MonoBehaviour
     [SerializeField] private Color pressedColor = new Color(0.45f, 0.85f, 0.45f);
     [SerializeField] private float colorSpeed = 8f;
     private AudioSource audioSource;
-    [SerializeField] private AudioClip pressedSound;
-    [SerializeField] private AudioClip releasedSound;
+    private AudioClip pressedSound;
+    private AudioClip releasedSound;
     [SerializeField] private UnityEvent onPressed;
     [SerializeField] private UnityEvent onReleased;
 
@@ -29,6 +29,14 @@ public abstract class PressurePlate : MonoBehaviour
     protected virtual void Awake()
     {
         audioSource = PlayerAudioController.GetOneShotSource();
+        GameAudioClips audioClips = GameAudioClips.Instance;
+
+        if (audioClips != null)
+        {
+            pressedSound = audioClips.PlatePressed;
+            releasedSound = audioClips.PlateReleased;
+        }
+
         BoxCollider trigger = GetComponent<BoxCollider>();
         Rigidbody body = GetComponent<Rigidbody>();
 

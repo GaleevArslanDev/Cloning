@@ -12,8 +12,8 @@ public class LevelManager : MonoBehaviour
     [SerializeField] private PlayerControlLock playerControl;
     [SerializeField] private RoomTransitionController roomTransition;
     private AudioSource transitionAudioSource;
-    [SerializeField] private AudioClip flaskClosingSound;
-    [SerializeField] private AudioClip flaskOpeningSound;
+    private AudioClip flaskClosingSound;
+    private AudioClip flaskOpeningSound;
     [FormerlySerializedAs("onAllLevelsCompleted")]
     [SerializeField] private UnityEvent onLevelCompleted;
 
@@ -44,6 +44,13 @@ public class LevelManager : MonoBehaviour
             roomTransition = FindFirstObjectByType<RoomTransitionController>();
 
         transitionAudioSource = PlayerAudioController.GetOneShotSource();
+        GameAudioClips audioClips = GameAudioClips.Instance;
+
+        if (audioClips != null)
+        {
+            flaskClosingSound = audioClips.FlaskClosing;
+            flaskOpeningSound = audioClips.FlaskOpening;
+        }
     }
 
     private IEnumerator Start()

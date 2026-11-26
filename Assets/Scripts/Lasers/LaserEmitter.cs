@@ -12,7 +12,7 @@ public class LaserEmitter : MonoBehaviour
     [SerializeField] private float surfaceOffset = 0.01f;
     [SerializeField] private ParticleSystem impactEffectPrefab;
     private AudioSource laserAudioSource;
-    [SerializeField] private AudioClip laserSound;
+    private AudioClip laserSound;
 
     private readonly List<List<Vector3>> pathPool = new List<List<Vector3>>();
     private readonly List<LineRenderer> linePool = new List<LineRenderer>();
@@ -25,6 +25,9 @@ public class LaserEmitter : MonoBehaviour
 
     private void Awake()
     {
+        laserSound = GameAudioClips.Instance != null
+            ? GameAudioClips.Instance.LaserLoop
+            : null;
         lineTemplate = GetComponent<LineRenderer>();
         lineTemplate.useWorldSpace = true;
         linePool.Add(lineTemplate);

@@ -6,8 +6,8 @@ public class WaterResetTrigger : MonoBehaviour
 {
     private AudioSource waterAudioSource;
     private AudioSource respawnAudioSource;
-    [SerializeField] private AudioClip waterSound;
-    [SerializeField] private AudioClip respawnSound;
+    private AudioClip waterSound;
+    private AudioClip respawnSound;
 
     private bool resetting;
 
@@ -15,6 +15,14 @@ public class WaterResetTrigger : MonoBehaviour
     {
         waterAudioSource = PlayerAudioController.GetOneShotSource();
         respawnAudioSource = waterAudioSource;
+        GameAudioClips audioClips = GameAudioClips.Instance;
+
+        if (audioClips != null)
+        {
+            waterSound = audioClips.Water;
+            respawnSound = audioClips.Respawn;
+        }
+
         GetComponent<Collider>().isTrigger = true;
     }
 

@@ -19,8 +19,8 @@ public class PlayerCarry : MonoBehaviour
     [SerializeField] private float movementSway = 0.025f;
     [SerializeField] private float rotationStep = 15f;
     private AudioSource carryAudioSource;
-    [SerializeField] private AudioClip pickupSound;
-    [SerializeField] private AudioClip dropSound;
+    private AudioClip pickupSound;
+    private AudioClip dropSound;
 
     private CarryableItem heldItem;
     private Transform holdTransform;
@@ -53,6 +53,13 @@ public class PlayerCarry : MonoBehaviour
     private void Awake()
     {
         carryAudioSource = PlayerAudioController.GetOneShotSource();
+        GameAudioClips audioClips = GameAudioClips.Instance;
+
+        if (audioClips != null)
+        {
+            pickupSound = audioClips.Pickup;
+            dropSound = audioClips.Drop;
+        }
 
         if (playerCamera == null)
             playerCamera = GetComponentInChildren<Camera>();

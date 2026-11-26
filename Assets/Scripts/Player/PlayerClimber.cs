@@ -9,7 +9,7 @@ public class PlayerClimber : MonoBehaviour
     [SerializeField] private float mountJumpDuration = 0.45f;
     [SerializeField] private float mountJumpHeight = 0.2f;
     private AudioSource climbAudioSource;
-    [SerializeField] private AudioClip climbSound;
+    private AudioClip climbSound;
 
     private CharacterController controller;
     private ClonePlayback mountedClone;
@@ -30,6 +30,9 @@ public class PlayerClimber : MonoBehaviour
     private void Awake()
     {
         climbAudioSource = PlayerAudioController.GetOneShotSource();
+        climbSound = GameAudioClips.Instance != null
+            ? GameAudioClips.Instance.Climbing
+            : null;
 
         if (playerMovement == null)
             playerMovement = GetComponent<PlayerMovement>();
