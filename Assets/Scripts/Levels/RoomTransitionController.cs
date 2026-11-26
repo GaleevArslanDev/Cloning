@@ -136,6 +136,23 @@ public class RoomTransitionController : MonoBehaviour
     private void OnDisable()
     {
         StopRebuildSound();
+
+        if (!Application.isPlaying)
+            RestoreMaterialColors();
+    }
+
+    private void OnApplicationQuit()
+    {
+        RestoreMaterialColors();
+    }
+
+    private void RestoreMaterialColors()
+    {
+        foreach (TransitionMaterial item in transitionMaterials)
+        {
+            if (item.Material != null)
+                item.Material.SetColor(item.ColorProperty, item.OriginalColor);
+        }
     }
 
     private void CaptureMaterialColors()
