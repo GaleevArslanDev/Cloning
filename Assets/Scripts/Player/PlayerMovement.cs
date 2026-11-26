@@ -9,12 +9,15 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float runSpeed = 5.5f;
     [SerializeField] private float acceleration = 14f;
     [SerializeField] private float gravity = -20f;
-    private AudioSource movementAudioSource;
+    private AudioSource footstepAudioSource;
+    private AudioSource fallAudioSource;
     private AudioClip[] footstepSounds;
     private AudioClip fallSound;
     [SerializeField] private float walkStepInterval = 0.5f;
     [SerializeField] private float runStepInterval = 0.35f;
     [SerializeField] private float fallSoundDelay;
+    [SerializeField] private float groundedSoundGrace = 0.15f;
+    [SerializeField] private float minimumFallSpeed = 0.5f;
 
     private CharacterController controller;
     private Vector3 horizontalVelocity;
@@ -26,13 +29,17 @@ public class PlayerMovement : MonoBehaviour
     private float stepTimer;
     private float fallTimer;
     private bool fallSoundPlayed;
+    private bool stepSequenceActive;
+    private float timeSinceGrounded;
+    private Vector3 previousSoundPosition;
 
     public bool IsMoving => moveInput.sqrMagnitude > 0.01f && controller.isGrounded;
     public bool IsRunning { get; private set; }
 
     private void Awake()
     {
-        movementAudioSource = PlayerAudioController.GetOneShotSource();
+        footstepAudioSource = PlayerAudioController.CreatePlayerSource();
+        fallAudioSource = PlayerAudioController.CreatePlayerSource();
         GameAudioClips audioClips = GameAudioClips.Instance;
 
         if (audioClips != null)
@@ -42,13 +49,30 @@ public class PlayerMovement : MonoBehaviour
         }
 
         controller = GetComponent<CharacterController>();
+        previousSoundPosition = transform.position;
+
+        if (fallSoundDelay <= 0f)
+            fallSoundDelay = 0.12f;
 
         if (GetComponent<CharacterAnimationController>() == null)
             gameObject.AddComponent<CharacterAnimationController>();
     }
 
+    private void OnEnable()
+    {
+        previousSoundPosition = transform.position;
+        timeSinceGrounded = 0f;
+        fallTimer = 0f;
+        fallSoundPlayed = false;
+        stepTimer = 0f;
+        stepSequenceActive = false;
+    }
+
     private void OnDisable()
     {
+        if (footstepAudioSource != null)
+            footstepAudioSource.Stop();
+
         ClearGroundPlatform();
     }
 
@@ -56,11 +80,18 @@ public class PlayerMovement : MonoBehaviour
     {
         if (PauseMenuController.IsGamePaused) return;
 
-        ApplyPlatformMovement();
         groundContactFound = false;
+        ApplyPlatformMovement();
         ReadInput();
         Move();
-        UpdateMovementSounds();
+        Vector3 soundUp = Physics.gravity.sqrMagnitude > 0.001f
+            ? -Physics.gravity.normalized
+            : Vector3.up;
+        float verticalSpeed = Time.deltaTime > 0f
+            ? Vector3.Dot(transform.position - previousSoundPosition, soundUp) / Time.deltaTime
+            : 0f;
+        previousSoundPosition = transform.position;
+        UpdateMovementSounds(verticalSpeed);
 
         if (!groundContactFound && !controller.isGrounded)
             ClearGroundPlatform();
@@ -69,38 +100,66 @@ public class PlayerMovement : MonoBehaviour
             groundPlatformPosition = groundPlatform.transform.position;
     }
 
-    private void UpdateMovementSounds()
+    private void UpdateMovementSounds(float actualVerticalSpeed)
     {
-        if (IsMoving && horizontalVelocity.sqrMagnitude > 0.1f)
+        bool groundedNow = controller.isGrounded || groundContactFound;
+
+        if (groundedNow)
+            timeSinceGrounded = 0f;
+        else
+            timeSinceGrounded += Time.deltaTime;
+
+        bool stableGrounded = timeSinceGrounded <= groundedSoundGrace;
+        bool shouldPlaySteps = stableGrounded &&
+                               moveInput.sqrMagnitude > 0.01f &&
+                               horizontalVelocity.sqrMagnitude > 0.1f;
+
+        if (shouldPlaySteps)
         {
+            if (!stepSequenceActive)
+            {
+                stepSequenceActive = true;
+                stepTimer = GetStepInterval() * 0.5f;
+            }
+
             stepTimer -= Time.deltaTime;
 
             if (stepTimer <= 0f)
             {
                 PlayRandomFootstep();
-                stepTimer = IsRunning ? runStepInterval : walkStepInterval;
+                stepTimer = GetStepInterval();
             }
         }
         else
         {
             stepTimer = 0f;
+            stepSequenceActive = false;
         }
 
-        if (!controller.isGrounded && verticalVelocity < 0f)
+        if (groundedNow)
+        {
+            fallTimer = 0f;
+            fallSoundPlayed = false;
+        }
+        else if (!stableGrounded && actualVerticalSpeed < -minimumFallSpeed)
         {
             fallTimer += Time.deltaTime;
 
             if (!fallSoundPlayed && fallTimer >= fallSoundDelay)
             {
-                PlaySound(fallSound);
+                PlaySound(fallAudioSource, fallSound);
                 fallSoundPlayed = true;
             }
         }
         else
         {
             fallTimer = 0f;
-            fallSoundPlayed = false;
         }
+    }
+
+    private float GetStepInterval()
+    {
+        return Mathf.Max(0.05f, IsRunning ? runStepInterval : walkStepInterval);
     }
 
     private void PlayRandomFootstep()
@@ -108,13 +167,19 @@ public class PlayerMovement : MonoBehaviour
         if (footstepSounds == null || footstepSounds.Length == 0)
             return;
 
-        PlaySound(footstepSounds[Random.Range(0, footstepSounds.Length)]);
+        if (footstepAudioSource != null && footstepAudioSource.isPlaying)
+            return;
+
+        PlaySound(
+            footstepAudioSource,
+            footstepSounds[Random.Range(0, footstepSounds.Length)]
+        );
     }
 
-    private void PlaySound(AudioClip clip)
+    private void PlaySound(AudioSource source, AudioClip clip)
     {
-        if (movementAudioSource != null && clip != null)
-            movementAudioSource.PlayOneShot(clip);
+        if (source != null && clip != null)
+            source.PlayOneShot(clip);
     }
 
     private void ApplyPlatformMovement()
@@ -201,6 +266,9 @@ public class PlayerMovement : MonoBehaviour
         stepTimer = 0f;
         fallTimer = 0f;
         fallSoundPlayed = false;
+        stepSequenceActive = false;
+        timeSinceGrounded = 0f;
+        previousSoundPosition = transform.position;
         ClearGroundPlatform();
     }
 
