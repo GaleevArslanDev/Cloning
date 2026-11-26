@@ -14945,9 +14945,9 @@ MonoBehaviour:
   interactionLayers:
     serializedVersion: 2
     m_Bits: 1
-  interactionPanel: {fileID: 0}
-  interactionPanelImage: {fileID: 0}
-  mouseButtonImage: {fileID: 0}
+  interactionPanel: {fileID: 959899348}
+  interactionPanelImage: {fileID: 959899350}
+  mouseButtonImage: {fileID: 394232402}
   hoverColor: {r: 1, g: 1, b: 1, a: 1}
   interactionColor: {r: 1, g: 0.9490197, b: 0.5176471, a: 1}
   playerCarry: {fileID: 268687962}
