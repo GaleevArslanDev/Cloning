@@ -1136,6 +1136,11 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 13473453}
   m_Mesh: {fileID: 4300000, guid: d49fea1167bbe644e87a0fe2bebca383, type: 2}
+--- !u!23 &15402747 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 6629164866515331985, guid: 10d2ac44704e46e47a7502beb6853439, type: 3}
+  m_PrefabInstance: {fileID: 1723074976}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &15491337
 GameObject:
   m_ObjectHideFlags: 0
@@ -27166,6 +27171,11 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 391141173}
   m_Mesh: {fileID: 4300000, guid: 5dd76c6be56086e45be8c579081c06e8, type: 2}
+--- !u!1 &393016072 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 152930997721959477, guid: 10d2ac44704e46e47a7502beb6853439, type: 3}
+  m_PrefabInstance: {fileID: 1918193300}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &393864006
 GameObject:
   m_ObjectHideFlags: 0
@@ -63323,15 +63333,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1321038448815434788, guid: c57e872fa76d9714eb1408f887163d63, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -30.412
+      value: -30.939
       objectReference: {fileID: 0}
     - target: {fileID: 1321038448815434788, guid: c57e872fa76d9714eb1408f887163d63, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 12.022087
+      value: 12.118
       objectReference: {fileID: 0}
     - target: {fileID: 1321038448815434788, guid: c57e872fa76d9714eb1408f887163d63, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -11.374
+      value: -10.585
       objectReference: {fileID: 0}
     - target: {fileID: 1321038448815434788, guid: c57e872fa76d9714eb1408f887163d63, type: 3}
       propertyPath: m_LocalRotation.w
@@ -66027,7 +66037,7 @@ Transform:
   m_GameObject: {fileID: 950728617}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 334.2, z: 0}
+  m_LocalPosition: {x: 0, y: 833.2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -74112,7 +74122,7 @@ MonoBehaviour:
   - {fileID: 1608199938}
   - {fileID: 329396932}
   - {fileID: 1481293396}
-  liftHeight: 2
+  liftHeight: 1.5
   movementSpeed: 1
   requiredSignals: 2
   movementAudioSource: {fileID: 0}
@@ -95749,7 +95759,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5726408035638590266, guid: 0503f93d8731c504aa42df098b3dabb3, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 4.667
+      value: 3.72
       objectReference: {fileID: 0}
     - target: {fileID: 5726408035638590266, guid: 0503f93d8731c504aa42df098b3dabb3, type: 3}
       propertyPath: m_LocalPosition.z
@@ -117231,7 +117241,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1321038448815434788, guid: c57e872fa76d9714eb1408f887163d63, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 12.022087
+      value: 12.13
       objectReference: {fileID: 0}
     - target: {fileID: 1321038448815434788, guid: c57e872fa76d9714eb1408f887163d63, type: 3}
       propertyPath: m_LocalPosition.z
@@ -118980,12 +118990,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 3991713826359145005, guid: 10d2ac44704e46e47a7502beb6853439, type: 3}
+    - {fileID: 42671985439889698, guid: 10d2ac44704e46e47a7502beb6853439, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 152930997721959477, guid: 10d2ac44704e46e47a7502beb6853439, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1723074979}
+    - targetCorrespondingSourceObject: {fileID: 152930997721959477, guid: 10d2ac44704e46e47a7502beb6853439, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1723074983}
   m_SourcePrefab: {fileID: 100100000, guid: 10d2ac44704e46e47a7502beb6853439, type: 3}
 --- !u!4 &1723074977 stripped
 Transform:
@@ -119020,6 +119034,59 @@ MonoBehaviour:
   requiredSignals: 2
   movementAudioSource: {fileID: 0}
   movementSound: {fileID: 0}
+--- !u!114 &1723074983
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1723074978}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3cd8a72b0c313a1428ac73bb4bf0d856, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CarryablePressurePlate
+  plateVisual: {fileID: 1723074977}
+  pressedOffset: {x: 0, y: -0.08, z: 0}
+  movementSpeed: 0.5
+  stateRenderer: {fileID: 15402747}
+  releasedColor: {r: 1, g: 1, b: 1, a: 1}
+  pressedColor: {r: 0.45, g: 0.85, b: 0.45, a: 1}
+  colorSpeed: 8
+  audioSource: {fileID: 0}
+  pressedSound: {fileID: 0}
+  releasedSound: {fileID: 0}
+  onPressed:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1723074979}
+        m_TargetAssemblyTypeName: FloorCubeLiftAction, Assembly-CSharp
+        m_MethodName: Raise
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  onReleased:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1723074979}
+        m_TargetAssemblyTypeName: FloorCubeLiftAction, Assembly-CSharp
+        m_MethodName: Lower
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  minimumHeight: 0
 --- !u!1 &1723333316
 GameObject:
   m_ObjectHideFlags: 0
@@ -132363,7 +132430,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1321038448815434788, guid: 10d2ac44704e46e47a7502beb6853439, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 12.022102
+      value: 12.085
       objectReference: {fileID: 0}
     - target: {fileID: 1321038448815434788, guid: 10d2ac44704e46e47a7502beb6853439, type: 3}
       propertyPath: m_LocalPosition.z
@@ -132399,15 +132466,72 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 3991713826359145005, guid: 10d2ac44704e46e47a7502beb6853439, type: 3}
+    - {fileID: 42671985439889698, guid: 10d2ac44704e46e47a7502beb6853439, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 152930997721959477, guid: 10d2ac44704e46e47a7502beb6853439, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1918193305}
   m_SourcePrefab: {fileID: 100100000, guid: 10d2ac44704e46e47a7502beb6853439, type: 3}
 --- !u!4 &1918193301 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1321038448815434788, guid: 10d2ac44704e46e47a7502beb6853439, type: 3}
   m_PrefabInstance: {fileID: 1918193300}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1918193305
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 393016072}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3cd8a72b0c313a1428ac73bb4bf0d856, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CarryablePressurePlate
+  plateVisual: {fileID: 1918193301}
+  pressedOffset: {x: 0, y: -0.08, z: 0}
+  movementSpeed: 0.5
+  stateRenderer: {fileID: 1983728031}
+  releasedColor: {r: 1, g: 1, b: 1, a: 1}
+  pressedColor: {r: 0.45, g: 0.85, b: 0.45, a: 1}
+  colorSpeed: 8
+  audioSource: {fileID: 0}
+  pressedSound: {fileID: 0}
+  releasedSound: {fileID: 0}
+  onPressed:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1723074979}
+        m_TargetAssemblyTypeName: FloorCubeLiftAction, Assembly-CSharp
+        m_MethodName: Activate
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  onReleased:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1723074979}
+        m_TargetAssemblyTypeName: FloorCubeLiftAction, Assembly-CSharp
+        m_MethodName: Deactivate
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  minimumHeight: 0
 --- !u!1 &1918887757
 GameObject:
   m_ObjectHideFlags: 0
@@ -136589,6 +136713,11 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1983582165}
   m_Mesh: {fileID: 4300000, guid: d49fea1167bbe644e87a0fe2bebca383, type: 2}
+--- !u!23 &1983728031 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 6629164866515331985, guid: 10d2ac44704e46e47a7502beb6853439, type: 3}
+  m_PrefabInstance: {fileID: 1918193300}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1983917764
 GameObject:
   m_ObjectHideFlags: 0
