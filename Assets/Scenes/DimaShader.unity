@@ -446,7 +446,7 @@ MonoBehaviour:
   dirtAmount: 0.308
   dirtColor: {r: 0.3301887, g: 0.32370177, b: 0.28502136, a: 1}
   realtimeReflection: 1
-  resolution: 999
+  resolution: 64
   reflectionLayers:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -556,7 +556,7 @@ ReflectionProbe:
   m_Mode: 1
   m_RefreshMode: 2
   m_TimeSlicingMode: 2
-  m_Resolution: 999
+  m_Resolution: 512
   m_UpdateFrequency: 0
   m_BoxSize: {x: 20, y: 20, z: 20}
   m_BoxOffset: {x: 0, y: 0, z: 0}
