@@ -4,8 +4,8 @@ using UnityEngine;
 [RequireComponent(typeof(Collider))]
 public class WaterResetTrigger : MonoBehaviour
 {
-    [SerializeField] private AudioSource waterAudioSource;
-    [SerializeField] private AudioSource respawnAudioSource;
+    private AudioSource waterAudioSource;
+    private AudioSource respawnAudioSource;
     [SerializeField] private AudioClip waterSound;
     [SerializeField] private AudioClip respawnSound;
 
@@ -13,6 +13,8 @@ public class WaterResetTrigger : MonoBehaviour
 
     private void Awake()
     {
+        waterAudioSource = PlayerAudioController.GetOneShotSource();
+        respawnAudioSource = waterAudioSource;
         GetComponent<Collider>().isTrigger = true;
     }
 

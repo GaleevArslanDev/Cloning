@@ -12,7 +12,7 @@ public class NarrativePlayer : MonoBehaviour
     [SerializeField] private GameObject phrasePanel;
     [SerializeField] private Text speakerText;
     [SerializeField] private Text phraseText;
-    [SerializeField] private AudioSource voiceSource;
+    private AudioSource voiceSource;
     [SerializeField] private UnityEvent onSequenceStarted;
     [SerializeField] private UnityEvent onSequenceFinished;
     [SerializeField] private UnityEvent<int> onLineStarted;
@@ -36,6 +36,7 @@ public class NarrativePlayer : MonoBehaviour
         if (keepBetweenScenes)
             DontDestroyOnLoad(gameObject);
 
+        voiceSource = PlayerAudioController.CreatePlayerSource();
         SetPanelVisible(false);
     }
 
@@ -128,6 +129,9 @@ public class NarrativePlayer : MonoBehaviour
 
     private void ShowLine(NarrativeLine line)
     {
+        if (voiceSource == null)
+            voiceSource = PlayerAudioController.CreatePlayerSource();
+
         if (speakerText != null)
         {
             speakerText.text = line.Speaker;

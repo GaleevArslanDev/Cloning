@@ -9,7 +9,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float runSpeed = 5.5f;
     [SerializeField] private float acceleration = 14f;
     [SerializeField] private float gravity = -20f;
-    [SerializeField] private AudioSource movementAudioSource;
+    private AudioSource movementAudioSource;
     [SerializeField] private AudioClip[] footstepSounds;
     [SerializeField] private AudioClip fallSound;
     [SerializeField] private float walkStepInterval = 0.5f;
@@ -32,6 +32,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void Awake()
     {
+        movementAudioSource = PlayerAudioController.GetOneShotSource();
         controller = GetComponent<CharacterController>();
 
         if (GetComponent<CharacterAnimationController>() == null)

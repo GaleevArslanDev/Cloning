@@ -8,7 +8,7 @@ public class PlayerClimber : MonoBehaviour
     [SerializeField] private float ledgeClimbDuration = 0.4f;
     [SerializeField] private float mountJumpDuration = 0.45f;
     [SerializeField] private float mountJumpHeight = 0.2f;
-    [SerializeField] private AudioSource climbAudioSource;
+    private AudioSource climbAudioSource;
     [SerializeField] private AudioClip climbSound;
 
     private CharacterController controller;
@@ -29,6 +29,8 @@ public class PlayerClimber : MonoBehaviour
 
     private void Awake()
     {
+        climbAudioSource = PlayerAudioController.GetOneShotSource();
+
         if (playerMovement == null)
             playerMovement = GetComponent<PlayerMovement>();
 

@@ -4,7 +4,7 @@ using UnityEngine.Events;
 
 public class ButtonInteractable : MonoBehaviour, IInteractable
 {
-    [SerializeField] private AudioSource audioSource;
+    private AudioSource audioSource;
     [SerializeField] private AudioClip pressedSound;
     [SerializeField] private AudioClip releasedSound;
     [SerializeField] private UnityEvent onPressed;
@@ -17,6 +17,11 @@ public class ButtonInteractable : MonoBehaviour, IInteractable
 
     public bool CanInteract => enabled && gameObject.activeInHierarchy;
     public bool RecordInteraction => true;
+
+    private void Awake()
+    {
+        audioSource = PlayerAudioController.GetOneShotSource();
+    }
 
     public void BeginInteraction(GameObject interactor)
     {

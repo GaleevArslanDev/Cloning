@@ -19,7 +19,7 @@ public class RoomTransitionController : MonoBehaviour
     [SerializeField] private float objectDelay = 0.12f;
     [SerializeField] private float hiddenDepth = 2f;
     [SerializeField] private bool buildWhenSceneStarts;
-    [SerializeField] private AudioSource rebuildAudioSource;
+    private AudioSource rebuildAudioSource;
     [SerializeField] private AudioClip rebuildSound;
 
     private readonly List<TransitionObject> objects = new List<TransitionObject>();
@@ -66,6 +66,9 @@ public class RoomTransitionController : MonoBehaviour
 
     private void Awake()
     {
+        if (rebuildSound != null)
+            rebuildAudioSource = PlayerAudioController.CreatePlayerSource();
+
         if (roomCubes == null)
             roomCubes = FindFirstObjectByType<RoomCubeField>();
 

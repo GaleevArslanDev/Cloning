@@ -9,7 +9,7 @@ public sealed class HoldDoorAction : MonoBehaviour, IJsonSaveable
     [SerializeField] private AnimationClip openingClip;
     [SerializeField, Min(0.01f)] private float playbackSpeed = 1f;
     [SerializeField, Min(1)] private int requiredSignals = 1;
-    [SerializeField] private AudioSource audioSource;
+    private AudioSource audioSource;
     [SerializeField] private AudioClip openingSound;
     private int activeSignals;
 
@@ -28,6 +28,8 @@ public sealed class HoldDoorAction : MonoBehaviour, IJsonSaveable
 
     private void Awake()
     {
+        audioSource = PlayerAudioController.GetOneShotSource();
+
         if (doorAnimator == null)
             doorAnimator = GetComponent<Animator>();
 

@@ -18,7 +18,7 @@ public class PlayerCarry : MonoBehaviour
     [SerializeField] private float dropCorrectionStep = 0.1f;
     [SerializeField] private float movementSway = 0.025f;
     [SerializeField] private float rotationStep = 15f;
-    [SerializeField] private AudioSource carryAudioSource;
+    private AudioSource carryAudioSource;
     [SerializeField] private AudioClip pickupSound;
     [SerializeField] private AudioClip dropSound;
 
@@ -52,6 +52,8 @@ public class PlayerCarry : MonoBehaviour
 
     private void Awake()
     {
+        carryAudioSource = PlayerAudioController.GetOneShotSource();
+
         if (playerCamera == null)
             playerCamera = GetComponentInChildren<Camera>();
         if (playerMovement == null)

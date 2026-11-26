@@ -7,7 +7,7 @@ public class FloorCubeLiftAction : MonoBehaviour, IJsonSaveable
     [SerializeField] private float liftHeight = 2f;
     [SerializeField] private float movementSpeed = 1f;
     [SerializeField] private int requiredSignals = 2;
-    [SerializeField] private AudioSource movementAudioSource;
+    private AudioSource movementAudioSource;
     [SerializeField] private AudioClip movementSound;
 
     private int activeRequests;
@@ -25,6 +25,9 @@ public class FloorCubeLiftAction : MonoBehaviour, IJsonSaveable
 
     private void Start()
     {
+        if (movementSound != null)
+            movementAudioSource = PlayerAudioController.CreatePlayerSource();
+
         if (roomCubes == null)
             roomCubes = FindFirstObjectByType<RoomCubeField>();
 

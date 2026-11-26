@@ -11,7 +11,7 @@ public class LaserEmitter : MonoBehaviour
     [SerializeField] private LayerMask laserLayers = ~0;
     [SerializeField] private float surfaceOffset = 0.01f;
     [SerializeField] private ParticleSystem impactEffectPrefab;
-    [SerializeField] private AudioSource laserAudioSource;
+    private AudioSource laserAudioSource;
     [SerializeField] private AudioClip laserSound;
 
     private readonly List<List<Vector3>> pathPool = new List<List<Vector3>>();
@@ -32,6 +32,9 @@ public class LaserEmitter : MonoBehaviour
 
     private void OnEnable()
     {
+        if (laserAudioSource == null && laserSound != null)
+            laserAudioSource = PlayerAudioController.CreatePlayerSource();
+
         if (laserAudioSource == null || laserSound == null)
             return;
 
