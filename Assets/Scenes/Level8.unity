@@ -143851,7 +143851,7 @@ MonoBehaviour:
   playerCarry: {fileID: 2067630604}
   resettableItems: []
   sampleInterval: 0.05
-  maximumClones: 5
+  maximumClones: 4
 --- !u!114 &2067630607
 MonoBehaviour:
   m_ObjectHideFlags: 0
