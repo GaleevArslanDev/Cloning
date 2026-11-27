@@ -92,6 +92,10 @@ public class CloneRecorder : MonoBehaviour
         }
     }
 
+#if UNITY_EDITOR
+    public object MenuReplayCycle => recording;
+#endif
+
     public void FinishRecording()
     {
         if (!isRecording)

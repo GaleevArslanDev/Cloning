@@ -22590,6 +22590,55 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 446969241}
   m_Mesh: {fileID: 4300000, guid: 5dd76c6be56086e45be8c579081c06e8, type: 2}
+--- !u!1 &447927364
+GameObject:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 447927366}
+  - component: {fileID: 447927365}
+  m_Layer: 0
+  m_Name: Unity-RecorderBindings
+  m_TagString: EditorOnly
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &447927365
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 447927364}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a24bc7e8573847adbdf1198360b3c794, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Recorder::UnityEngine.Recorder.RecorderBindings
+  m_References:
+    m_Keys:
+    - 81df387dea4c8c64c94fca507fd0e5fd
+    m_Values:
+    - {fileID: 1302645375}
+--- !u!4 &447927366
+Transform:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 447927364}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &450539490
 GameObject:
   m_ObjectHideFlags: 0
@@ -52240,7 +52289,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FloorCubeLiftAction
   roomCubes: {fileID: 1272040966}
-  floorCubes:
+  surface: 0
+  cubes:
   - {fileID: 1888930839}
   - {fileID: 1430963348}
   - {fileID: 234861398}
@@ -92191,7 +92241,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FloorCubeLiftAction
   roomCubes: {fileID: 1272040966}
-  floorCubes:
+  surface: 0
+  cubes:
   - {fileID: 1952947832}
   - {fileID: 514291826}
   - {fileID: 1746587323}
@@ -92217,7 +92268,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FloorCubeLiftAction
   roomCubes: {fileID: 1272040966}
-  floorCubes:
+  surface: 0
+  cubes:
   - {fileID: 1919581839}
   - {fileID: 1653696347}
   - {fileID: 1042478750}
@@ -107094,7 +107146,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FloorCubeLiftAction
   roomCubes: {fileID: 1272040966}
-  floorCubes:
+  surface: 0
+  cubes:
   - {fileID: 1174955402}
   - {fileID: 1288089207}
   - {fileID: 1858663974}
@@ -109641,7 +109694,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FloorCubeLiftAction
   roomCubes: {fileID: 1272040966}
-  floorCubes:
+  surface: 0
+  cubes:
   - {fileID: 55957999}
   - {fileID: 638867886}
   - {fileID: 573955462}
@@ -119066,3 +119120,4 @@ SceneRoots:
   - {fileID: 1600753564}
   - {fileID: 1436006132}
   - {fileID: 806601293}
+  - {fileID: 447927366}
