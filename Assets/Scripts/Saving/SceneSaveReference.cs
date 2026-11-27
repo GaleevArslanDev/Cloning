@@ -71,7 +71,9 @@ public static class SceneSaveReference
     {
         Transform target = FindTransform(path);
 
-        if (target == null)
+        if (target == null ||
+            string.IsNullOrWhiteSpace(componentType) ||
+            componentIndex < 0)
             return null;
 
         MonoBehaviour[] behaviours = target.GetComponents<MonoBehaviour>();

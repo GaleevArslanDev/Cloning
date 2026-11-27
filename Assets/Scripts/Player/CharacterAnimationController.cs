@@ -7,21 +7,21 @@ public class CharacterAnimationController : MonoBehaviour
     [SerializeField] private Animator animator;
     [SerializeField] private Transform lookSource;
     [SerializeField] private Transform headBone;
-    [SerializeField] private float walkingSpeed = 3.5f;
-    [SerializeField] private float turningSpeed = 180f;
-    [SerializeField] private float turnAnimationSensitivity = 6f;
-    [SerializeField] private float movementSmoothness = 10f;
-    [SerializeField] private float turnSmoothness = 12f;
-    [SerializeField] private float turnStartSmoothness = 35f;
-    [SerializeField] private float turnDirectionChangeSmoothness = 7f;
-    [SerializeField] private float turnResponsePower = 0.35f;
-    [SerializeField] private float turnReleaseDelay = 0.12f;
-    [SerializeField] private float movementThreshold = 0.05f;
-    [SerializeField] private float turningThreshold = 0.05f;
-    [SerializeField] private float jumpVelocityThreshold = 0.8f;
-    [SerializeField] private float minimumJumpHeight = 0.2f;
-    [SerializeField] private float maximumHeadPitch = 85f;
-    [SerializeField] private float maximumHeadYaw = 70f;
+    [SerializeField, Min(0.01f)] private float walkingSpeed = 3.5f;
+    [SerializeField, Min(1f)] private float turningSpeed = 180f;
+    [SerializeField, Min(0.01f)] private float turnAnimationSensitivity = 6f;
+    [SerializeField, Min(0f)] private float movementSmoothness = 10f;
+    [SerializeField, Min(0f)] private float turnSmoothness = 12f;
+    [SerializeField, Min(0.01f)] private float turnStartSmoothness = 35f;
+    [SerializeField, Min(0.01f)] private float turnDirectionChangeSmoothness = 7f;
+    [SerializeField, Range(0.01f, 1f)] private float turnResponsePower = 0.35f;
+    [SerializeField, Min(0f)] private float turnReleaseDelay = 0.12f;
+    [SerializeField, Min(0f)] private float movementThreshold = 0.05f;
+    [SerializeField, Range(0f, 1f)] private float turningThreshold = 0.05f;
+    [SerializeField, Min(0f)] private float jumpVelocityThreshold = 0.8f;
+    [SerializeField, Min(0.01f)] private float minimumJumpHeight = 0.2f;
+    [SerializeField, Range(0f, 89f)] private float maximumHeadPitch = 85f;
+    [SerializeField, Range(0f, 180f)] private float maximumHeadYaw = 70f;
 
     private readonly Dictionary<int, AnimatorControllerParameterType> parameters =
         new Dictionary<int, AnimatorControllerParameterType>();
@@ -50,6 +50,26 @@ public class CharacterAnimationController : MonoBehaviour
 
     private void Awake()
     {
+        walkingSpeed = Mathf.Max(0.01f, SaveDataValidator.Finite(walkingSpeed, 3.5f));
+        turningSpeed = Mathf.Max(1f, SaveDataValidator.Finite(turningSpeed, 180f));
+        movementSmoothness = Mathf.Max(0f, SaveDataValidator.Finite(movementSmoothness, 10f));
+        turnSmoothness = Mathf.Max(0f, SaveDataValidator.Finite(turnSmoothness, 12f));
+        turnReleaseDelay = Mathf.Max(0f, SaveDataValidator.Finite(turnReleaseDelay, 0.12f));
+        movementThreshold = Mathf.Max(0f, SaveDataValidator.Finite(movementThreshold, 0.05f));
+        turningThreshold = Mathf.Clamp01(SaveDataValidator.Finite(turningThreshold, 0.05f));
+        jumpVelocityThreshold = Mathf.Max(0f, SaveDataValidator.Finite(jumpVelocityThreshold, 0.8f));
+        maximumHeadPitch = Mathf.Clamp(SaveDataValidator.Finite(maximumHeadPitch, 85f), 0f, 89f);
+        maximumHeadYaw = Mathf.Clamp(SaveDataValidator.Finite(maximumHeadYaw, 70f), 0f, 180f);
+
+        turnAnimationSensitivity = SaveDataValidator.Finite(turnAnimationSensitivity, 6f);
+        turnStartSmoothness = SaveDataValidator.Finite(turnStartSmoothness, 35f);
+        turnDirectionChangeSmoothness = SaveDataValidator.Finite(
+            turnDirectionChangeSmoothness,
+            7f
+        );
+        turnResponsePower = SaveDataValidator.Finite(turnResponsePower, 0.35f);
+        minimumJumpHeight = SaveDataValidator.Finite(minimumJumpHeight, 0.2f);
+
         if (turnAnimationSensitivity <= 0f)
             turnAnimationSensitivity = 6f;
         if (turnStartSmoothness <= 0f)
@@ -58,6 +78,8 @@ public class CharacterAnimationController : MonoBehaviour
             turnDirectionChangeSmoothness = 7f;
         if (turnResponsePower <= 0f)
             turnResponsePower = 0.35f;
+        else
+            turnResponsePower = Mathf.Min(1f, turnResponsePower);
         if (minimumJumpHeight <= 0f)
             minimumJumpHeight = 0.2f;
 

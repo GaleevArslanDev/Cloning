@@ -197,7 +197,10 @@ public class LevelManager : MonoBehaviour
         if (player != null && centerPoint != null)
         {
             float elapsed = 0f;
-            float maximumTime = Mathf.Max(0.01f, maximumCenteringTime);
+            float maximumTime = Mathf.Max(
+                0.01f,
+                SaveDataValidator.Finite(maximumCenteringTime, 0.01f)
+            );
             Vector3 targetPosition = centerPoint.position;
             targetPosition.y = player.transform.position.y;
 
@@ -216,8 +219,22 @@ public class LevelManager : MonoBehaviour
 
         if (level.WaitForFinishAnimationSignal)
         {
-            while (!finishAnimationSignalReceived)
+            float signalWait = 0f;
+
+            while (!finishAnimationSignalReceived &&
+                   signalWait < level.FinishAnimationSignalTimeout)
+            {
+                signalWait += Time.unscaledDeltaTime;
                 yield return null;
+            }
+
+            if (!finishAnimationSignalReceived)
+            {
+                Debug.LogWarning(
+                    "LevelManager: сигнал завершения анимации не получен вовремя, переход продолжен",
+                    this
+                );
+            }
         }
         else if (level.FinishAnimationDuration > 0f)
         {
@@ -225,6 +242,18 @@ public class LevelManager : MonoBehaviour
         }
 
         level.FinishFinishAnimation();
+        string nextSceneName = level.NextSceneName != null
+            ? level.NextSceneName.Trim()
+            : string.Empty;
+
+        if (!string.IsNullOrWhiteSpace(nextSceneName) &&
+            !Application.CanStreamedLevelBeLoaded(nextSceneName))
+        {
+            onLevelCompleted?.Invoke();
+            FinishWithoutScene($"сцена '{nextSceneName}' недоступна в сборке");
+            yield break;
+        }
+
         level.StartTransition();
 
         if (roomTransition != null)
@@ -235,11 +264,17 @@ public class LevelManager : MonoBehaviour
         level.FinishTransition();
         onLevelCompleted?.Invoke();
 
-        if (string.IsNullOrWhiteSpace(level.NextSceneName))
+        if (string.IsNullOrWhiteSpace(nextSceneName))
+        {
+            FinishWithoutScene("не указана следующая сцена");
             yield break;
+        }
 
-        if (!Application.CanStreamedLevelBeLoaded(level.NextSceneName))
+        if (!Application.CanStreamedLevelBeLoaded(nextSceneName))
+        {
+            FinishWithoutScene($"сцена '{nextSceneName}' недоступна в сборке");
             yield break;
+        }
 
         FirstPersonCamera currentCamera = FindFirstObjectByType<FirstPersonCamera>();
 
@@ -251,12 +286,30 @@ public class LevelManager : MonoBehaviour
         }
 
         enteringFromTransition = true;
-        yield return SceneManager.LoadSceneAsync(level.NextSceneName);
+        AsyncOperation operation = SceneManager.LoadSceneAsync(nextSceneName);
+
+        if (operation == null)
+        {
+            enteringFromTransition = false;
+            FinishWithoutScene($"не удалось начать загрузку сцены '{nextSceneName}'");
+            yield break;
+        }
+
+        yield return operation;
     }
 
     private void PlayTransitionSound(AudioClip clip)
     {
         if (transitionAudioSource != null && clip != null)
             transitionAudioSource.PlayOneShot(clip);
+    }
+
+    private void FinishWithoutScene(string reason)
+    {
+        Debug.LogWarning($"LevelManager: {reason}", this);
+        isTransitioning = false;
+
+        if (playerControl != null)
+            playerControl.SetControlEnabled(true);
     }
 }

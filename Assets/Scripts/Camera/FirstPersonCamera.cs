@@ -6,25 +6,25 @@ public class FirstPersonCamera : MonoBehaviour
 {
     [SerializeField] private Transform playerBody;
     [SerializeField] private PlayerMovement playerMovement;
-    [SerializeField] private float sensitivity = 0.12f;
-    [SerializeField] private float verticalLimit = 85f;
+    [SerializeField, Range(0f, 5f)] private float sensitivity = 0.12f;
+    [SerializeField, Range(0f, 89f)] private float verticalLimit = 85f;
 
     [Header("Animated Body")]
     [SerializeField] private Transform animatedHead;
     [SerializeField] private bool followAnimatedHead = true;
-    [SerializeField] private float animationSmoothness = 14f;
-    [SerializeField] private float maximumHeadFollowLag = 0.015f;
+    [SerializeField, Min(0f)] private float animationSmoothness = 14f;
+    [SerializeField, Min(0f)] private float maximumHeadFollowLag = 0.015f;
 
     [Header("Head Bob")]
-    [SerializeField] private float walkFrequency = 8f;
-    [SerializeField] private float runFrequency = 11f;
-    [SerializeField] private float walkAmount = 0.035f;
-    [SerializeField] private float runAmount = 0.055f;
-    [SerializeField] private float bobSmoothness = 10f;
+    [SerializeField, Min(0f)] private float walkFrequency = 8f;
+    [SerializeField, Min(0f)] private float runFrequency = 11f;
+    [SerializeField, Min(0f)] private float walkAmount = 0.035f;
+    [SerializeField, Min(0f)] private float runAmount = 0.055f;
+    [SerializeField, Min(0f)] private float bobSmoothness = 10f;
 
     [Header("Sway")]
-    [SerializeField] private float breathingAmount = 0.006f;
-    [SerializeField] private float breathingSpeed = 1.4f;
+    [SerializeField, Min(0f)] private float breathingAmount = 0.006f;
+    [SerializeField, Min(0f)] private float breathingSpeed = 1.4f;
 
     private Vector3 startPosition;
     private Vector3 currentOffset;
@@ -37,6 +37,13 @@ public class FirstPersonCamera : MonoBehaviour
 
     private void Awake()
     {
+        sensitivity = Mathf.Clamp(SaveDataValidator.Finite(sensitivity, 0.12f), 0f, 5f);
+        verticalLimit = Mathf.Clamp(SaveDataValidator.Finite(verticalLimit, 85f), 0f, 89f);
+        animationSmoothness = Mathf.Max(
+            0f,
+            SaveDataValidator.Finite(animationSmoothness, 14f)
+        );
+
         if (maximumHeadFollowLag <= 0f)
             maximumHeadFollowLag = 0.015f;
 
@@ -180,9 +187,13 @@ public class FirstPersonCamera : MonoBehaviour
     public void SetLook(Quaternion bodyRotation, float newPitch)
     {
         if (playerBody != null)
-            playerBody.rotation = bodyRotation;
+            playerBody.rotation = SaveDataValidator.Rotation(bodyRotation);
 
-        pitch = Mathf.Clamp(newPitch, -verticalLimit, verticalLimit);
+        pitch = Mathf.Clamp(
+            SaveDataValidator.Finite(newPitch, 0f),
+            -verticalLimit,
+            verticalLimit
+        );
         bobTime = 0f;
         currentOffset = Vector3.zero;
         SnapToAnimatedHead();

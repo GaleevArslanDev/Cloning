@@ -18,6 +18,9 @@ public class LaserMirror : MonoBehaviour
 
     public Vector3 GetSplitDirection(Vector3 incomingDirection)
     {
+        if (incomingDirection.sqrMagnitude < 0.000001f)
+            return transform.forward;
+
         return Vector3.Reflect(incomingDirection.normalized, ReflectionNormal).normalized;
     }
 }

@@ -4,12 +4,12 @@ public class CloneCarryController : MonoBehaviour
 {
     [SerializeField] private Transform carryPoint;
     [SerializeField] private ClonePlayback playback;
-    [SerializeField] private float pickupDistance = 2.5f;
-    [SerializeField] private float pickupDuration = 0.45f;
-    [SerializeField] private float dropDuration = 0.35f;
-    [SerializeField] private float followSpeed = 14f;
-    [SerializeField] private float movementSway = 0.02f;
-    [SerializeField] private float rotationStep = 15f;
+    [SerializeField, Min(0f)] private float pickupDistance = 2.5f;
+    [SerializeField, Min(0f)] private float pickupDuration = 0.45f;
+    [SerializeField, Min(0f)] private float dropDuration = 0.35f;
+    [SerializeField, Min(0f)] private float followSpeed = 14f;
+    [SerializeField, Min(0f)] private float movementSway = 0.02f;
+    [SerializeField, Min(0f)] private float rotationStep = 15f;
 
     private CarryableItem heldItem;
     private Vector3 transitionStartPosition;
@@ -42,7 +42,11 @@ public class CloneCarryController : MonoBehaviour
     private void LateUpdate()
     {
         if (heldItem == null)
+        {
+            IsCarrying = false;
+            state = CloneCarryState.None;
             return;
+        }
 
         if (state == CloneCarryState.Lifting)
             UpdateLifting();
@@ -58,17 +62,20 @@ public class CloneCarryController : MonoBehaviour
     public void Pickup(CarryableItem item)
     {
         ReleaseCurrentItem();
-        IsCarrying = true;
-        state = CloneCarryState.Holding;
-        swayTime = 0f;
 
-        if (item == null || Vector3.Distance(transform.position, item.transform.position) > pickupDistance)
+        if (item == null ||
+            Vector3.Distance(transform.position, item.transform.position) >
+            Mathf.Max(0f, pickupDistance))
+        {
             return;
+        }
 
         if (!item.TryTake(gameObject))
             return;
 
         heldItem = item;
+        IsCarrying = true;
+        swayTime = 0f;
         Quaternion relativeRotation = Quaternion.Inverse(transform.rotation) * item.transform.rotation;
         Vector3 defaultRotation = item.HoldRotationOffset;
         holdRotation = Quaternion.Euler(
@@ -94,8 +101,8 @@ public class CloneCarryController : MonoBehaviour
 
         transitionStartPosition = heldItem.transform.position;
         transitionStartRotation = heldItem.transform.rotation;
-        dropPosition = position;
-        dropRotation = rotation;
+        dropPosition = SaveDataValidator.Finite(position, heldItem.transform.position);
+        dropRotation = SaveDataValidator.Rotation(rotation);
         transitionTime = 0f;
         state = CloneCarryState.Dropping;
     }
@@ -131,7 +138,10 @@ public class CloneCarryController : MonoBehaviour
         if (ApplyRecordedPose())
             return;
 
-        float follow = 1f - Mathf.Exp(-followSpeed * Time.deltaTime);
+        float follow = 1f - Mathf.Exp(
+            -Mathf.Max(0f, SaveDataValidator.Finite(followSpeed, 14f)) *
+            Time.deltaTime
+        );
         heldItem.transform.position = Vector3.Lerp(heldItem.transform.position, GetHoldPosition(), follow);
         heldItem.transform.rotation = Quaternion.Slerp(heldItem.transform.rotation, GetHoldRotation(), follow);
     }
@@ -184,18 +194,24 @@ public class CloneCarryController : MonoBehaviour
         if (playback == null || Mathf.Abs(playback.ScrollInputThisFrame) < 0.01f)
             return;
 
-        float angle = Mathf.Sign(playback.ScrollInputThisFrame) * rotationStep;
+        float angle = Mathf.Sign(playback.ScrollInputThisFrame) *
+                      Mathf.Max(0f, SaveDataValidator.Finite(rotationStep, 15f));
         holdRotation = Quaternion.AngleAxis(angle, Vector3.up) * holdRotation;
     }
 
     private float SmoothProgress(float time, float duration)
     {
-        float progress = Mathf.Clamp01(time / Mathf.Max(0.01f, duration));
+        float progress = Mathf.Clamp01(
+            SaveDataValidator.Finite(time, 0f) /
+            Mathf.Clamp(SaveDataValidator.Finite(duration, 0.01f), 0.01f, 10f)
+        );
         return progress * progress * (3f - 2f * progress);
     }
 
     private void ReleaseCurrentItem()
     {
+        IsCarrying = false;
+
         if (heldItem != null)
             ReleaseCurrentItem(heldItem.transform.position, heldItem.transform.rotation);
         else
@@ -209,6 +225,7 @@ public class CloneCarryController : MonoBehaviour
 
         CarryableItem item = heldItem;
         heldItem = null;
+        IsCarrying = false;
         state = CloneCarryState.None;
         item.Release(gameObject, position, rotation);
     }

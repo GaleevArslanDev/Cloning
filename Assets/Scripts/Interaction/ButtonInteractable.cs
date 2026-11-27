@@ -90,7 +90,9 @@ public class ButtonInteractable : MonoBehaviour, IInteractable
 
         initialStates = new bool[objectsToHide.Length];
 
-        for (int i = 0; i < objectsToHide.Length; i++)
+        int count = Mathf.Min(objectsToHide.Length, initialStates.Length);
+
+        for (int i = 0; i < count; i++)
         {
             if (objectsToHide[i] == null)
                 continue;
@@ -105,7 +107,9 @@ public class ButtonInteractable : MonoBehaviour, IInteractable
         if (objectsToHide == null || initialStates == null)
             return;
 
-        for (int i = 0; i < objectsToHide.Length; i++)
+        int count = Mathf.Min(objectsToHide.Length, initialStates.Length);
+
+        for (int i = 0; i < count; i++)
         {
             if (objectsToHide[i] != null)
                 objectsToHide[i].SetActive(initialStates[i]);

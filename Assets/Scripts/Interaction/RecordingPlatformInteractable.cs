@@ -7,6 +7,9 @@ public class RecordingPlatformInteractable : MonoBehaviour, IInteractable
 
     public void BeginInteraction(GameObject interactor)
     {
+        if (interactor == null)
+            return;
+
         CloneRecorder recorder = interactor.GetComponent<CloneRecorder>();
 
         if (recorder == null)

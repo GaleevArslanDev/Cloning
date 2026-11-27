@@ -7,11 +7,11 @@ public abstract class PressurePlate : MonoBehaviour
 {
     [SerializeField] private Transform plateVisual;
     [SerializeField] private Vector3 pressedOffset = new Vector3(0f, -0.08f, 0f);
-    [SerializeField] private float movementSpeed = 0.5f;
+    [SerializeField, Min(0f)] private float movementSpeed = 0.5f;
     [SerializeField] private Renderer stateRenderer;
     [SerializeField] private Color releasedColor = Color.white;
     [SerializeField] private Color pressedColor = new Color(0.45f, 0.85f, 0.45f);
-    [SerializeField] private float colorSpeed = 8f;
+    [SerializeField, Min(0f)] private float colorSpeed = 8f;
     private AudioSource audioSource;
     private AudioClip pressedSound;
     private AudioClip releasedSound;
@@ -82,6 +82,9 @@ public abstract class PressurePlate : MonoBehaviour
 
     private void UpdateCollider(Collider other)
     {
+        if (ReferenceEquals(other, null))
+            return;
+
         GameObject newActivator = GetActivator(other);
 
         if (activeColliders.TryGetValue(other, out GameObject oldActivator))
@@ -99,7 +102,9 @@ public abstract class PressurePlate : MonoBehaviour
         activeColliders.Add(other, newActivator);
 
         if (activators.TryGetValue(newActivator, out int colliderCount))
-            activators[newActivator] = colliderCount + 1;
+            activators[newActivator] = colliderCount < int.MaxValue
+                ? colliderCount + 1
+                : int.MaxValue;
         else
             activators.Add(newActivator, 1);
 
@@ -108,6 +113,9 @@ public abstract class PressurePlate : MonoBehaviour
 
     private void RemoveCollider(Collider other)
     {
+        if (ReferenceEquals(other, null))
+            return;
+
         if (!activeColliders.TryGetValue(other, out GameObject activator))
             return;
 
@@ -177,7 +185,7 @@ public abstract class PressurePlate : MonoBehaviour
             plateVisual.localPosition = Vector3.MoveTowards(
                 plateVisual.localPosition,
                 targetPosition,
-                movementSpeed * Time.deltaTime
+                Mathf.Max(0f, movementSpeed) * Time.deltaTime
             );
         }
 
@@ -187,7 +195,7 @@ public abstract class PressurePlate : MonoBehaviour
             stateMaterial.color = Color.Lerp(
                 stateMaterial.color,
                 targetColor,
-                colorSpeed * Time.deltaTime
+                Mathf.Clamp01(Mathf.Max(0f, colorSpeed) * Time.deltaTime)
             );
         }
     }

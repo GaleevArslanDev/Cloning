@@ -5,9 +5,9 @@ public class LaserRedirectorCube : MonoBehaviour
 {
     [SerializeField] private Vector3 mirrorDetectionSize = new Vector3(1f, 0.35f, 1f);
     [SerializeField] private LayerMask mirrorLayers = ~0;
+    [SerializeField] private BoxCollider cubeCollider;
 
     private readonly Collider[] mirrorBuffer = new Collider[16];
-    private Collider cubeCollider;
 
     public Vector3 OutputPosition
     {
@@ -29,7 +29,7 @@ public class LaserRedirectorCube : MonoBehaviour
 
     private void Awake()
     {
-        cubeCollider = GetComponent<Collider>();
+        ResolveCubeCollider();
     }
 
     public bool TryGetMountedMirror(out LaserMirror mirror)
@@ -41,8 +41,17 @@ public class LaserRedirectorCube : MonoBehaviour
             out Vector3 faceForward
         );
 
-        Vector3 center = outputPosition + outputDirection * mirrorDetectionSize.y * 0.5f;
-        Vector3 halfSize = mirrorDetectionSize * 0.5f;
+        Vector3 configuredSize = SaveDataValidator.Finite(
+            mirrorDetectionSize,
+            new Vector3(1f, 0.35f, 1f)
+        );
+        Vector3 detectionSize = new Vector3(
+            Mathf.Max(0.01f, Mathf.Abs(configuredSize.x)),
+            Mathf.Max(0.01f, Mathf.Abs(configuredSize.y)),
+            Mathf.Max(0.01f, Mathf.Abs(configuredSize.z))
+        );
+        Vector3 center = outputPosition + outputDirection * detectionSize.y * 0.5f;
+        Vector3 halfSize = detectionSize * 0.5f;
         Quaternion detectionRotation = Quaternion.LookRotation(faceForward, outputDirection);
 
         int count = Physics.OverlapBoxNonAlloc(
@@ -53,6 +62,9 @@ public class LaserRedirectorCube : MonoBehaviour
             mirrorLayers,
             QueryTriggerInteraction.Collide
         );
+
+        float nearestDistance = float.MaxValue;
+        mirror = null;
 
         for (int i = 0; i < count; i++)
         {
@@ -66,12 +78,17 @@ public class LaserRedirectorCube : MonoBehaviour
             if (detectedMirror == null)
                 continue;
 
+            float distance = (detectedCollider.ClosestPoint(outputPosition) -
+                              outputPosition).sqrMagnitude;
+
+            if (distance >= nearestDistance)
+                continue;
+
+            nearestDistance = distance;
             mirror = detectedMirror;
-            return true;
         }
 
-        mirror = null;
-        return false;
+        return mirror != null;
     }
 
     public void GetTopFace(
@@ -81,11 +98,28 @@ public class LaserRedirectorCube : MonoBehaviour
         out Vector3 faceForward
     )
     {
-        BoxCollider boxCollider = (BoxCollider)cubeCollider;
+        if (cubeCollider == null)
+            ResolveCubeCollider();
+
+        if (cubeCollider == null)
+        {
+            position = transform.position;
+            normal = GetWorldUp();
+            faceRight = Vector3.ProjectOnPlane(transform.right, normal).normalized;
+
+            if (faceRight.sqrMagnitude < 0.000001f)
+                faceRight = Vector3.ProjectOnPlane(transform.forward, normal).normalized;
+
+            if (faceRight.sqrMagnitude < 0.000001f)
+                faceRight = Vector3.Cross(normal, Vector3.forward).normalized;
+
+            faceForward = Vector3.Cross(faceRight, normal).normalized;
+            return;
+        }
+
+        BoxCollider boxCollider = cubeCollider;
         Transform boxTransform = boxCollider.transform;
-        Vector3 worldUp = Physics.gravity.sqrMagnitude > 0.0001f
-            ? -Physics.gravity.normalized
-            : Vector3.up;
+        Vector3 worldUp = GetWorldUp();
 
         float rightAlignment = Vector3.Dot(boxTransform.right, worldUp);
         float upAlignment = Vector3.Dot(boxTransform.up, worldUp);
@@ -147,5 +181,35 @@ public class LaserRedirectorCube : MonoBehaviour
 
         faceRight = Vector3.ProjectOnPlane(faceRight, normal).normalized;
         faceForward = Vector3.ProjectOnPlane(faceForward, normal).normalized;
+    }
+
+    private void ResolveCubeCollider()
+    {
+        if (cubeCollider != null)
+            return;
+
+        BoxCollider[] colliders = GetComponents<BoxCollider>();
+
+        foreach (BoxCollider candidate in colliders)
+        {
+            if (candidate != null && candidate.enabled && !candidate.isTrigger)
+            {
+                cubeCollider = candidate;
+                break;
+            }
+        }
+
+        if (cubeCollider == null && colliders.Length > 0)
+            cubeCollider = colliders[0];
+
+        if (cubeCollider == null)
+            Debug.LogWarning("LaserRedirectorCube: не найден BoxCollider", this);
+    }
+
+    private Vector3 GetWorldUp()
+    {
+        return Physics.gravity.sqrMagnitude > 0.0001f
+            ? -Physics.gravity.normalized
+            : Vector3.up;
     }
 } 

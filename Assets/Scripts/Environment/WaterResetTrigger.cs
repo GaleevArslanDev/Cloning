@@ -4,7 +4,7 @@ using UnityEngine;
 [RequireComponent(typeof(Collider))]
 public class WaterResetTrigger : MonoBehaviour
 {
-    [SerializeField] private float respawnSoundDelay = 0.25f;
+    [SerializeField, Min(0f)] private float respawnSoundDelay = 0.25f;
 
     private AudioSource waterAudioSource;
     private AudioSource respawnAudioSource;
@@ -47,12 +47,19 @@ public class WaterResetTrigger : MonoBehaviour
         PlaySound(waterAudioSource, waterSound);
         recorder.FinishRecording();
 
-        if (respawnSoundDelay > 0f)
-            yield return new WaitForSeconds(respawnSoundDelay);
+        float delay = Mathf.Max(0f, respawnSoundDelay);
+
+        if (delay > 0f)
+            yield return new WaitForSeconds(delay);
         else
             yield return null;
 
         PlaySound(respawnAudioSource, respawnSound);
+        resetting = false;
+    }
+
+    private void OnDisable()
+    {
         resetting = false;
     }
 

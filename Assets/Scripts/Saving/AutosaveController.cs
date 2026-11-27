@@ -8,7 +8,7 @@ public class AutosaveController : MonoBehaviour
     private static bool exitSaveCompleted;
     private static float elapsedTime;
 
-    [SerializeField] private float interval = 300f;
+    [SerializeField, Min(1f)] private float interval = 300f;
     [FormerlySerializedAs("slotName")]
     [SerializeField] private string slotNamePrefix = "Autosave";
 
@@ -26,7 +26,13 @@ public class AutosaveController : MonoBehaviour
 
         elapsedTime += Time.unscaledDeltaTime;
 
-        if (elapsedTime < Mathf.Max(1f, interval))
+        float safeInterval = Mathf.Clamp(
+            SaveDataValidator.Finite(interval, 300f),
+            1f,
+            86400f
+        );
+
+        if (elapsedTime < safeInterval)
             return;
 
         LevelManager levelManager = FindFirstObjectByType<LevelManager>();
@@ -48,12 +54,11 @@ public class AutosaveController : MonoBehaviour
         if (exitSaveCompleted)
             return;
 
-        exitSaveCompleted = true;
         AutosaveController controller = FindFirstObjectByType<AutosaveController>();
         string saveName = controller != null
             ? controller.CreateSaveName()
             : CreateSaveName("Autosave");
-        GameSaveSystem.Save(saveName);
+        exitSaveCompleted = GameSaveSystem.Save(saveName);
     }
 
     private string CreateSaveName()
@@ -63,6 +68,9 @@ public class AutosaveController : MonoBehaviour
 
     private static string CreateSaveName(string prefix)
     {
+        if (string.IsNullOrWhiteSpace(prefix))
+            prefix = "Autosave";
+
         string levelNumber = GameSaveSystem.GetLevelNumber(
             SceneManager.GetActiveScene().name
         );

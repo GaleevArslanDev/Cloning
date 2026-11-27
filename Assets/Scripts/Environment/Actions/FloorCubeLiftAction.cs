@@ -13,9 +13,9 @@ public class FloorCubeLiftAction : MonoBehaviour, IJsonSaveable
     [SerializeField] private LiftSurface surface;
     [FormerlySerializedAs("floorCubes")]
     [SerializeField] private Transform[] cubes;
-    [SerializeField] private float liftHeight = 2f;
-    [SerializeField] private float movementSpeed = 1f;
-    [SerializeField] private int requiredSignals = 2;
+    [SerializeField, Min(0f)] private float liftHeight = 2f;
+    [SerializeField, Min(0f)] private float movementSpeed = 1f;
+    [SerializeField, Min(1)] private int requiredSignals = 2;
     private AudioSource movementAudioSource;
     private AudioClip movementSound;
 
@@ -52,12 +52,22 @@ public class FloorCubeLiftAction : MonoBehaviour, IJsonSaveable
         if (!registered)
             Register();
 
-        float targetHeight = IsActive ? Mathf.Max(0f, liftHeight) : 0f;
+        float maximumHeight = Mathf.Clamp(
+            SaveDataValidator.Finite(liftHeight, 0f),
+            0f,
+            10000f
+        );
+        float targetHeight = IsActive ? maximumHeight : 0f;
         float previousHeight = currentHeight;
         currentHeight = Mathf.MoveTowards(
             currentHeight,
             targetHeight,
-            Mathf.Max(0f, movementSpeed) * Time.fixedDeltaTime
+            Mathf.Clamp(
+                SaveDataValidator.Finite(movementSpeed, 0f),
+                0f,
+                100f
+            ) *
+            Time.fixedDeltaTime
         );
 
         if (roomCubes != null)
@@ -85,7 +95,8 @@ public class FloorCubeLiftAction : MonoBehaviour, IJsonSaveable
 
     public void Activate()
     {
-        activeRequests++;
+        if (activeRequests < int.MaxValue)
+            activeRequests++;
     }
 
     public void Deactivate()
@@ -114,13 +125,34 @@ public class FloorCubeLiftAction : MonoBehaviour, IJsonSaveable
 
     public void RestoreJsonState(string json)
     {
-        SaveState state = JsonUtility.FromJson<SaveState>(json);
+        if (string.IsNullOrWhiteSpace(json))
+            return;
+
+        SaveState state;
+
+        try
+        {
+            state = JsonUtility.FromJson<SaveState>(json);
+        }
+        catch (System.ArgumentException exception)
+        {
+            Debug.LogWarning($"FloorCubeLiftAction: повреждён JSON: {exception.Message}", this);
+            return;
+        }
 
         if (state == null)
             return;
 
         activeRequests = Mathf.Max(0, state.ActiveRequests);
-        currentHeight = Mathf.Clamp(state.CurrentHeight, 0f, Mathf.Max(0f, liftHeight));
+        currentHeight = Mathf.Clamp(
+            SaveDataValidator.Finite(state.CurrentHeight, 0f),
+            0f,
+            Mathf.Clamp(
+                SaveDataValidator.Finite(liftHeight, 0f),
+                0f,
+                10000f
+            )
+        );
         Register();
 
         if (roomCubes != null)
