@@ -122392,10 +122392,10 @@ MonoBehaviour:
   laserLoop: {fileID: 8300000, guid: b9b5255fd2cd4b0498b3fd86a123c2fe, type: 3}
   laserReceived: {fileID: 8300000, guid: 277bdf2ea0783e440873bc6e5ccb7af2, type: 3}
   floorMovement: {fileID: 8300000, guid: 1aac1458c609bc6489f86c3c07969447, type: 3}
-  doorOpening: {fileID: 8300000, guid: 088038c0d834a3948ba385ec8d4a8fb5, type: 3}
+  doorOpening: {fileID: 8300000, guid: d7620bfe0b4d2ea40976d1ba171bd2e7, type: 3}
   flaskClosing: {fileID: 8300000, guid: 391af76a38bcd9d4e94b43b0667ea6b5, type: 3}
   flaskOpening: {fileID: 8300000, guid: 088038c0d834a3948ba385ec8d4a8fb5, type: 3}
-  rebuilding: {fileID: 8300000, guid: c73252ace6f6a644382ba3da23da99c9, type: 3}
+  rebuilding: {fileID: 8300000, guid: d75f2064b1c59ac4fa37f6c6d5994d0b, type: 3}
 --- !u!1 &1786060519
 GameObject:
   m_ObjectHideFlags: 0
