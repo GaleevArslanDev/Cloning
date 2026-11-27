@@ -28859,12 +28859,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FloorCubeLiftAction
   roomCubes: {fileID: 1151583249}
-  floorCubes:
+  surface: 1
+  cubes:
   - {fileID: 923004217}
   - {fileID: 1534061892}
   - {fileID: 553562816}
   - {fileID: 1581995701}
-  liftHeight: 2
+  liftHeight: 3
   movementSpeed: 1
   requiredSignals: 1
 --- !u!1 &416634793
@@ -54623,7 +54624,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5726408035638590266, guid: 0503f93d8731c504aa42df098b3dabb3, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 7.13
+      value: 8.43
       objectReference: {fileID: 0}
     - target: {fileID: 5726408035638590266, guid: 0503f93d8731c504aa42df098b3dabb3, type: 3}
       propertyPath: m_LocalPosition.z
@@ -60318,7 +60319,7 @@ Transform:
   m_GameObject: {fileID: 858183785}
   serializedVersion: 2
   m_LocalRotation: {x: -1, y: -0, z: -0, w: 0.0000014603136}
-  m_LocalPosition: {x: -6.419998, y: 14.43, z: 1.0800056}
+  m_LocalPosition: {x: -6.419998, y: 15.39, z: 1.0800056}
   m_LocalScale: {x: 24.75, y: 373.9957, z: 24.75}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -68232,7 +68233,7 @@ Transform:
   m_GameObject: {fileID: 973935628}
   serializedVersion: 2
   m_LocalRotation: {x: -1, y: -0, z: -0, w: 0.0000014603136}
-  m_LocalPosition: {x: -6.419998, y: 14.43, z: 0.08999634}
+  m_LocalPosition: {x: -6.419998, y: 15.39, z: 0.08999634}
   m_LocalScale: {x: 24.75, y: 373.9957, z: 24.75}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -74212,7 +74213,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FloorCubeLiftAction
   roomCubes: {fileID: 1151583249}
-  floorCubes:
+  surface: 0
+  cubes:
   - {fileID: 1900162802}
   - {fileID: 1608199938}
   - {fileID: 329396932}
@@ -80675,7 +80677,7 @@ MonoBehaviour:
   cubesRoot: {fileID: 278908367}
   flatRoomCenter: {fileID: 1153582604}
   flatRoomSize: {x: 19.725065, y: 9.869624, z: 13.623873}
-  hasCeiling: 0
+  hasCeiling: 1
   detectRoomAutomatically: 0
   detectionStep: 0.05
   showRoomPreview: 1
@@ -115038,7 +115040,7 @@ Transform:
   m_GameObject: {fileID: 1660426605}
   serializedVersion: 2
   m_LocalRotation: {x: -1, y: -0, z: -0, w: 0.0000014603136}
-  m_LocalPosition: {x: -7.41, y: 14.43, z: 0.08999634}
+  m_LocalPosition: {x: -7.41, y: 15.39, z: 0.08999634}
   m_LocalScale: {x: 24.75, y: 373.9957, z: 24.75}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -117329,7 +117331,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1321038448815434788, guid: c57e872fa76d9714eb1408f887163d63, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 12.13
+      value: 12.07
       objectReference: {fileID: 0}
     - target: {fileID: 1321038448815434788, guid: c57e872fa76d9714eb1408f887163d63, type: 3}
       propertyPath: m_LocalPosition.z
@@ -117394,7 +117396,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FloorCubeLiftAction
   roomCubes: {fileID: 1151583249}
-  floorCubes:
+  surface: 1
+  cubes:
   - {fileID: 1511377878}
   - {fileID: 2040306054}
   - {fileID: 969776881}
@@ -119110,7 +119113,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FloorCubeLiftAction
   roomCubes: {fileID: 1151583249}
-  floorCubes:
+  surface: 0
+  cubes:
   - {fileID: 41623930}
   - {fileID: 2101837619}
   - {fileID: 156670747}
@@ -138808,7 +138812,7 @@ Transform:
   m_GameObject: {fileID: 2002725777}
   serializedVersion: 2
   m_LocalRotation: {x: -1, y: -0, z: -0, w: 0.0000014603136}
-  m_LocalPosition: {x: -7.41, y: 14.43, z: 1.0800056}
+  m_LocalPosition: {x: -7.41, y: 15.39, z: 1.0800056}
   m_LocalScale: {x: 24.75, y: 373.9957, z: 24.75}
   m_ConstrainProportionsScale: 0
   m_Children: []
