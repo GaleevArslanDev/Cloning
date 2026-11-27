@@ -94052,7 +94052,7 @@ MonoBehaviour:
   cubesRoot: {fileID: 263526039}
   flatRoomCenter: {fileID: 1890523760}
   flatRoomSize: {x: 19.725065, y: 9.869624, z: 13.623873}
-  hasCeiling: 0
+  hasCeiling: 1
   detectRoomAutomatically: 0
   detectionStep: 0.05
   showRoomPreview: 1
@@ -134808,7 +134808,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FloorCubeLiftAction
   roomCubes: {fileID: 1370236329}
-  floorCubes:
+  surface: 0
+  cubes:
   - {fileID: 1154354787}
   - {fileID: 436693766}
   - {fileID: 689052661}
