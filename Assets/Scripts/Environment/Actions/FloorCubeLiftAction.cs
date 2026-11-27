@@ -1,9 +1,18 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class FloorCubeLiftAction : MonoBehaviour, IJsonSaveable
 {
+    private enum LiftSurface
+    {
+        Floor,
+        Ceiling
+    }
+
     [SerializeField] private RoomCubeField roomCubes;
-    [SerializeField] private Transform[] floorCubes;
+    [SerializeField] private LiftSurface surface;
+    [FormerlySerializedAs("floorCubes")]
+    [SerializeField] private Transform[] cubes;
     [SerializeField] private float liftHeight = 2f;
     [SerializeField] private float movementSpeed = 1f;
     [SerializeField] private int requiredSignals = 2;
@@ -123,7 +132,11 @@ public class FloorCubeLiftAction : MonoBehaviour, IJsonSaveable
         if (registered || roomCubes == null)
             return;
 
-        roomCubes.RegisterFloorLift(this, floorCubes);
+        roomCubes.RegisterFloorLift(
+            this,
+            cubes,
+            surface == LiftSurface.Ceiling
+        );
         registered = true;
     }
 

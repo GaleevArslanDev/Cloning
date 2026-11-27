@@ -49,6 +49,7 @@ public class RoomCubeField : MonoBehaviour
         public float AppliedOffset;
         public Rigidbody Body;
         public bool IsFloor;
+        public bool IsCeiling;
     }
 
     private class FloorLiftGroup
@@ -194,7 +195,11 @@ public class RoomCubeField : MonoBehaviour
         });
     }
 
-    public void RegisterFloorLift(Object owner, Transform[] selectedCubes)
+    public void RegisterFloorLift(
+        Object owner,
+        Transform[] selectedCubes,
+        bool useCeiling = false
+    )
     {
         if (owner == null || selectedCubes == null)
             return;
@@ -208,12 +213,17 @@ public class RoomCubeField : MonoBehaviour
 
             CubeState cube = FindCube(selectedCube);
 
-            if (cube == null || !cube.IsFloor)
-            {
+            if (cube == null)
                 continue;
-            }
 
-            EnsureFloorBody(cube);
+            bool validSurface = useCeiling
+                ? hasCeiling && cube.IsCeiling
+                : cube.IsFloor;
+
+            if (!validSurface)
+                continue;
+
+            EnsureBody(cube);
             group.Cubes.Add(cube);
         }
 
@@ -254,7 +264,7 @@ public class RoomCubeField : MonoBehaviour
         geometryDirty = true;
     }
 
-    private void EnsureFloorBody(CubeState cube)
+    private void EnsureBody(CubeState cube)
     {
         if (cube.Body != null)
             return;
@@ -271,7 +281,7 @@ public class RoomCubeField : MonoBehaviour
 
     private float GetLift(CubeState cube)
     {
-        if (!cube.IsFloor || floorLifts.Count == 0)
+        if (floorLifts.Count == 0)
             return 0f;
 
         float height = 0f;
@@ -310,7 +320,8 @@ public class RoomCubeField : MonoBehaviour
                 sourceFilter.sharedMesh.bounds,
                 out Vector3 flatPosition,
                 out Vector3 normal,
-                out bool isFloor
+                out bool isFloor,
+                out bool isCeiling
             );
 
             CubeState state = new CubeState
@@ -328,7 +339,8 @@ public class RoomCubeField : MonoBehaviour
                 ),
                 TransitionStart = GetValue(finalPosition, randomSeed + 83) *
                                   maximumTransitionDelay,
-                IsFloor = isFloor
+                IsFloor = isFloor,
+                IsCeiling = isCeiling
             };
 
             float minimumDuration = Mathf.Clamp(
@@ -411,6 +423,7 @@ public class RoomCubeField : MonoBehaviour
         List<DetectedBlock> blocks = new List<DetectedBlock>();
         List<float> xCenters = new List<float>();
         List<float> zCenters = new List<float>();
+        List<float> wallYCenters = new List<float>();
 
         foreach (MeshRenderer renderer in renderers)
         {
@@ -443,21 +456,29 @@ public class RoomCubeField : MonoBehaviour
             blocks.Add(block);
 
             if (axis == 0)
+            {
                 xCenters.Add(block.Center.x);
+                wallYCenters.Add(block.Center.y);
+            }
             else if (axis == 2)
+            {
                 zCenters.Add(block.Center.z);
+                wallYCenters.Add(block.Center.y);
+            }
         }
 
-        if (xCenters.Count < 2 || zCenters.Count < 2)
+        if (xCenters.Count < 2 || zCenters.Count < 2 || wallYCenters.Count == 0)
             return false;
 
         float middleX = GetMedian(xCenters);
         float middleZ = GetMedian(zCenters);
+        float middleY = GetMedian(wallYCenters);
         List<float> leftFaces = new List<float>();
         List<float> rightFaces = new List<float>();
         List<float> backFaces = new List<float>();
         List<float> frontFaces = new List<float>();
         List<float> floorFaces = new List<float>();
+        List<float> ceilingFaces = new List<float>();
         float top = float.MinValue;
 
         foreach (DetectedBlock block in blocks)
@@ -473,7 +494,10 @@ public class RoomCubeField : MonoBehaviour
             }
             else if (block.Axis == 1)
             {
-                floorFaces.Add(block.Maximum.y);
+                if (hasCeiling && block.Center.y > middleY)
+                    ceilingFaces.Add(block.Minimum.y);
+                else
+                    floorFaces.Add(block.Maximum.y);
             }
             else
             {
@@ -491,6 +515,7 @@ public class RoomCubeField : MonoBehaviour
             backFaces.Count == 0 ||
             frontFaces.Count == 0 ||
             floorFaces.Count == 0 ||
+            (hasCeiling && ceilingFaces.Count == 0) ||
             top == float.MinValue)
         {
             return false;
@@ -501,9 +526,10 @@ public class RoomCubeField : MonoBehaviour
         float back = GetMostCommon(backFaces);
         float front = GetMostCommon(frontFaces);
         float floor = GetMostCommon(floorFaces);
+        float roomTop = hasCeiling ? GetMostCommon(ceilingFaces) : top;
         Vector3 localCenter = new Vector3(
             (left + right) * 0.5f,
-            (floor + top) * 0.5f,
+            (floor + roomTop) * 0.5f,
             (back + front) * 0.5f
         );
 
@@ -512,7 +538,7 @@ public class RoomCubeField : MonoBehaviour
         rotation = cubesRoot.rotation;
         size = new Vector3(
             Mathf.Abs(right - left) * Mathf.Abs(scale.x),
-            Mathf.Abs(top - floor) * Mathf.Abs(scale.y),
+            Mathf.Abs(roomTop - floor) * Mathf.Abs(scale.y),
             Mathf.Abs(front - back) * Mathf.Abs(scale.z)
         );
         return true;
@@ -596,7 +622,8 @@ public class RoomCubeField : MonoBehaviour
         Bounds meshBounds,
         out Vector3 flatPosition,
         out Vector3 normal,
-        out bool isFloor
+        out bool isFloor,
+        out bool isCeiling
     )
     {
         GetRoomBounds(cubeRoot, meshBounds, out Vector3 minimum, out Vector3 maximum);
@@ -647,6 +674,7 @@ public class RoomCubeField : MonoBehaviour
         flatPosition = cubeRoot.position + targetWorldSurface - worldSurface;
         normal = flatRoomCenter.TransformDirection(localNormal).normalized;
         isFloor = localNormal.y < -0.5f;
+        isCeiling = hasCeiling && localNormal.y > 0.5f;
     }
 
     private void GetRoomBounds(
@@ -778,6 +806,15 @@ public class RoomCubeField : MonoBehaviour
             new Vector3(0f, -half.y, 0f),
             new Vector3(size.x, thickness, size.z)
         );
+
+        if (hasCeiling)
+        {
+            Gizmos.DrawCube(
+                new Vector3(0f, half.y, 0f),
+                new Vector3(size.x, thickness, size.z)
+            );
+        }
+
         Gizmos.DrawCube(
             new Vector3(-half.x, 0f, 0f),
             new Vector3(thickness, size.y, size.z)
