@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class CarryablePressurePlate : PressurePlate
 {
-    [SerializeField] private float minimumHeight = 0f;
+    [SerializeField, Min(0f)] private float minimumHeight = 0f;
 
     protected override GameObject GetActivator(Collider other)
     {
@@ -13,7 +13,7 @@ public class CarryablePressurePlate : PressurePlate
 
         Vector3 localCenter = transform.InverseTransformPoint(other.bounds.center);
 
-        if (localCenter.y < minimumHeight)
+        if (localCenter.y < Mathf.Max(0f, minimumHeight))
             return null;
 
         return item.gameObject;

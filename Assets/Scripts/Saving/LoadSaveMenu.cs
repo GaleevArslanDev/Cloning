@@ -70,20 +70,26 @@ public class LoadSaveMenu : MonoBehaviour
 
     private void FillPage()
     {
-        int viewsCount = slotViews != null ? slotViews.Length : 0;
+        int viewsCount = GetUsableViewCount();
         int startIndex = currentPage * Mathf.Max(1, viewsCount);
+        int viewIndex = 0;
 
-        for (int i = 0; i < viewsCount; i++)
+        if (slotViews != null)
         {
-            int slotIndex = startIndex + i;
-
-            if (slotIndex < slots.Count)
+            foreach (SaveSlotView view in slotViews)
             {
-                slotViews[i].Show(this, slots[slotIndex]);
-                slotViews[i].UpdateSelection(selectedSlot);
+                if (view == null)
+                    continue;
+
+                int slotIndex = startIndex + viewIndex;
+
+                if (slotIndex < slots.Count)
+                    view.Show(this, slots[slotIndex]);
+                else
+                    view.Hide();
+
+                viewIndex++;
             }
-            else
-                slotViews[i].Hide();
         }
 
         int pageCount = GetPageCount();
@@ -98,7 +104,7 @@ public class LoadSaveMenu : MonoBehaviour
 
     private int GetPageCount()
     {
-        int viewsCount = slotViews != null ? slotViews.Length : 0;
+        int viewsCount = GetUsableViewCount();
 
         if (viewsCount == 0 || slots.Count == 0)
             return 0;
@@ -108,6 +114,14 @@ public class LoadSaveMenu : MonoBehaviour
 
     public void Select(string slotName)
     {
+        selectedSlot = string.Empty;
+        SetButtonsEnabled(false);
+
+        if (string.IsNullOrWhiteSpace(slotName))
+        {
+            return;
+        }
+
         foreach (SaveSlotInfo slot in GameSaveSystem.GetSlots())
         {
             if (slot.Name != slotName)
@@ -146,6 +160,9 @@ public class LoadSaveMenu : MonoBehaviour
 
     public static string GetDisplayName(string slotName)
     {
+        if (string.IsNullOrWhiteSpace(slotName))
+            return "Без названия";
+
         return slotName.StartsWith("Autosave", StringComparison.OrdinalIgnoreCase)
             ? "Автосохранение"
             : slotName;
@@ -175,5 +192,21 @@ public class LoadSaveMenu : MonoBehaviour
             loadButton.interactable = enabled;
         if (deleteButton != null)
             deleteButton.interactable = enabled;
+    }
+
+    private int GetUsableViewCount()
+    {
+        if (slotViews == null)
+            return 0;
+
+        int count = 0;
+
+        foreach (SaveSlotView view in slotViews)
+        {
+            if (view != null)
+                count++;
+        }
+
+        return count;
     }
 }

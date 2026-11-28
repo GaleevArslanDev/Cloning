@@ -22,7 +22,11 @@ public class TwoPointsUpperInteractor : MonoBehaviour
     )
     {
         viewPoint = newViewPoint;
-        interactionDistance = newInteractionDistance;
+        interactionDistance = Mathf.Clamp(
+            SaveDataValidator.Finite(newInteractionDistance, 0f),
+            0f,
+            100f
+        );
         interactionLayers = newInteractionLayers;
         climbUpDirection = newClimbUpDirection;
         climbAction = newClimbAction;
@@ -63,7 +67,7 @@ public class TwoPointsUpperInteractor : MonoBehaviour
         }
 
         if (currentInteractable is MonoBehaviour target && target != null)
-            currentInteractable.Interact(gameObject, deltaTime);
+            currentInteractable.Interact(gameObject, Mathf.Max(0f, deltaTime));
     }
 
     private IInteractable FindInteractable()

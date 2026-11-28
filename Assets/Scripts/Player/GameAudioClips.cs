@@ -31,6 +31,11 @@ public class GameAudioClips : MonoBehaviour
     [SerializeField] private AudioClip flaskOpening;
     [SerializeField] private AudioClip rebuilding;
 
+    [Header("Music")]
+    [SerializeField] private string mainMenuSceneName = "MainMenu";
+    [SerializeField] private BackgroundMusicTrack mainMenuMusic = new BackgroundMusicTrack();
+    [SerializeField] private BackgroundMusicTrack[] levelMusic;
+
     public static GameAudioClips Instance
     {
         get
@@ -60,6 +65,11 @@ public class GameAudioClips : MonoBehaviour
     public AudioClip FlaskClosing => flaskClosing;
     public AudioClip FlaskOpening => flaskOpening;
     public AudioClip Rebuilding => rebuilding;
+    public string MainMenuSceneName => string.IsNullOrWhiteSpace(mainMenuSceneName)
+        ? "MainMenu"
+        : mainMenuSceneName.Trim();
+    public BackgroundMusicTrack MainMenuMusic => mainMenuMusic;
+    public BackgroundMusicTrack[] LevelMusic => levelMusic;
 
     private void Awake()
     {
@@ -71,6 +81,14 @@ public class GameAudioClips : MonoBehaviour
 
         instance = this;
         DontDestroyOnLoad(gameObject);
+
+        BackgroundMusicController musicController =
+            GetComponent<BackgroundMusicController>();
+
+        if (musicController == null)
+            musicController = gameObject.AddComponent<BackgroundMusicController>();
+
+        musicController.Configure(this);
     }
 
     private void OnDestroy()

@@ -5,19 +5,19 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(CharacterController))]
 public class PlayerMovement : MonoBehaviour
 {
-    [SerializeField] private float walkSpeed = 3.5f;
-    [SerializeField] private float runSpeed = 5.5f;
-    [SerializeField] private float acceleration = 14f;
+    [SerializeField, Min(0f)] private float walkSpeed = 3.5f;
+    [SerializeField, Min(0f)] private float runSpeed = 5.5f;
+    [SerializeField, Min(0f)] private float acceleration = 14f;
     [SerializeField] private float gravity = -20f;
     private AudioSource footstepAudioSource;
     private AudioSource fallAudioSource;
     private AudioClip[] footstepSounds;
     private AudioClip fallSound;
-    [SerializeField] private float walkStepInterval = 0.5f;
-    [SerializeField] private float runStepInterval = 0.35f;
-    [SerializeField] private float fallSoundDelay;
-    [SerializeField] private float groundedSoundGrace = 0.15f;
-    [SerializeField] private float minimumFallSpeed = 0.5f;
+    [SerializeField, Min(0.05f)] private float walkStepInterval = 0.5f;
+    [SerializeField, Min(0.05f)] private float runStepInterval = 0.35f;
+    [SerializeField, Min(0f)] private float fallSoundDelay;
+    [SerializeField, Min(0f)] private float groundedSoundGrace = 0.15f;
+    [SerializeField, Min(0f)] private float minimumFallSpeed = 0.5f;
 
     private CharacterController controller;
     private Vector3 horizontalVelocity;
@@ -49,6 +49,19 @@ public class PlayerMovement : MonoBehaviour
         }
 
         controller = GetComponent<CharacterController>();
+        walkSpeed = Mathf.Clamp(SaveDataValidator.Finite(walkSpeed, 3.5f), 0f, 100f);
+        runSpeed = Mathf.Clamp(SaveDataValidator.Finite(runSpeed, 5.5f), 0f, 100f);
+        acceleration = Mathf.Clamp(
+            SaveDataValidator.Finite(acceleration, 14f),
+            0f,
+            1000f
+        );
+        gravity = SaveDataValidator.Finite(gravity, -20f);
+
+        if (gravity >= 0f)
+            gravity = -20f;
+
+        gravity = Mathf.Max(gravity, -200f);
         previousSoundPosition = transform.position;
 
         if (fallSoundDelay <= 0f)
@@ -255,6 +268,8 @@ public class PlayerMovement : MonoBehaviour
 
     public void Teleport(Vector3 position, Quaternion rotation)
     {
+        position = SaveDataValidator.Finite(position, transform.position);
+        rotation = SaveDataValidator.Rotation(rotation);
         controller.enabled = false;
         transform.SetPositionAndRotation(position, rotation);
         controller.enabled = true;
@@ -274,6 +289,9 @@ public class PlayerMovement : MonoBehaviour
 
     public bool MoveTo(Vector3 targetPosition, float speed, float stopDistance)
     {
+        targetPosition = SaveDataValidator.Finite(targetPosition, transform.position);
+        speed = Mathf.Clamp(SaveDataValidator.Finite(speed, 0f), 0f, 100f);
+        stopDistance = Mathf.Max(0f, SaveDataValidator.Finite(stopDistance, 0f));
         Vector3 difference = targetPosition - transform.position;
         float distance = difference.magnitude;
 

@@ -4,9 +4,9 @@ public class CloneClimbInteractable : MonoBehaviour, IInteractable
 {
     [SerializeField] private ClonePlayback playback;
     [SerializeField] private Transform mountPoint;
-    [SerializeField] private float stackHorizontalDistance = 0.75f;
-    [SerializeField] private float minimumStackHeight = 1.2f;
-    [SerializeField] private float maximumStackHeight = 2.6f;
+    [SerializeField, Min(0f)] private float stackHorizontalDistance = 0.75f;
+    [SerializeField, Min(0f)] private float minimumStackHeight = 1.2f;
+    [SerializeField, Min(0f)] private float maximumStackHeight = 2.6f;
 
     private PlayerClimber rider;
 
@@ -15,6 +15,19 @@ public class CloneClimbInteractable : MonoBehaviour, IInteractable
 
     private void Awake()
     {
+        stackHorizontalDistance = Mathf.Max(
+            0f,
+            SaveDataValidator.Finite(stackHorizontalDistance, 0.75f)
+        );
+        minimumStackHeight = Mathf.Max(
+            0f,
+            SaveDataValidator.Finite(minimumStackHeight, 1.2f)
+        );
+        maximumStackHeight = Mathf.Max(
+            minimumStackHeight,
+            SaveDataValidator.Finite(maximumStackHeight, 2.6f)
+        );
+
         if (playback == null)
             playback = GetComponentInParent<ClonePlayback>();
         if (mountPoint == null)

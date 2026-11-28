@@ -6,7 +6,7 @@ public class ClonePlayback : MonoBehaviour
     private static readonly HashSet<ClonePlayback> activeClones = new HashSet<ClonePlayback>();
 
     [SerializeField] private Transform head;
-    [SerializeField] private float standingSpeed = 0.05f;
+    [SerializeField, Min(0f)] private float standingSpeed = 0.05f;
     [SerializeField] private CloneCarryController carryController;
 
     private readonly HashSet<MonoBehaviour> activeInteractions = new HashSet<MonoBehaviour>();
@@ -44,6 +44,12 @@ public class ClonePlayback : MonoBehaviour
         float maximumVerticalDistance
     )
     {
+        horizontalDistance = Mathf.Max(0f, horizontalDistance);
+        minimumVerticalDistance = Mathf.Max(0f, minimumVerticalDistance);
+        maximumVerticalDistance = Mathf.Max(
+            minimumVerticalDistance,
+            maximumVerticalDistance
+        );
         Vector3 up = Physics.gravity.sqrMagnitude > 0.001f
             ? -Physics.gravity.normalized
             : Vector3.up;
@@ -84,6 +90,13 @@ public class ClonePlayback : MonoBehaviour
         if (carryController == null)
             carryController = GetComponent<CloneCarryController>();
 
+        if (recordingData == null || recordingData.Poses.Count == 0)
+        {
+            Debug.LogWarning("ClonePlayback: запись отсутствует или не содержит поз", this);
+            StopPlayback();
+            return;
+        }
+
         recording = recordingData;
         poseIndex = 0;
         interactionIndex = 0;
@@ -98,8 +111,7 @@ public class ClonePlayback : MonoBehaviour
         RightInputPressedThisFrame = false;
         ScrollInputThisFrame = 0f;
 
-        if (recording.Poses.Count > 0)
-            ApplyPose(recording.Poses[0]);
+        ApplyPose(recording.Poses[0]);
 
         if (startTime > 0f)
             Seek(startTime);
@@ -107,7 +119,11 @@ public class ClonePlayback : MonoBehaviour
 
     private void Seek(float time)
     {
-        playbackTime = Mathf.Clamp(time, 0f, recording.Duration);
+        playbackTime = Mathf.Clamp(
+            SaveDataValidator.Finite(time, 0f),
+            0f,
+            Mathf.Max(0f, SaveDataValidator.Finite(recording.Duration, 0f))
+        );
         poseIndex = 0;
         UpdatePose();
 
@@ -202,7 +218,9 @@ public class ClonePlayback : MonoBehaviour
         RecordedPose current = recording.Poses[poseIndex];
         RecordedPose next = recording.Poses[Mathf.Min(poseIndex + 1, recording.Poses.Count - 1)];
         float duration = next.Time - current.Time;
-        float progress = duration > 0f ? (playbackTime - current.Time) / duration : 1f;
+        float progress = duration > 0f
+            ? Mathf.Clamp01((playbackTime - current.Time) / duration)
+            : 1f;
 
         transform.position = Vector3.Lerp(current.Position, next.Position, progress);
         transform.rotation = Quaternion.Slerp(current.BodyRotation, next.BodyRotation, progress);
@@ -214,7 +232,7 @@ public class ClonePlayback : MonoBehaviour
             ? Vector3.Distance(current.Position, next.Position) / duration
             : 0f;
 
-        IsStandingStill = speed <= standingSpeed;
+        IsStandingStill = speed <= Mathf.Max(0f, standingSpeed);
         IsJumping = current.IsJumping || next.IsJumping;
         IsRidingClone = current.IsRidingClone && next.IsRidingClone;
         UpdateCarryPose(current, next, progress);

@@ -5,8 +5,8 @@ public class LevelFinishTrigger : MonoBehaviour
 {
     [SerializeField] private LevelManager levelManager;
     [SerializeField] private Transform centerPoint;
-    [SerializeField] private float centeringSpeed = 2.5f;
-    [SerializeField] private float maximumCenteringTime = 2f;
+    [SerializeField, Min(0f)] private float centeringSpeed = 2.5f;
+    [SerializeField, Min(0f)] private float maximumCenteringTime = 2f;
 
     private bool activated;
 

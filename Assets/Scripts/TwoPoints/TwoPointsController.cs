@@ -9,14 +9,14 @@ public class TwoPointsController : MonoBehaviour
     [SerializeField] private Transform lowerHead;
     [SerializeField] private GameObject upperPlayerPrefab;
     [SerializeField] private GameObject upperClonePrefab;
-    [SerializeField] private float interactionDistance = 3f;
+    [SerializeField, Min(0f)] private float interactionDistance = 3f;
     [SerializeField] private LayerMask interactionLayers = ~0;
     [SerializeField] private LayerMask obstacleLayers = ~0;
-    [SerializeField] private float collisionOffset = 0.02f;
-    [SerializeField] private float copyMoveSpeed = 6f;
-    [SerializeField] private float upperGravity = 20f;
-    [SerializeField] private float rescueDistance = 1.25f;
-    [SerializeField] private float cloneRefreshInterval = 0.1f;
+    [SerializeField, Min(0f)] private float collisionOffset = 0.02f;
+    [SerializeField, Min(0f)] private float copyMoveSpeed = 6f;
+    [SerializeField, Min(0f)] private float upperGravity = 20f;
+    [SerializeField, Min(0f)] private float rescueDistance = 1.25f;
+    [SerializeField, Min(0.02f)] private float cloneRefreshInterval = 0.1f;
 
     private readonly Dictionary<ClonePlayback, GameObject> cloneCopies = new Dictionary<ClonePlayback, GameObject>();
     private readonly List<ClonePlayback> removedClones = new List<ClonePlayback>();
@@ -34,6 +34,37 @@ public class TwoPointsController : MonoBehaviour
 
     private void Awake()
     {
+        interactionDistance = Mathf.Clamp(
+            SaveDataValidator.Finite(interactionDistance, 3f),
+            0f,
+            100f
+        );
+        collisionOffset = Mathf.Clamp(
+            SaveDataValidator.Finite(collisionOffset, 0.02f),
+            0f,
+            1f
+        );
+        copyMoveSpeed = Mathf.Clamp(
+            SaveDataValidator.Finite(copyMoveSpeed, 6f),
+            0f,
+            100f
+        );
+        upperGravity = Mathf.Clamp(
+            SaveDataValidator.Finite(upperGravity, 20f),
+            0f,
+            200f
+        );
+        rescueDistance = Mathf.Clamp(
+            SaveDataValidator.Finite(rescueDistance, 1.25f),
+            0f,
+            100f
+        );
+        cloneRefreshInterval = Mathf.Clamp(
+            SaveDataValidator.Finite(cloneRefreshInterval, 0.1f),
+            0.02f,
+            10f
+        );
+
         if (lowerHead == null)
         {
             Camera playerCamera = GetComponentInChildren<Camera>();

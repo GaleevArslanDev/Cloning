@@ -64,11 +64,17 @@ public class CarryableItem : MonoBehaviour, IInteractable
         startGravity = body.useGravity;
 
         for (int i = 0; i < itemColliders.Length; i++)
-            startTriggers[i] = itemColliders[i].isTrigger;
+        {
+            if (itemColliders[i] != null)
+                startTriggers[i] = itemColliders[i].isTrigger;
+        }
     }
 
     public void BeginInteraction(GameObject interactor)
     {
+        if (interactor == null)
+            return;
+
         PlayerCarry playerCarry = interactor.GetComponent<PlayerCarry>();
 
         if (playerCarry != null)
@@ -87,7 +93,7 @@ public class CarryableItem : MonoBehaviour, IInteractable
     {
         Initialize();
 
-        if (newOwner == null || owner != null)
+        if (newOwner == null || owner != null || body == null)
             return false;
 
         owner = newOwner;
@@ -101,6 +107,9 @@ public class CarryableItem : MonoBehaviour, IInteractable
 
         for (int i = 0; i < itemColliders.Length; i++)
         {
+            if (itemColliders[i] == null)
+                continue;
+
             originalTriggers[i] = itemColliders[i].isTrigger;
             itemColliders[i].isTrigger = true;
         }
@@ -116,7 +125,10 @@ public class CarryableItem : MonoBehaviour, IInteractable
         transform.SetPositionAndRotation(position, rotation);
 
         for (int i = 0; i < itemColliders.Length; i++)
-            itemColliders[i].isTrigger = originalTriggers[i];
+        {
+            if (itemColliders[i] != null && i < originalTriggers.Length)
+                itemColliders[i].isTrigger = originalTriggers[i];
+        }
 
         body.isKinematic = originalKinematic;
         body.useGravity = originalGravity;
@@ -125,13 +137,27 @@ public class CarryableItem : MonoBehaviour, IInteractable
 
     public Bounds GetBounds()
     {
-        if (itemColliders.Length == 0)
+        Collider firstCollider = null;
+
+        foreach (Collider itemCollider in itemColliders)
+        {
+            if (itemCollider != null)
+            {
+                firstCollider = itemCollider;
+                break;
+            }
+        }
+
+        if (firstCollider == null)
             return new Bounds(transform.position, Vector3.one * 0.2f);
 
-        Bounds bounds = itemColliders[0].bounds;
+        Bounds bounds = firstCollider.bounds;
 
-        for (int i = 1; i < itemColliders.Length; i++)
-            bounds.Encapsulate(itemColliders[i].bounds);
+        foreach (Collider itemCollider in itemColliders)
+        {
+            if (itemCollider != null && itemCollider != firstCollider)
+                bounds.Encapsulate(itemCollider.bounds);
+        }
 
         return bounds;
     }
@@ -150,7 +176,10 @@ public class CarryableItem : MonoBehaviour, IInteractable
         transform.SetPositionAndRotation(startPosition, startRotation);
 
         for (int i = 0; i < itemColliders.Length; i++)
-            itemColliders[i].isTrigger = startTriggers[i];
+        {
+            if (itemColliders[i] != null)
+                itemColliders[i].isTrigger = i < startTriggers.Length && startTriggers[i];
+        }
 
         body.useGravity = startGravity;
         body.isKinematic = startKinematic;
@@ -166,7 +195,10 @@ public class CarryableItem : MonoBehaviour, IInteractable
         startGravity = body.useGravity;
 
         for (int i = 0; i < itemColliders.Length; i++)
-            startTriggers[i] = itemColliders[i].isTrigger;
+        {
+            if (itemColliders[i] != null && i < startTriggers.Length)
+                startTriggers[i] = itemColliders[i].isTrigger;
+        }
     }
 
     public void RestoreSavedState(
@@ -185,7 +217,10 @@ public class CarryableItem : MonoBehaviour, IInteractable
         transform.SetPositionAndRotation(position, rotation);
 
         for (int i = 0; i < itemColliders.Length; i++)
-            itemColliders[i].isTrigger = startTriggers[i];
+        {
+            if (itemColliders[i] != null)
+                itemColliders[i].isTrigger = i < startTriggers.Length && startTriggers[i];
+        }
 
         body.useGravity = useGravity;
         body.isKinematic = isKinematic;

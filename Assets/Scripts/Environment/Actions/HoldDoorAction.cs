@@ -47,7 +47,10 @@ public sealed class HoldDoorAction : MonoBehaviour, IJsonSaveable
 
         // Changing the target never resets progress, even during rapid reversals.
         progress = Mathf.MoveTowards(progress, IsPressed ? 1f : 0f,
-            Time.deltaTime * Mathf.Max(0.01f, playbackSpeed) / openingClip.length);
+            Time.deltaTime * Mathf.Max(
+                0.01f,
+                SaveDataValidator.Finite(playbackSpeed, 1f)
+            ) / openingClip.length);
         ApplyProgress();
     }
 
@@ -55,7 +58,9 @@ public sealed class HoldDoorAction : MonoBehaviour, IJsonSaveable
     public void Open()
     {
         bool wasPressed = IsPressed;
-        activeSignals++;
+
+        if (activeSignals < int.MaxValue)
+            activeSignals++;
 
         if (!wasPressed && IsPressed && audioSource != null && openingSound != null)
             audioSource.PlayOneShot(openingSound);
@@ -78,13 +83,26 @@ public sealed class HoldDoorAction : MonoBehaviour, IJsonSaveable
 
     public void RestoreJsonState(string json)
     {
-        SaveState state = JsonUtility.FromJson<SaveState>(json);
+        if (string.IsNullOrWhiteSpace(json))
+            return;
+
+        SaveState state;
+
+        try
+        {
+            state = JsonUtility.FromJson<SaveState>(json);
+        }
+        catch (System.ArgumentException exception)
+        {
+            Debug.LogWarning($"HoldDoorAction: повреждён JSON: {exception.Message}", this);
+            return;
+        }
 
         if (state == null)
             return;
 
         activeSignals = Mathf.Max(0, state.ActiveSignals);
-        progress = Mathf.Clamp01(state.Progress);
+        progress = Mathf.Clamp01(SaveDataValidator.Finite(state.Progress, 0f));
         ApplyProgress();
     }
 

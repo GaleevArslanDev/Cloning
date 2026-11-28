@@ -7,17 +7,17 @@ public class PlayerCarry : MonoBehaviour
     [SerializeField] private Camera playerCamera;
     [SerializeField] private PlayerMovement playerMovement;
     [SerializeField] private Vector3 holdOffset = new Vector3(0.35f, -0.25f, 1.3f);
-    [SerializeField] private float pickupDuration = 0.45f;
-    [SerializeField] private float dropDuration = 0.35f;
-    [SerializeField] private float followSpeed = 14f;
-    [SerializeField] private float dropSearchDistance = 8f;
+    [SerializeField, Min(0f)] private float pickupDuration = 0.45f;
+    [SerializeField, Min(0f)] private float dropDuration = 0.35f;
+    [SerializeField, Min(0f)] private float followSpeed = 14f;
+    [SerializeField, Min(0f)] private float dropSearchDistance = 8f;
     [SerializeField] private LayerMask dropSurfaceLayers = ~0;
     [SerializeField] private LayerMask dropBlockingLayers = ~0;
-    [SerializeField] private float allowedDropOverlap = 0.002f;
-    [SerializeField] private float dropCorrectionDistance = 0.8f;
-    [SerializeField] private float dropCorrectionStep = 0.1f;
-    [SerializeField] private float movementSway = 0.025f;
-    [SerializeField] private float rotationStep = 15f;
+    [SerializeField, Min(0f)] private float allowedDropOverlap = 0.002f;
+    [SerializeField, Min(0f)] private float dropCorrectionDistance = 0.8f;
+    [SerializeField, Min(0.001f)] private float dropCorrectionStep = 0.1f;
+    [SerializeField, Min(0f)] private float movementSway = 0.025f;
+    [SerializeField, Min(0f)] private float rotationStep = 15f;
     private AudioSource carryAudioSource;
     private AudioClip pickupSound;
     private AudioClip dropSound;
@@ -107,8 +107,15 @@ public class PlayerCarry : MonoBehaviour
     {
         if (PauseMenuController.IsGamePaused) return;
 
-        if (heldItem == null || holdTransform == null)
+        if (heldItem == null)
             return;
+
+        if (holdTransform == null)
+        {
+            Debug.LogWarning("PlayerCarry: потеряна точка удержания, предмет отпущен", this);
+            CancelCarry();
+            return;
+        }
 
         if (state == CarryState.Lifting)
             UpdateLifting();
@@ -120,7 +127,24 @@ public class PlayerCarry : MonoBehaviour
 
     public bool TryPickup(CarryableItem item)
     {
-        if (heldItem != null || item == null || !item.TryTake(gameObject))
+        if (heldItem != null || item == null)
+            return false;
+
+        if (holdTransform == null)
+        {
+            if (playerCamera == null)
+                playerCamera = GetComponentInChildren<Camera>();
+
+            holdTransform = playerCamera != null ? playerCamera.transform : null;
+
+            if (holdTransform == null)
+            {
+                Debug.LogWarning("PlayerCarry: не назначена камера или точка удержания", this);
+                return false;
+            }
+        }
+
+        if (!item.TryTake(gameObject))
             return false;
 
         heldItem = item;
@@ -145,10 +169,18 @@ public class PlayerCarry : MonoBehaviour
 
     public void ConfigureExternalInput(Transform newHoldTransform, Vector3 newDropDirection)
     {
+        if (newHoldTransform == null)
+        {
+            Debug.LogWarning("PlayerCarry: внешняя точка удержания не назначена", this);
+            return;
+        }
+
         holdTransform = newHoldTransform;
         playerMovement = null;
         useMouseInput = false;
-        dropDirection = newDropDirection.normalized;
+        dropDirection = newDropDirection.sqrMagnitude > 0.0001f
+            ? newDropDirection.normalized
+            : Vector3.down;
     }
 
     public void RequestDrop()
@@ -162,7 +194,8 @@ public class PlayerCarry : MonoBehaviour
         if (heldItem == null || state != CarryState.Holding || Mathf.Abs(scroll) < 0.01f)
             return;
 
-        float angle = Mathf.Sign(scroll) * rotationStep;
+        float angle = Mathf.Sign(scroll) *
+                      Mathf.Max(0f, SaveDataValidator.Finite(rotationStep, 15f));
         holdRotation = Quaternion.AngleAxis(angle, Vector3.up) * holdRotation;
     }
 
@@ -203,7 +236,13 @@ public class PlayerCarry : MonoBehaviour
     private void UpdateLifting()
     {
         transitionTime += Time.deltaTime;
-        float progress = Mathf.Clamp01(transitionTime / Mathf.Max(0.01f, pickupDuration));
+        float progress = Mathf.Clamp01(
+            transitionTime / Mathf.Clamp(
+                SaveDataValidator.Finite(pickupDuration, 0.45f),
+                0.01f,
+                10f
+            )
+        );
         progress = progress * progress * (3f - 2f * progress);
 
         heldItem.transform.position = Vector3.Lerp(transitionStartPosition, GetHoldPosition(), progress);
@@ -215,7 +254,10 @@ public class PlayerCarry : MonoBehaviour
 
     private void UpdateHolding()
     {
-        float follow = 1f - Mathf.Exp(-followSpeed * Time.deltaTime);
+        float follow = 1f - Mathf.Exp(
+            -Mathf.Max(0f, SaveDataValidator.Finite(followSpeed, 14f)) *
+            Time.deltaTime
+        );
         heldItem.transform.position = Vector3.Lerp(heldItem.transform.position, GetHoldPosition(), follow);
         heldItem.transform.rotation = Quaternion.Slerp(heldItem.transform.rotation, GetHoldRotation(), follow);
     }
@@ -236,7 +278,13 @@ public class PlayerCarry : MonoBehaviour
     private void UpdateDropping()
     {
         transitionTime += Time.deltaTime;
-        float progress = Mathf.Clamp01(transitionTime / Mathf.Max(0.01f, dropDuration));
+        float progress = Mathf.Clamp01(
+            transitionTime / Mathf.Clamp(
+                SaveDataValidator.Finite(dropDuration, 0.35f),
+                0.01f,
+                10f
+            )
+        );
         progress = progress * progress * (3f - 2f * progress);
 
         heldItem.transform.position = Vector3.Lerp(transitionStartPosition, dropPosition, progress);
@@ -324,8 +372,14 @@ public class PlayerCarry : MonoBehaviour
             towardPlayer = Vector3.Cross(surfaceNormal, Vector3.right);
 
         towardPlayer.Normalize();
-        float step = Mathf.Max(0.02f, dropCorrectionStep);
-        float maximumDistance = Mathf.Max(0f, dropCorrectionDistance);
+        float step = Mathf.Max(
+            0.02f,
+            SaveDataValidator.Finite(dropCorrectionStep, 0.1f)
+        );
+        float maximumDistance = Mathf.Max(
+            0f,
+            SaveDataValidator.Finite(dropCorrectionDistance, 0f)
+        );
         float[] angles = { 0f, 30f, -30f, 60f, -60f, 90f, -90f, 135f, -135f, 180f };
 
         for (float distance = step; distance <= maximumDistance + 0.001f; distance += step)
@@ -374,7 +428,7 @@ public class PlayerCarry : MonoBehaviour
         RaycastHit[] hits = Physics.RaycastAll(
             origin,
             dropDirection,
-            dropSearchDistance,
+            Mathf.Max(0f, SaveDataValidator.Finite(dropSearchDistance, 0f)),
             dropSurfaceLayers,
             QueryTriggerInteraction.Ignore
         );
@@ -505,7 +559,10 @@ public class PlayerCarry : MonoBehaviour
                     continue;
                 }
 
-                if (distance > allowedDropOverlap)
+                if (distance > Mathf.Max(
+                        0f,
+                        SaveDataValidator.Finite(allowedDropOverlap, 0f)
+                    ))
                 {
                     isClear = false;
                     break;

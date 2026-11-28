@@ -14,8 +14,8 @@ public class CloneRecorder : MonoBehaviour
     [SerializeField] private PlayerClimber playerClimber;
     [SerializeField] private PlayerCarry playerCarry;
     [SerializeField] private CarryableItem[] resettableItems;
-    [SerializeField] private float sampleInterval = 0.05f;
-    [SerializeField] private int maximumClones = 5;
+    [SerializeField, Min(0.02f)] private float sampleInterval = 0.05f;
+    [SerializeField, Range(1, 100)] private int maximumClones = 5;
 
     private readonly List<CloneRecordingData> savedRecordings = new List<CloneRecordingData>();
     private readonly List<ClonePlayback> activeClones = new List<ClonePlayback>();
@@ -88,7 +88,7 @@ public class CloneRecorder : MonoBehaviour
         if (recordingTime >= nextSampleTime)
         {
             RecordPose();
-            nextSampleTime = recordingTime + Mathf.Max(0.02f, sampleInterval);
+            nextSampleTime = recordingTime + GetSampleInterval();
         }
     }
 
@@ -98,7 +98,7 @@ public class CloneRecorder : MonoBehaviour
 
     public void FinishRecording()
     {
-        if (!isRecording)
+        if (!isRecording || recording == null)
             return;
 
         RecordPose();
@@ -173,7 +173,12 @@ public class CloneRecorder : MonoBehaviour
         };
 
         foreach (CloneRecordingData savedRecording in savedRecordings)
-            save.SavedRecordings.Add(RecordingSaveConverter.ToSaveData(savedRecording));
+        {
+            RecordingSaveData savedData = RecordingSaveConverter.ToSaveData(savedRecording);
+
+            if (savedData != null)
+                save.SavedRecordings.Add(savedData);
+        }
 
         return save;
     }
@@ -183,22 +188,47 @@ public class CloneRecorder : MonoBehaviour
         if (save == null)
             return;
 
-        StopActiveClones();
-        savedRecordings.Clear();
+        List<CloneRecordingData> restoredRecordings = new List<CloneRecordingData>();
 
-        foreach (RecordingSaveData savedRecording in save.SavedRecordings)
+        if (save.SavedRecordings != null)
         {
-            CloneRecordingData restored = RecordingSaveConverter.FromSaveData(savedRecording);
+            foreach (RecordingSaveData savedRecording in save.SavedRecordings)
+            {
+                CloneRecordingData restored = RecordingSaveConverter.FromSaveData(savedRecording);
 
-            if (restored != null)
-                savedRecordings.Add(restored);
+                if (restored != null && restored.Poses.Count > 0)
+                    restoredRecordings.Add(restored);
+            }
         }
 
-        recording = RecordingSaveConverter.FromSaveData(save.CurrentRecording);
-        recordingTime = Mathf.Max(0f, save.RecordingTime);
-        nextSampleTime = recordingTime + Mathf.Max(0.02f, sampleInterval);
+        int cloneLimit = GetCloneLimit();
+
+        while (restoredRecordings.Count > cloneLimit)
+            restoredRecordings.RemoveAt(0);
+
+        CloneRecordingData restoredCurrent = RecordingSaveConverter.FromSaveData(
+            save.CurrentRecording
+        );
+
+        if (save.IsRecording && restoredCurrent == null)
+            restoredCurrent = new CloneRecordingData();
+
+        float restoredTime = Mathf.Max(
+            0f,
+            SaveDataValidator.Finite(save.RecordingTime, 0f)
+        );
+
+        StopActiveClones();
+        savedRecordings.Clear();
+        savedRecordings.AddRange(restoredRecordings);
+        recording = restoredCurrent;
+        recordingTime = restoredTime;
+        nextSampleTime = recordingTime + GetSampleInterval();
         isRecording = save.IsRecording && recording != null;
         previousLeftInput = Mouse.current != null && Mouse.current.leftButton.isPressed;
+
+        if (isRecording && recording.Poses.Count == 0)
+            RecordPose();
 
         foreach (CloneRecordingData savedRecording in savedRecordings)
             SpawnClone(savedRecording, recordingTime);
@@ -208,7 +238,7 @@ public class CloneRecorder : MonoBehaviour
     {
         recording = new CloneRecordingData();
         recordingTime = 0f;
-        nextSampleTime = Mathf.Max(0.02f, sampleInterval);
+        nextSampleTime = GetSampleInterval();
         isRecording = true;
         previousLeftInput = Mouse.current != null && Mouse.current.leftButton.isPressed;
         RecordPose();
@@ -216,7 +246,7 @@ public class CloneRecorder : MonoBehaviour
 
     private void RecordInput()
     {
-        if (Mouse.current == null)
+        if (recording == null || Mouse.current == null)
             return;
 
         bool leftInput = Mouse.current.leftButton.isPressed;
@@ -257,7 +287,7 @@ public class CloneRecorder : MonoBehaviour
 
     private void RecordPose()
     {
-        if (playerBody == null || playerHead == null)
+        if (recording == null || playerBody == null || playerHead == null)
             return;
 
         Vector3 carryLocalPosition = Vector3.zero;
@@ -296,7 +326,8 @@ public class CloneRecorder : MonoBehaviour
 
     private void RecordInteraction(IInteractable interactable, RecordedInteractionType type)
     {
-        if (!isRecording || interactable == null || !interactable.RecordInteraction)
+        if (!isRecording || recording == null ||
+            interactable == null || !interactable.RecordInteraction)
             return;
 
         MonoBehaviour target = interactable as MonoBehaviour;
@@ -314,7 +345,7 @@ public class CloneRecorder : MonoBehaviour
 
     private void RecordItemPickup(CarryableItem item)
     {
-        if (!isRecording)
+        if (!isRecording || recording == null)
             return;
 
         recording.CarryActions.Add(new RecordedCarryAction
@@ -327,7 +358,7 @@ public class CloneRecorder : MonoBehaviour
 
     private void RecordItemDrop(CarryableItem item, Vector3 position, Quaternion rotation)
     {
-        if (!isRecording)
+        if (!isRecording || recording == null)
             return;
 
         recording.CarryActions.Add(new RecordedCarryAction
@@ -342,12 +373,12 @@ public class CloneRecorder : MonoBehaviour
 
     private void SaveRecording()
     {
-        if (recording.Poses.Count == 0)
+        if (recording == null || recording.Poses.Count == 0)
             return;
 
         savedRecordings.Add(recording);
 
-        int cloneLimit = maximumClones > 0 ? maximumClones : 5;
+        int cloneLimit = GetCloneLimit();
 
         while (savedRecordings.Count > cloneLimit)
             savedRecordings.RemoveAt(0);
@@ -370,6 +401,7 @@ public class CloneRecorder : MonoBehaviour
     private void SpawnClone(CloneRecordingData recordingToPlay, float startTime)
     {
         if (clonePrefab == null ||
+            recordingToPlay == null ||
             recordingToPlay.Poses.Count == 0 ||
             startTime >= recordingToPlay.Duration)
         {
@@ -439,6 +471,20 @@ public class CloneRecorder : MonoBehaviour
 
         if (playerCamera != null)
             playerCamera.ResetLook();
+    }
+
+    private float GetSampleInterval()
+    {
+        return Mathf.Clamp(
+            SaveDataValidator.Finite(sampleInterval, 0.05f),
+            0.02f,
+            10f
+        );
+    }
+
+    private int GetCloneLimit()
+    {
+        return Mathf.Clamp(maximumClones > 0 ? maximumClones : 5, 1, 100);
     }
 
     private void OnDestroy()

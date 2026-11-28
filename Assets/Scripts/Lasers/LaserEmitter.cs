@@ -5,11 +5,11 @@ using UnityEngine;
 public class LaserEmitter : MonoBehaviour
 {
     [SerializeField] private Transform startPoint;
-    [SerializeField] private float maximumDistance = 50f;
-    [SerializeField] private int maximumInteractions = 20;
-    [SerializeField] private int maximumPaths = 16;
+    [SerializeField, Min(0.01f)] private float maximumDistance = 50f;
+    [SerializeField, Min(1)] private int maximumInteractions = 20;
+    [SerializeField, Min(1)] private int maximumPaths = 16;
     [SerializeField] private LayerMask laserLayers = ~0;
-    [SerializeField] private float surfaceOffset = 0.01f;
+    [SerializeField, Min(0f)] private float surfaceOffset = 0.01f;
     [SerializeField] private ParticleSystem impactEffectPrefab;
     private AudioSource laserAudioSource;
     private AudioClip laserSound;
@@ -63,21 +63,38 @@ public class LaserEmitter : MonoBehaviour
         Vector3 origin = startPoint != null ? startPoint.position : transform.position;
         Vector3 direction = startPoint != null ? startPoint.forward : transform.forward;
 
+        if (direction.sqrMagnitude < 0.000001f)
+            direction = transform.forward;
+
         firstPath.Add(origin);
         Trace(origin, direction.normalized, firstPath, 0);
     }
 
     private void Trace(Vector3 origin, Vector3 direction, List<Vector3> path, int interactionCount)
     {
-        if (interactionCount >= maximumInteractions)
+        float distance = Mathf.Clamp(
+            SaveDataValidator.Finite(maximumDistance, 50f),
+            0.01f,
+            10000f
+        );
+
+        if (direction.sqrMagnitude < 0.000001f)
         {
-            path.Add(origin + direction * maximumDistance);
+            path.Add(origin);
             return;
         }
 
-        if (!Physics.Raycast(origin, direction, out RaycastHit hit, maximumDistance, laserLayers))
+        direction.Normalize();
+
+        if (interactionCount >= Mathf.Clamp(maximumInteractions, 1, 100))
         {
-            path.Add(origin + direction * maximumDistance);
+            path.Add(origin + direction * distance);
+            return;
+        }
+
+        if (!Physics.Raycast(origin, direction, out RaycastHit hit, distance, laserLayers))
+        {
+            path.Add(origin + direction * distance);
             return;
         }
 
@@ -97,7 +114,7 @@ public class LaserEmitter : MonoBehaviour
         if (reflectiveSurface != null)
         {
             Vector3 reflectedDirection = Vector3.Reflect(direction, hit.normal).normalized;
-            Vector3 reflectedOrigin = hit.point + reflectedDirection * surfaceOffset;
+            Vector3 reflectedOrigin = hit.point + reflectedDirection * Mathf.Max(0f, surfaceOffset);
             Trace(reflectedOrigin, reflectedDirection, path, interactionCount + 1);
             return;
         }
@@ -119,7 +136,7 @@ public class LaserEmitter : MonoBehaviour
             AddImpact(splitPosition, mirror.ReflectionNormal);
 
             Trace(
-                splitPosition + reflectedDirection * surfaceOffset,
+                splitPosition + reflectedDirection * Mathf.Max(0f, surfaceOffset),
                 reflectedDirection,
                 path,
                 interactionCount + 1
@@ -129,13 +146,13 @@ public class LaserEmitter : MonoBehaviour
         }
 
         Vector3 outputDirection = redirector.OutputDirection.normalized;
-        Vector3 nextOrigin = outputPosition + outputDirection * surfaceOffset;
+        Vector3 nextOrigin = outputPosition + outputDirection * Mathf.Max(0f, surfaceOffset);
         Trace(nextOrigin, outputDirection, path, interactionCount + 1);
     }
 
     private List<Vector3> GetPath()
     {
-        if (pathCount >= Mathf.Max(1, maximumPaths))
+        if (pathCount >= Mathf.Clamp(maximumPaths, 1, 64))
             return null;
 
         if (pathCount >= pathPool.Count)
@@ -184,8 +201,10 @@ public class LaserEmitter : MonoBehaviour
 
         ParticleSystem impact = impactPool[impactCount];
         impact.transform.SetPositionAndRotation(
-            position + normal * surfaceOffset,
-            Quaternion.LookRotation(normal)
+            position + normal * Mathf.Max(0f, surfaceOffset),
+            normal.sqrMagnitude > 0.000001f
+                ? Quaternion.LookRotation(normal)
+                : Quaternion.identity
         );
 
         if (!impact.gameObject.activeSelf)

@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class PlayerInteractor : MonoBehaviour
 {
     [SerializeField] private Camera interactionCamera;
-    [SerializeField] private float interactionDistance = 3f;
+    [SerializeField, Min(0f)] private float interactionDistance = 3f;
     [SerializeField] private LayerMask interactionLayers = ~0;
     [SerializeField] private GameObject interactionPanel;
     [SerializeField] private Image interactionPanelImage;
@@ -26,6 +26,11 @@ public class PlayerInteractor : MonoBehaviour
 
     private void Awake()
     {
+        interactionDistance = Mathf.Clamp(
+            SaveDataValidator.Finite(interactionDistance, 3f),
+            0f,
+            100f
+        );
         if (interactionCamera == null)
             interactionCamera = GetComponentInChildren<Camera>();
         if (playerCarry == null)

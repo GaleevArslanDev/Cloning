@@ -30,6 +30,12 @@ public class MirrorPlacement : MonoBehaviour
 
     private Quaternion GetTriangleRotation(Vector3 surfaceNormal, Quaternion currentRotation)
     {
+        if (surfaceNormal.sqrMagnitude < 0.000001f ||
+            triangleFaceNormal.sqrMagnitude < 0.000001f)
+        {
+            return currentRotation;
+        }
+
         Vector3 targetNormal = -surfaceNormal.normalized;
         Vector3 firstNormal = currentRotation * triangleFaceNormal.normalized;
         Vector3 secondNormal = -firstNormal;
@@ -50,15 +56,30 @@ public class MirrorPlacement : MonoBehaviour
         );
 
         Vector3 targetNormal = -surfaceNormal;
-        Vector3 firstNormal = currentRotation * firstSquareFaceNormal.normalized;
-        Vector3 secondNormal = currentRotation * secondSquareFaceNormal.normalized;
+        Vector3 firstLocalNormal = firstSquareFaceNormal.sqrMagnitude > 0.000001f
+            ? firstSquareFaceNormal.normalized
+            : Vector3.down;
+        Vector3 secondLocalNormal = secondSquareFaceNormal.sqrMagnitude > 0.000001f
+            ? secondSquareFaceNormal.normalized
+            : Vector3.left;
+        Vector3 triangleNormal = triangleFaceNormal.sqrMagnitude > 0.000001f
+            ? triangleFaceNormal.normalized
+            : Vector3.forward;
+        Vector3 firstNormal = currentRotation * firstLocalNormal;
+        Vector3 secondNormal = currentRotation * secondLocalNormal;
 
         Vector3 selectedNormal = Vector3.Dot(firstNormal, targetNormal) >= Vector3.Dot(secondNormal, targetNormal)
             ? firstNormal
             : secondNormal;
 
         Quaternion rotation = Quaternion.FromToRotation(selectedNormal, targetNormal) * currentRotation;
-        Vector3 mirrorAxis = Vector3.ProjectOnPlane(rotation * triangleFaceNormal.normalized, surfaceNormal).normalized;
+        Vector3 mirrorAxis = Vector3.ProjectOnPlane(
+            rotation * triangleNormal,
+            surfaceNormal
+        ).normalized;
+
+        if (mirrorAxis.sqrMagnitude < 0.000001f)
+            return rotation;
 
         Vector3 targetAxis = Mathf.Abs(Vector3.Dot(mirrorAxis, cubeRight)) >=
                              Mathf.Abs(Vector3.Dot(mirrorAxis, cubeForward))

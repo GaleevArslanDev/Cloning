@@ -21,6 +21,17 @@ public class LaserReceiver : MonoBehaviour
             : null;
     }
 
+    private void Update()
+    {
+        if (emitters.Count == 0)
+            return;
+
+        int removed = emitters.RemoveWhere(emitter => emitter == null);
+
+        if (removed > 0 && emitters.Count == 0)
+            onDeactivated?.Invoke();
+    }
+
     public void Receive(LaserEmitter emitter)
     {
         if (emitter == null || !emitters.Add(emitter))

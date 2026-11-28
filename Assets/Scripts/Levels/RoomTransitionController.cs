@@ -12,12 +12,12 @@ public class RoomTransitionController : MonoBehaviour
     [SerializeField, HideInInspector] private Material roomMaterial;
     [SerializeField] private Material[] roomMaterials;
     [SerializeField] private Color transitionColor = Color.white;
-    [SerializeField] private float materialColorDuration = 4f;
-    [SerializeField] private float objectMoveDuration = 4f;
-    [SerializeField] private float roomMoveDuration = 3f;
-    [SerializeField] private float breathingSettleDuration = 1.5f;
-    [SerializeField] private float objectDelay = 0.12f;
-    [SerializeField] private float hiddenDepth = 2f;
+    [SerializeField, Min(0f)] private float materialColorDuration = 4f;
+    [SerializeField, Min(0f)] private float objectMoveDuration = 4f;
+    [SerializeField, Min(0f)] private float roomMoveDuration = 3f;
+    [SerializeField, Min(0f)] private float breathingSettleDuration = 1.5f;
+    [SerializeField, Min(0f)] private float objectDelay = 0.12f;
+    [SerializeField, Min(0f)] private float hiddenDepth = 2f;
     [SerializeField] private bool buildWhenSceneStarts;
     private AudioSource rebuildAudioSource;
     private AudioClip rebuildSound;
@@ -66,6 +66,37 @@ public class RoomTransitionController : MonoBehaviour
 
     private void Awake()
     {
+        materialColorDuration = Mathf.Clamp(
+            SaveDataValidator.Finite(materialColorDuration, 4f),
+            0f,
+            300f
+        );
+        objectMoveDuration = Mathf.Clamp(
+            SaveDataValidator.Finite(objectMoveDuration, 4f),
+            0f,
+            300f
+        );
+        roomMoveDuration = Mathf.Clamp(
+            SaveDataValidator.Finite(roomMoveDuration, 3f),
+            0f,
+            300f
+        );
+        breathingSettleDuration = Mathf.Clamp(
+            SaveDataValidator.Finite(breathingSettleDuration, 1.5f),
+            0f,
+            300f
+        );
+        objectDelay = Mathf.Clamp(
+            SaveDataValidator.Finite(objectDelay, 0.12f),
+            0f,
+            60f
+        );
+        hiddenDepth = Mathf.Clamp(
+            SaveDataValidator.Finite(hiddenDepth, 2f),
+            0f,
+            10000f
+        );
+
         rebuildSound = GameAudioClips.Instance != null
             ? GameAudioClips.Instance.Rebuilding
             : null;
@@ -215,6 +246,9 @@ public class RoomTransitionController : MonoBehaviour
 
         foreach (TransitionMaterial item in transitionMaterials)
         {
+            if (item.Material == null)
+                continue;
+
             item.StartColor = item.Material.GetColor(item.ColorProperty);
             item.TargetColor = toTransitionColor
                 ? transitionColor
@@ -236,6 +270,9 @@ public class RoomTransitionController : MonoBehaviour
 
             foreach (TransitionMaterial item in transitionMaterials)
             {
+                if (item.Material == null)
+                    continue;
+
                 item.Material.SetColor(
                     item.ColorProperty,
                     Color.Lerp(item.StartColor, item.TargetColor, progress)
@@ -246,13 +283,19 @@ public class RoomTransitionController : MonoBehaviour
         }
 
         foreach (TransitionMaterial item in transitionMaterials)
-            item.Material.SetColor(item.ColorProperty, item.TargetColor);
+        {
+            if (item.Material != null)
+                item.Material.SetColor(item.ColorProperty, item.TargetColor);
+        }
     }
 
     private void SetTransitionMaterialColors()
     {
         foreach (TransitionMaterial item in transitionMaterials)
-            item.Material.SetColor(item.ColorProperty, transitionColor);
+        {
+            if (item.Material != null)
+                item.Material.SetColor(item.ColorProperty, transitionColor);
+        }
     }
 
     private void CaptureObjects()
@@ -338,11 +381,11 @@ public class RoomTransitionController : MonoBehaviour
         Vector3 hiddenLocal = localPosition;
 
         if (Mathf.Abs(localDirection.x) > 0.5f)
-            hiddenLocal.x = localDirection.x * (halfSize.x + hiddenDepth);
+            hiddenLocal.x = localDirection.x * (halfSize.x + Mathf.Max(0f, hiddenDepth));
         else if (Mathf.Abs(localDirection.y) > 0.5f)
-            hiddenLocal.y = localDirection.y * (halfSize.y + hiddenDepth);
+            hiddenLocal.y = localDirection.y * (halfSize.y + Mathf.Max(0f, hiddenDepth));
         else
-            hiddenLocal.z = localDirection.z * (halfSize.z + hiddenDepth);
+            hiddenLocal.z = localDirection.z * (halfSize.z + Mathf.Max(0f, hiddenDepth));
 
         item.HiddenPosition = FlatRoomCenter.TransformPoint(hiddenLocal);
         item.RollAxis = Vector3.Cross(direction, FlatRoomCenter.up).normalized;
@@ -372,7 +415,8 @@ public class RoomTransitionController : MonoBehaviour
 
     private void SetObjectProgress(float progress)
     {
-        float totalDelay = Mathf.Max(0f, objects.Count - 1) * objectDelay;
+        float safeDelay = Mathf.Max(0f, objectDelay);
+        float totalDelay = Mathf.Max(0f, objects.Count - 1) * safeDelay;
         float fullDuration = Mathf.Max(0.01f, objectMoveDuration + totalDelay);
 
         for (int i = 0; i < objects.Count; i++)
@@ -382,7 +426,7 @@ public class RoomTransitionController : MonoBehaviour
             if (item.Transform == null)
                 continue;
 
-            float delay = i * objectDelay / fullDuration;
+            float delay = i * safeDelay / fullDuration;
             float available = Mathf.Max(0.01f, 1f - totalDelay / fullDuration);
             float localProgress = Mathf.Clamp01((progress - delay) / available);
             localProgress = Smooth(localProgress);
@@ -459,6 +503,10 @@ public class RoomTransitionController : MonoBehaviour
         for (int i = 0; i < item.Colliders.Length; i++)
         {
             Collider itemCollider = item.Colliders[i];
+
+            if (itemCollider == null)
+                continue;
+
             item.ColliderStates[i] = itemCollider.enabled;
             itemCollider.enabled = false;
         }
@@ -470,6 +518,10 @@ public class RoomTransitionController : MonoBehaviour
         for (int i = 0; i < item.Bodies.Length; i++)
         {
             Rigidbody body = item.Bodies[i];
+
+            if (body == null)
+                continue;
+
             item.KinematicStates[i] = body.isKinematic;
             item.GravityStates[i] = body.useGravity;
             body.isKinematic = true;
@@ -484,6 +536,10 @@ public class RoomTransitionController : MonoBehaviour
         for (int i = 0; i < item.Behaviours.Length; i++)
         {
             MonoBehaviour behaviour = item.Behaviours[i];
+
+            if (behaviour == null)
+                continue;
+
             item.BehaviourStates[i] = behaviour.enabled;
             behaviour.enabled = false;
         }
@@ -498,7 +554,13 @@ public class RoomTransitionController : MonoBehaviour
 
             item.Transform.SetPositionAndRotation(item.FinalPosition, item.FinalRotation);
 
-            for (int i = 0; i < item.Bodies.Length; i++)
+            int bodyCount = Mathf.Min(
+                item.Bodies != null ? item.Bodies.Length : 0,
+                item.KinematicStates != null ? item.KinematicStates.Length : 0,
+                item.GravityStates != null ? item.GravityStates.Length : 0
+            );
+
+            for (int i = 0; i < bodyCount; i++)
             {
                 if (item.Bodies[i] == null)
                     continue;
@@ -507,13 +569,23 @@ public class RoomTransitionController : MonoBehaviour
                 item.Bodies[i].isKinematic = item.KinematicStates[i];
             }
 
-            for (int i = 0; i < item.Colliders.Length; i++)
+            int colliderCount = Mathf.Min(
+                item.Colliders != null ? item.Colliders.Length : 0,
+                item.ColliderStates != null ? item.ColliderStates.Length : 0
+            );
+
+            for (int i = 0; i < colliderCount; i++)
             {
                 if (item.Colliders[i] != null)
                     item.Colliders[i].enabled = item.ColliderStates[i];
             }
 
-            for (int i = 0; i < item.Behaviours.Length; i++)
+            int behaviourCount = Mathf.Min(
+                item.Behaviours != null ? item.Behaviours.Length : 0,
+                item.BehaviourStates != null ? item.BehaviourStates.Length : 0
+            );
+
+            for (int i = 0; i < behaviourCount; i++)
             {
                 if (item.Behaviours[i] != null)
                     item.Behaviours[i].enabled = item.BehaviourStates[i];

@@ -5,9 +5,9 @@ using System.Collections;
 public class PlayerClimber : MonoBehaviour
 {
     [SerializeField] private PlayerMovement playerMovement;
-    [SerializeField] private float ledgeClimbDuration = 0.4f;
-    [SerializeField] private float mountJumpDuration = 0.45f;
-    [SerializeField] private float mountJumpHeight = 0.2f;
+    [SerializeField, Min(0f)] private float ledgeClimbDuration = 0.4f;
+    [SerializeField, Min(0f)] private float mountJumpDuration = 0.45f;
+    [SerializeField, Min(0f)] private float mountJumpHeight = 0.2f;
     private AudioSource climbAudioSource;
     private AudioClip climbSound;
 
@@ -45,6 +45,12 @@ public class PlayerClimber : MonoBehaviour
     {
         if (jumpAnimationTime > 0f)
             jumpAnimationTime -= Time.deltaTime;
+    }
+
+    private void OnDisable()
+    {
+        if (mountedClone != null || climbRoutine != null)
+            Dismount();
     }
 
     public void Mount(ClonePlayback clone, Transform mountPoint)
@@ -138,7 +144,11 @@ public class PlayerClimber : MonoBehaviour
     private IEnumerator ClimbToLedge(Vector3 targetPosition)
     {
         Vector3 startPosition = transform.position;
-        float duration = Mathf.Max(0.01f, ledgeClimbDuration);
+        float duration = Mathf.Clamp(
+            SaveDataValidator.Finite(ledgeClimbDuration, 0.4f),
+            0.01f,
+            10f
+        );
         float time = 0f;
 
         while (time < duration)
@@ -161,7 +171,11 @@ public class PlayerClimber : MonoBehaviour
     private IEnumerator JumpToMountPoint()
     {
         Vector3 startPosition = transform.localPosition;
-        float duration = Mathf.Max(0.01f, mountJumpDuration);
+        float duration = Mathf.Clamp(
+            SaveDataValidator.Finite(mountJumpDuration, 0.45f),
+            0.01f,
+            10f
+        );
         float time = 0f;
 
         while (time < duration)
@@ -169,7 +183,7 @@ public class PlayerClimber : MonoBehaviour
             time += Time.deltaTime;
             float progress = Mathf.Clamp01(time / duration);
             float smoothProgress = Mathf.SmoothStep(0f, 1f, progress);
-            float jumpOffset = Mathf.Sin(progress * Mathf.PI) * mountJumpHeight;
+            float jumpOffset = Mathf.Sin(progress * Mathf.PI) * Mathf.Max(0f, mountJumpHeight);
 
             transform.localPosition = Vector3.Lerp(
                 startPosition,

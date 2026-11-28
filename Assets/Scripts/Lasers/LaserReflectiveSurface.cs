@@ -7,7 +7,14 @@ public class LaserReflectiveSurface : MonoBehaviour
     [SerializeField] private Vector3 localNormal = Vector3.up;
 
     public LaserMirror Mirror => mirror;
-    public Vector3 SurfaceNormal => transform.TransformDirection(localNormal).normalized;
+    public Vector3 SurfaceNormal
+    {
+        get
+        {
+            Vector3 normal = transform.TransformDirection(localNormal);
+            return normal.sqrMagnitude > 0.000001f ? normal.normalized : transform.up;
+        }
+    }
 
     private void Awake()
     {

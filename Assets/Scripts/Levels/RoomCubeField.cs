@@ -13,15 +13,15 @@ public class RoomCubeField : MonoBehaviour
     [SerializeField] private Vector3 flatRoomSize = new Vector3(20f, 8f, 20f);
     [SerializeField] private bool hasCeiling;
     [SerializeField] private bool detectRoomAutomatically = true;
-    [SerializeField] private float detectionStep = 0.05f;
+    [SerializeField, Min(0.001f)] private float detectionStep = 0.05f;
     [SerializeField] private bool showRoomPreview = true;
     [SerializeField] private Color previewColor = new Color(0.1f, 0.85f, 1f, 0.2f);
-    [SerializeField] private float breathingAmplitude = 0.025f;
-    [SerializeField] private float floorBreathingAmplitude = 0.003f;
-    [SerializeField] private float breathingSpeed = 0.8f;
-    [SerializeField] private float speedRandomness = 0.35f;
-    [SerializeField] private float waveRadius = 1.25f;
-    [SerializeField] private float waveHeight = 0.18f;
+    [SerializeField, Min(0f)] private float breathingAmplitude = 0.025f;
+    [SerializeField, Min(0f)] private float floorBreathingAmplitude = 0.003f;
+    [SerializeField, Min(0f)] private float breathingSpeed = 0.8f;
+    [SerializeField, Range(0f, 1f)] private float speedRandomness = 0.35f;
+    [SerializeField, Min(0.01f)] private float waveRadius = 1.25f;
+    [SerializeField, Min(0f)] private float waveHeight = 0.18f;
     [SerializeField] private int randomSeed = 731;
     [SerializeField] private bool randomizeTransition = true;
     [SerializeField, Range(0f, 0.9f)] private float maximumTransitionDelay = 0.55f;
@@ -71,6 +71,28 @@ public class RoomCubeField : MonoBehaviour
 
     private void Awake()
     {
+        flatRoomSize = SanitizeRoomSize(flatRoomSize);
+        breathingAmplitude = Mathf.Max(
+            0f,
+            SaveDataValidator.Finite(breathingAmplitude, 0.025f)
+        );
+        floorBreathingAmplitude = Mathf.Max(
+            0f,
+            SaveDataValidator.Finite(floorBreathingAmplitude, 0.003f)
+        );
+        breathingSpeed = Mathf.Max(
+            0f,
+            SaveDataValidator.Finite(breathingSpeed, 0.8f)
+        );
+        speedRandomness = Mathf.Clamp01(
+            SaveDataValidator.Finite(speedRandomness, 0.35f)
+        );
+        waveRadius = Mathf.Max(
+            0.01f,
+            SaveDataValidator.Finite(waveRadius, 1.25f)
+        );
+        waveHeight = Mathf.Max(0f, SaveDataValidator.Finite(waveHeight, 0.18f));
+
         if (cubesRoot == null)
             cubesRoot = transform;
 
@@ -152,7 +174,7 @@ public class RoomCubeField : MonoBehaviour
 
     public void SetFlatness(float value)
     {
-        flatness = Mathf.Clamp01(value);
+        flatness = Mathf.Clamp01(SaveDataValidator.Finite(value, 0f));
         geometryDirty = true;
     }
 
@@ -183,7 +205,7 @@ public class RoomCubeField : MonoBehaviour
 
     public void SetBreathingStrength(float value)
     {
-        breathingStrength = Mathf.Clamp01(value);
+        breathingStrength = Mathf.Clamp01(SaveDataValidator.Finite(value, 0f));
     }
 
     public void AddFloorWave(Vector3 position, float strength)
@@ -191,7 +213,7 @@ public class RoomCubeField : MonoBehaviour
         waves.Add(new RoomWave
         {
             Position = position,
-            Strength = Mathf.Clamp01(strength)
+            Strength = Mathf.Clamp01(SaveDataValidator.Finite(strength, 0f))
         });
     }
 
@@ -247,7 +269,7 @@ public class RoomCubeField : MonoBehaviour
         if (owner == null || !floorLifts.TryGetValue(owner, out FloorLiftGroup group))
             return;
 
-        height = Mathf.Max(0f, height);
+        height = Mathf.Max(0f, SaveDataValidator.Finite(height, 0f));
 
         if (Mathf.Abs(group.Height - height) <= 0.0001f)
             return;
@@ -554,6 +576,9 @@ public class RoomCubeField : MonoBehaviour
 
     private float GetMedian(List<float> values)
     {
+        if (values == null || values.Count == 0)
+            return 0f;
+
         values.Sort();
         int middle = values.Count / 2;
 
@@ -565,6 +590,9 @@ public class RoomCubeField : MonoBehaviour
 
     private float GetMostCommon(List<float> values)
     {
+        if (values == null || values.Count == 0)
+            return 0f;
+
         float step = Mathf.Max(0.001f, detectionStep);
         Dictionary<int, int> counts = new Dictionary<int, int>();
         Dictionary<int, float> sums = new Dictionary<int, float>();
@@ -854,7 +882,17 @@ public class RoomCubeField : MonoBehaviour
 
         center = flatRoomCenter.position;
         rotation = flatRoomCenter.rotation;
-        size = flatRoomSize;
+        size = SanitizeRoomSize(flatRoomSize);
         return true;
+    }
+
+    private Vector3 SanitizeRoomSize(Vector3 value)
+    {
+        value = SaveDataValidator.Finite(value, new Vector3(20f, 8f, 20f));
+        return new Vector3(
+            Mathf.Max(0.01f, Mathf.Abs(value.x)),
+            Mathf.Max(0.01f, Mathf.Abs(value.y)),
+            Mathf.Max(0.01f, Mathf.Abs(value.z))
+        );
     }
 }
