@@ -41,16 +41,25 @@ public class PauseMenuController : MonoBehaviour
 
     private static void InstallForScene(Scene scene, LoadSceneMode mode)
     {
-        if (scene.name == "MainMenu" || FindFirstObjectByType<PauseMenuController>() != null)
-            return;
+        if (scene.name == "MainMenu") return;
+
+        bool gameLevel = scene.name.Length == 6 &&
+            scene.name.StartsWith("Level", StringComparison.Ordinal) &&
+            scene.name[5] >= '1' && scene.name[5] <= '9' &&
+            scene.path == $"Assets/Scenes/{scene.name}.unity";
+
+        bool needsMenu = gameLevel;
         foreach (var root in scene.GetRootGameObjects())
         {
-            if (root.GetComponentInChildren<PlayerMovement>(true) == null) continue;
-            var menu = new GameObject("PauseMenu");
-            SceneManager.MoveGameObjectToScene(menu, scene);
-            menu.AddComponent<PauseMenuController>();
-            break;
+            if (root.GetComponentInChildren<PauseMenuController>(true) != null) return;
+            if (!needsMenu && root.GetComponentInChildren<PlayerMovement>(true) != null)
+                needsMenu = true;
         }
+        if (!needsMenu) return;
+
+        var menu = new GameObject("PauseMenu");
+        SceneManager.MoveGameObjectToScene(menu, scene);
+        menu.AddComponent<PauseMenuController>();
     }
 
     private void Awake()
@@ -65,7 +74,8 @@ public class PauseMenuController : MonoBehaviour
 
     private void Update()
     {
-        if (loading || Mouse.current == null || !Mouse.current.middleButton.wasPressedThisFrame)
+        if (loading || gameObject.scene != SceneManager.GetActiveScene() ||
+            Mouse.current == null || !Mouse.current.middleButton.wasPressedThisFrame)
             return;
 
         if (!isPaused)

@@ -78,7 +78,10 @@ public class LoadSaveMenu : MonoBehaviour
             int slotIndex = startIndex + i;
 
             if (slotIndex < slots.Count)
+            {
                 slotViews[i].Show(this, slots[slotIndex]);
+                slotViews[i].UpdateSelection(selectedSlot);
+            }
             else
                 slotViews[i].Hide();
         }
@@ -111,6 +114,8 @@ public class LoadSaveMenu : MonoBehaviour
                 continue;
 
             selectedSlot = slot.Name;
+            foreach (var view in slotViews)
+                if (view.gameObject.activeInHierarchy) view.UpdateSelection(selectedSlot);
             SetSelectedInfo(
                 GetDisplayName(slot.Name),
                 GameSaveSystem.GetLevelNumber(slot.SceneName),
