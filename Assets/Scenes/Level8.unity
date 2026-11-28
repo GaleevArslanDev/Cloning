@@ -148895,6 +148895,23 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2146476095}
   m_Mesh: {fileID: 4300000, guid: d49fea1167bbe644e87a0fe2bebca383, type: 2}
+--- !u!1001 &723189102447701
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 200, guid: 7aa4bcb2567a4fbcba734461bc508834, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 7aa4bcb2567a4fbcba734461bc508834, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -148920,3 +148937,4 @@ SceneRoots:
   - {fileID: 1925932028}
   - {fileID: 318838308}
   - {fileID: 1023555582}
+  - {fileID: 723189102447701}
